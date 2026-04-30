@@ -53,28 +53,36 @@
 
     <main id="main" class="main-shell">
       <section class="tabletop-scene" data-tabletop-scene data-depth-range-x="18" data-depth-range-y="14">
-        <article class="desk-prop desk-prop--manual" data-reveal data-depth="0.32">
-          <span class="desk-prop__tag">Profile / field notes</span>
+        <a
+          class="desk-prop desk-prop--manual"
+          href="profile.html"
+          data-reveal
+          data-depth="0.28"
+          aria-label="Open profile notes"
+        >
           <div class="manual-sheet">
-            <p class="manual-sheet__kicker">Roscosmo workshop table</p>
-            <h1>Objects, circuits, and prototypes laid out in one place.</h1>
+            <p class="manual-sheet__kicker">Profile</p>
+            <h1>Workshop notes.</h1>
             <p>
-              A small independent practice focused on physical product work,
-              electronics, and the kind of iterative experiments that need to be
-              built before they can be understood.
+              Independent design practice focused on physical product work,
+              electronics, and buildable prototypes.
             </p>
             <ul class="manual-sheet__list">
-              <li>Product concept development</li>
-              <li>Electronics prototyping</li>
-              <li>CAD and enclosure design</li>
-              <li>Embedded systems and physical testing</li>
+              <li>Background</li>
+              <li>Approach</li>
+              <li>Capabilities</li>
             </ul>
-            <a class="paper-link" href="profile.html">Open the full profile</a>
+            <span class="prop-link-note">Open profile</span>
           </div>
-        </article>
+        </a>
 
-        <article class="desk-prop desk-prop--projects" data-reveal data-depth="0.56">
-          <span class="desk-prop__tag">Projects / selected object</span>
+        <a
+          class="desk-prop desk-prop--projects"
+          href="projects.html"
+          data-reveal
+          data-depth="0.46"
+          aria-label="Open projects archive"
+        >
           <div class="object-cradle">
             <div
               class="layered-object"
@@ -94,49 +102,32 @@
               />
               <div class="layered-object__stack" data-layer-stack hidden></div>
             </div>
-            <div class="object-caption">
-              <p class="object-caption__label">Projects</p>
-              <h2>Move across the table and open the builds that catch your eye.</h2>
-              <p>
-                Case studies for product design, hardware, interface
-                experiments, and fabrication work. The hero object above acts as
-                a tactile preview before you open the full project archive.
-              </p>
-              <a class="object-link" href="projects.html">Browse projects</a>
+            <div class="object-plaque">
+              <p class="object-plaque__label">Projects</p>
+              <strong>Selected work</strong>
+              <span>Click to move closer.</span>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article class="desk-prop desk-prop--contact" data-reveal data-depth="0.2">
-          <span class="desk-prop__tag">Contact / card</span>
+        <a
+          class="desk-prop desk-prop--contact"
+          href="contact.html"
+          data-reveal
+          data-depth="0.16"
+          aria-label="Open contact details"
+        >
           <div class="contact-card">
-            <p class="contact-card__stamp">Roscosmo Studio</p>
-            <a class="contact-card__mail" href="mailto:hello@example.com">hello@example.com</a>
-            <p>
-              For commissions, collaboration, prototypes, and strange useful
-              ideas that need a build-minded design partner.
-            </p>
-            <a class="paper-link paper-link--compact" href="contact.html">Go to contact</a>
+            <p class="contact-card__stamp">Contact</p>
+            <p class="contact-card__mail">hello@example.com</p>
+            <p>Commissions, collaboration, prototypes.</p>
+            <span class="prop-link-note prop-link-note--dark">Contact details</span>
           </div>
-        </article>
+        </a>
 
-        <nav class="desk-prop desk-prop--routes" data-reveal data-depth="0.12" aria-label="Sections on the table">
-          <span class="desk-prop__tag">Routes / tabletop stops</span>
-          <div class="route-strip">
-            <a class="route-chip" href="profile.html">
-              <strong>Profile</strong>
-              <span>Notes, background, philosophy</span>
-            </a>
-            <a class="route-chip" href="projects.html">
-              <strong>Projects</strong>
-              <span>Objects, experiments, documentation</span>
-            </a>
-            <a class="route-chip" href="contact.html">
-              <strong>Contact</strong>
-              <span>Email, links, collaboration</span>
-            </a>
-          </div>
-        </nav>
+        <aside class="desk-prop desk-prop--guide" data-reveal data-depth="0.08">
+          <p class="desk-note">Tabletop overview. Click an object to move closer.</p>
+        </aside>
       </section>
     </main>
 

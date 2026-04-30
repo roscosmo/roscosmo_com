@@ -185,10 +185,10 @@ body[data-page="home"] .site-header__inner {
 
 .tabletop-scene {
   position: relative;
-  min-height: clamp(42rem, 78vh, 60rem);
+  min-height: clamp(38rem, 74vh, 54rem);
   display: grid;
   grid-template-columns: minmax(250px, 0.94fr) minmax(380px, 1.35fr) minmax(220px, 0.72fr);
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto 1fr;
   gap: 1.35rem;
   padding: 1.6rem;
   border: 1px solid var(--home-table-line);
@@ -231,30 +231,12 @@ body[data-page="home"] .site-header__inner {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 0.75rem;
+  gap: 0.6rem;
   align-content: start;
   transform: var(--prop-tilt, rotate(0deg)) translate3d(var(--depth-shift-x, 0px), var(--depth-shift-y, 0px), 0);
   transform-origin: center;
   transition: transform 180ms ease;
   will-change: transform;
-}
-
-.desk-prop__tag {
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  min-height: 1.8rem;
-  padding: 0.28rem 0.62rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01)),
-    rgba(9, 10, 14, 0.86);
-  color: var(--brand-cream);
-  font-family: var(--font-heading);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
 }
 
 .desk-prop--manual {
@@ -266,9 +248,9 @@ body[data-page="home"] .site-header__inner {
 }
 
 .desk-prop--projects {
-  --prop-tilt: rotate(1.7deg);
+  --prop-tilt: rotate(1.2deg);
   grid-column: 2;
-  grid-row: 1 / span 3;
+  grid-row: 1 / span 2;
   align-self: stretch;
   z-index: 2;
 }
@@ -281,16 +263,18 @@ body[data-page="home"] .site-header__inner {
   width: min(100%, 18.5rem);
 }
 
-.desk-prop--routes {
-  --prop-tilt: rotate(-1.2deg);
-  grid-column: 1 / span 3;
-  grid-row: 3;
+.desk-prop--guide {
+  --prop-tilt: rotate(-2deg);
+  grid-column: 3;
+  grid-row: 2;
   align-self: end;
+  justify-self: end;
+  width: min(100%, 15rem);
 }
 
 .manual-sheet,
 .contact-card,
-.route-strip,
+.desk-note,
 .object-cradle {
   position: relative;
   overflow: hidden;
@@ -299,11 +283,11 @@ body[data-page="home"] .site-header__inner {
 }
 
 .manual-sheet {
-  min-height: 31rem;
+  min-height: 24rem;
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
   align-content: start;
-  padding: 1.45rem 1.5rem 1.7rem;
+  padding: 1.3rem 1.35rem 1.45rem;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.12)),
     linear-gradient(180deg, transparent 0 1.75rem, rgba(39, 29, 21, 0.1) 1.75rem 1.82rem, transparent 1.82rem),
@@ -343,9 +327,9 @@ body[data-page="home"] .site-header__inner {
 }
 
 .manual-sheet h1 {
-  max-width: 11ch;
+  max-width: 8ch;
   color: var(--home-ink);
-  font-size: clamp(2.5rem, 5vw, 4.6rem);
+  font-size: clamp(2.1rem, 4.4vw, 3.7rem);
   line-height: 0.95;
 }
 
@@ -358,15 +342,14 @@ body[data-page="home"] .site-header__inner {
   margin: 0;
   padding-left: 1.15rem;
   display: grid;
-  gap: 0.45rem;
+  gap: 0.35rem;
 }
 
-.paper-link {
+.prop-link-note {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   justify-self: start;
-  margin-top: auto;
   color: var(--home-ink);
   font-family: var(--font-heading);
   font-size: 0.82rem;
@@ -375,20 +358,20 @@ body[data-page="home"] .site-header__inner {
   text-transform: uppercase;
 }
 
-.paper-link::after {
+.prop-link-note::after {
   content: "->";
 }
 
-.paper-link--compact {
-  margin-top: 0.5rem;
+.prop-link-note--dark {
+  color: var(--home-ink);
 }
 
 .object-cradle {
   min-height: 100%;
   display: grid;
-  gap: 1rem;
+  gap: 0.7rem;
   align-content: start;
-  padding: 1rem;
+  padding: 0.95rem;
   border-color: rgba(255, 255, 255, 0.1);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
@@ -398,7 +381,7 @@ body[data-page="home"] .site-header__inner {
 
 .layered-object {
   position: relative;
-  min-height: clamp(22rem, 38vw, 33rem);
+  min-height: clamp(24rem, 42vw, 35rem);
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
     radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--brand-blue) 14%, transparent), transparent 24%),
@@ -459,51 +442,44 @@ body[data-page="home"] .site-header__inner {
   opacity: 0;
 }
 
-.object-caption {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.object-caption__label {
-  color: var(--brand-cream);
-  font-family: var(--font-heading);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.object-caption h2 {
-  max-width: 13ch;
-  font-size: clamp(2rem, 3vw, 3.2rem);
-}
-
-.object-caption p {
-  max-width: 38rem;
-  color: var(--muted);
-}
-
-.object-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.object-plaque {
+  display: inline-grid;
+  gap: 0.22rem;
   justify-self: start;
+  margin-left: 0.45rem;
+  padding: 0.62rem 0.8rem 0.58rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+    rgba(10, 12, 18, 0.9);
+  box-shadow: 0 12px 18px rgba(0, 0, 0, 0.24);
+}
+
+.object-plaque__label {
   color: var(--brand-cream);
   font-family: var(--font-heading);
-  font-size: 0.84rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-.object-link::after {
-  content: "->";
+.object-plaque strong {
+  color: var(--text-light);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.object-plaque span {
+  color: var(--muted);
+  font-size: 0.84rem;
 }
 
 .contact-card {
   display: grid;
-  gap: 0.7rem;
-  padding: 1.2rem 1.15rem 1.3rem;
+  gap: 0.55rem;
+  padding: 1.05rem 1rem 1.1rem;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.12)),
     linear-gradient(180deg, #ede0ca 0%, #d8c1a2 100%);
@@ -533,7 +509,7 @@ body[data-page="home"] .site-header__inner {
 .contact-card__mail {
   color: var(--home-ink);
   font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
 }
 
@@ -541,39 +517,28 @@ body[data-page="home"] .site-header__inner {
   color: rgba(39, 29, 21, 0.82);
 }
 
-.route-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.8rem;
-  padding: 0.95rem;
-  border-color: rgba(255, 255, 255, 0.1);
+.desk-note {
+  padding: 0.9rem 1rem;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
-    rgba(9, 11, 16, 0.94);
-}
-
-.route-chip {
-  display: grid;
-  gap: 0.35rem;
-  min-height: 7rem;
-  padding: 0.95rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012)),
-    rgba(13, 16, 24, 0.96);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.route-chip strong {
-  color: var(--brand-cream);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.1)),
+    linear-gradient(180deg, #e4d3b6 0%, #cfb78f 100%);
+  color: rgba(39, 29, 21, 0.86);
   font-family: var(--font-heading);
-  font-size: 0.92rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
 }
 
-.route-chip span {
-  color: var(--muted);
+.desk-prop[href] {
+  color: inherit;
+  text-decoration: none;
+}
+
+.desk-prop[href]:hover,
+.desk-prop[href]:focus-visible {
+  transform: var(--prop-tilt, rotate(0deg)) translate3d(var(--depth-shift-x, 0px), var(--depth-shift-y, 0px), 0)
+    scale(1.012);
 }
 
 body[data-page="profile"] .panel--hero {
@@ -693,16 +658,12 @@ body[data-page="projects"] .project-card:first-child img {
   .desk-prop--manual,
   .desk-prop--projects,
   .desk-prop--contact,
-  .desk-prop--routes {
+  .desk-prop--guide {
     grid-column: auto;
     grid-row: auto;
     justify-self: stretch;
     width: 100%;
     --prop-tilt: rotate(0deg);
-  }
-
-  .route-strip {
-    grid-template-columns: 1fr;
   }
 
   .selector-card--projects,
@@ -786,7 +747,7 @@ body[data-page="projects"] .project-card:first-child img {
   .manual-sheet,
   .object-cradle,
   .contact-card,
-  .route-strip {
+  .desk-note {
     box-shadow: 0 18px 32px rgba(0, 0, 0, 0.24);
   }
 }
