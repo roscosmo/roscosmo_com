@@ -102,6 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setActiveNav();
   setupRevealAnimations();
   setupIntroMotion();
+  setupTabletopMotion();
+  setupLayeredScenes();
   setupModelLoaders();
   setupThemeLab();
 });
@@ -581,6 +583,250 @@ function setupIntroMotion() {
   });
 
   requestRender();
+}
+
+function setupTabletopMotion() {
+  const stage = document.querySelector("[data-tabletop-scene]");
+  if (!stage || prefersReducedMotion) {
+    return;
+  }
+
+  const movers = stage.querySelectorAll("[data-depth]");
+  if (!movers.length) {
+    return;
+  }
+
+  const rangeX = Number(stage.dataset.depthRangeX || "18");
+  const rangeY = Number(stage.dataset.depthRangeY || "14");
+  let frameId = 0;
+  let pointerX = 0.5;
+  let pointerY = 0.5;
+
+  const render = () => {
+    movers.forEach((element) => {
+      const depth = Number(element.dataset.depth || "0");
+      const shiftX = (pointerX - 0.5) * depth * rangeX;
+      const shiftY = (pointerY - 0.5) * depth * rangeY;
+      element.style.setProperty("--depth-shift-x", `${shiftX.toFixed(2)}px`);
+      element.style.setProperty("--depth-shift-y", `${shiftY.toFixed(2)}px`);
+    });
+
+    frameId = 0;
+  };
+
+  const requestRender = () => {
+    if (!frameId) {
+      frameId = window.requestAnimationFrame(render);
+    }
+  };
+
+  stage.addEventListener("pointermove", (event) => {
+    const bounds = stage.getBoundingClientRect();
+    pointerX = (event.clientX - bounds.left) / bounds.width;
+    pointerY = (event.clientY - bounds.top) / bounds.height;
+    requestRender();
+  });
+
+  stage.addEventListener("pointerleave", () => {
+    pointerX = 0.5;
+    pointerY = 0.5;
+    requestRender();
+  });
+
+  requestRender();
+}
+
+function setupLayeredScenes() {
+  const scenes = document.querySelectorAll("[data-layered-scene]");
+  if (!scenes.length) {
+    return;
+  }
+
+  scenes.forEach((scene) => {
+    bindLayeredSceneMotion(scene);
+    loadLayeredScene(scene);
+  });
+}
+
+function bindLayeredSceneMotion(scene) {
+  if (prefersReducedMotion) {
+    scene.style.setProperty("--scene-shift-x", "0");
+    scene.style.setProperty("--scene-shift-y", "0");
+    scene.style.setProperty("--scene-scroll", "0");
+    return;
+  }
+
+  const rangeX = Number(scene.dataset.sceneRangeX || "24");
+  const rangeY = Number(scene.dataset.sceneRangeY || "18");
+  let pointerX = 0.5;
+  let pointerY = 0.5;
+  let scrollShift = 0;
+  let frameId = 0;
+
+  const render = () => {
+    const shiftX = (pointerX - 0.5) * rangeX;
+    const shiftY = (pointerY - 0.5) * rangeY;
+    scene.style.setProperty("--scene-shift-x", shiftX.toFixed(2));
+    scene.style.setProperty("--scene-shift-y", shiftY.toFixed(2));
+    scene.style.setProperty("--scene-scroll", scrollShift.toFixed(2));
+    frameId = 0;
+  };
+
+  const requestRender = () => {
+    if (!frameId) {
+      frameId = window.requestAnimationFrame(render);
+    }
+  };
+
+  const updateScroll = () => {
+    const bounds = scene.getBoundingClientRect();
+    const sceneCenter = bounds.top + bounds.height / 2;
+    const viewportCenter = window.innerHeight / 2;
+    scrollShift = ((sceneCenter - viewportCenter) / window.innerHeight) * -8;
+    requestRender();
+  };
+
+  scene.addEventListener("pointermove", (event) => {
+    const bounds = scene.getBoundingClientRect();
+    pointerX = (event.clientX - bounds.left) / bounds.width;
+    pointerY = (event.clientY - bounds.top) / bounds.height;
+    requestRender();
+  });
+
+  scene.addEventListener("pointerleave", () => {
+    pointerX = 0.5;
+    pointerY = 0.5;
+    requestRender();
+  });
+
+  window.addEventListener("scroll", updateScroll, { passive: true });
+  window.addEventListener("resize", updateScroll);
+  updateScroll();
+  requestRender();
+}
+
+async function loadLayeredScene(scene) {
+  const metadataPath = scene.dataset.metadata;
+  const stack = scene.querySelector("[data-layer-stack]");
+  const poster = scene.querySelector("[data-layer-poster]");
+
+  if (!metadataPath || !stack) {
+    scene.dataset.layerState = "fallback";
+    return;
+  }
+
+  try {
+    const response = await fetch(metadataPath, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`metadata request failed with ${response.status}`);
+    }
+
+    const metadata = await response.json();
+    const layers = normalizeLayerEntries(metadata);
+    if (!layers.length) {
+      scene.dataset.layerState = "fallback";
+      return;
+    }
+
+    const metadataUrl = new URL(metadataPath, window.location.href);
+    const stackNodes = await Promise.all(
+      layers.map(async (layer) => {
+        const image = document.createElement("img");
+        image.className = "layered-object__layer";
+        image.alt = "";
+        image.decoding = "async";
+        image.loading = "lazy";
+        image.style.setProperty("--depth", String(layer.depth));
+        image.src = resolveLayerSource(layer.file, metadataUrl);
+        await waitForImage(image);
+        return image;
+      })
+    );
+
+    stack.replaceChildren(...stackNodes);
+    stack.hidden = false;
+    scene.dataset.layerState = "ready";
+
+    if (poster) {
+      poster.setAttribute("aria-hidden", "true");
+    }
+  } catch (error) {
+    scene.dataset.layerState = "fallback";
+  }
+}
+
+function normalizeLayerEntries(metadata) {
+  const rawLayers = metadata.layers || metadata.slices || metadata.images || [];
+  if (!Array.isArray(rawLayers) || !rawLayers.length) {
+    return [];
+  }
+
+  return rawLayers
+    .map((entry, index) => {
+      if (typeof entry === "string") {
+        return {
+          file: entry,
+          depth: (index + 1) / rawLayers.length,
+        };
+      }
+
+      const file =
+        entry.file ||
+        entry.filename ||
+        entry.src ||
+        entry.path ||
+        entry.image;
+
+      if (!file) {
+        return null;
+      }
+
+      const depth = Number(
+        entry.depth ??
+          entry.z ??
+          entry.offset ??
+          entry.distance ??
+          (index + 1) / rawLayers.length
+      );
+
+      return {
+        file,
+        depth: Number.isFinite(depth) ? depth : (index + 1) / rawLayers.length,
+      };
+    })
+    .filter(Boolean);
+}
+
+function resolveLayerSource(file, metadataUrl) {
+  const normalized = file.replace(/\\/g, "/");
+
+  if (/^(?:https?:|data:|blob:|\/)/.test(normalized)) {
+    return normalized;
+  }
+
+  if (normalized.includes("/")) {
+    return new URL(normalized, metadataUrl).toString();
+  }
+
+  return new URL(`layers/${normalized}`, metadataUrl).toString();
+}
+
+function waitForImage(image) {
+  return new Promise((resolve, reject) => {
+    if (image.complete) {
+      if (image.naturalWidth > 0) {
+        resolve();
+      } else {
+        reject(new Error("layer image failed to load"));
+      }
+      return;
+    }
+
+    image.addEventListener("load", () => resolve(), { once: true });
+    image.addEventListener("error", () => reject(new Error("layer image failed to load")), {
+      once: true,
+    });
+  });
 }
 
 function setupModelLoaders() {

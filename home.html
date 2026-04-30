@@ -52,140 +52,91 @@
     </header>
 
     <main id="main" class="main-shell">
-      <section class="home-stage">
-        <div class="marquee-board" data-reveal>
-          <p class="eyebrow">Main Hub</p>
-          <div class="wordmark-lockup">
-            <div class="wordmark-lockup__frame">
-              <h1 class="wordmark-lockup__name">
-                <span class="wordmark-lockup__warm">Rosco</span>
-                <span class="wordmark-lockup__cool">smo</span>
-              </h1>
-              <span class="wordmark-lockup__stamp">R&amp;D</span>
-            </div>
-            <p class="wordmark-lockup__sub lead">
-              Selected work in physical design, electronics, and prototypes that
-              are meant to be built, tested, and understood.
-            </p>
-          </div>
-          <div class="meta-strip" aria-label="Studio disciplines">
-            <span>Industrial design</span>
-            <span>Embedded hardware</span>
-            <span>Fabrication</span>
-            <span>Documentation</span>
-          </div>
-        </div>
-
-        <aside class="status-board" data-reveal>
-          <p class="eyebrow">Current Focus</p>
-          <div class="status-list">
-            <div class="status-list__item">
-              <strong>Buildable outcomes</strong>
-              <span>Products and prototypes that survive contact with reality.</span>
-            </div>
-            <div class="status-list__item">
-              <strong>Toy-lab energy</strong>
-              <span>Retro cues, bright accents, and tactile object thinking without the clutter.</span>
-            </div>
-            <div class="status-list__item">
-              <strong>Future-ready pages</strong>
-              <span>Static now, expandable later for richer case studies and 3D content.</span>
-            </div>
-          </div>
-          <div class="status-meter" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </aside>
-      </section>
-
-      <section class="selector-deck" aria-label="Primary site sections">
-        <a class="selector-card selector-card--profile" href="profile.html" data-reveal>
-          <div class="selector-card__media">
-            <img
-              src="assets/images/placeholder-profile.svg"
-              alt="Abstract placeholder portrait for the profile page"
-              width="1600"
-              height="1200"
-              decoding="async"
-            />
-          </div>
-          <div class="selector-card__body">
-            <p class="selector-card__code">Zone 01 / Profile</p>
-            <h2>Studio profile, approach, and capabilities.</h2>
+      <section class="tabletop-scene" data-tabletop-scene data-depth-range-x="18" data-depth-range-y="14">
+        <article class="desk-prop desk-prop--manual" data-reveal data-depth="0.32">
+          <span class="desk-prop__tag">Profile / field notes</span>
+          <div class="manual-sheet">
+            <p class="manual-sheet__kicker">Roscosmo workshop table</p>
+            <h1>Objects, circuits, and prototypes laid out in one place.</h1>
             <p>
-              Background, design philosophy, methods, and the practical skills
-              the studio brings into product and hardware work.
+              A small independent practice focused on physical product work,
+              electronics, and the kind of iterative experiments that need to be
+              built before they can be understood.
             </p>
-            <div class="selector-card__meta" aria-hidden="true">
-              <span>Approach</span>
-              <span>Capabilities</span>
-              <span>Process</span>
-            </div>
-            <span class="selector-card__cta">Open profile</span>
+            <ul class="manual-sheet__list">
+              <li>Product concept development</li>
+              <li>Electronics prototyping</li>
+              <li>CAD and enclosure design</li>
+              <li>Embedded systems and physical testing</li>
+            </ul>
+            <a class="paper-link" href="profile.html">Open the full profile</a>
           </div>
-          <div class="selector-card__rail" aria-hidden="true">
-            <span class="selector-card__number">01</span>
-            <span></span>
-          </div>
-        </a>
+        </article>
 
-        <a class="selector-card selector-card--projects" href="projects.html" data-reveal>
-          <div class="selector-card__media">
-            <img
-              src="assets/images/placeholder-project-01.svg"
-              alt="Abstract placeholder project composition"
-              width="1600"
-              height="1200"
-              decoding="async"
-            />
-          </div>
-          <div class="selector-card__body">
-            <p class="selector-card__code">Zone 02 / Projects</p>
-            <h2>Case studies, prototypes, and experiments.</h2>
-            <p>
-              Product design, electronics, interactive objects, and mechanical
-              exploration collected into expandable project pages.
-            </p>
-            <div class="selector-card__meta" aria-hidden="true">
-              <span>Case studies</span>
-              <span>Hardware</span>
+        <article class="desk-prop desk-prop--projects" data-reveal data-depth="0.56">
+          <span class="desk-prop__tag">Projects / selected object</span>
+          <div class="object-cradle">
+            <div
+              class="layered-object"
+              data-layered-scene
+              data-metadata="assets/scene/home-project-object/metadata.json"
+              data-scene-range-x="28"
+              data-scene-range-y="18"
+            >
+              <img
+                class="layered-object__poster"
+                data-layer-poster
+                src="assets/images/placeholder-project-01.svg"
+                alt="Preview object representing selected project work"
+                width="1600"
+                height="1200"
+                decoding="async"
+              />
+              <div class="layered-object__stack" data-layer-stack hidden></div>
             </div>
-            <span class="selector-card__cta">View work</span>
+            <div class="object-caption">
+              <p class="object-caption__label">Projects</p>
+              <h2>Move across the table and open the builds that catch your eye.</h2>
+              <p>
+                Case studies for product design, hardware, interface
+                experiments, and fabrication work. The hero object above acts as
+                a tactile preview before you open the full project archive.
+              </p>
+              <a class="object-link" href="projects.html">Browse projects</a>
+            </div>
           </div>
-          <div class="selector-card__rail" aria-hidden="true">
-            <span class="selector-card__number">02</span>
-            <span></span>
-          </div>
-        </a>
+        </article>
 
-        <a class="selector-card selector-card--contact" href="contact.html" data-reveal>
-          <div class="selector-card__media selector-card__media--icon" aria-hidden="true">
-            <div class="signal-icon">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <div class="selector-card__body">
-            <p class="selector-card__code">Zone 03 / Contact</p>
-            <h2>Direct contact without fake forms.</h2>
+        <article class="desk-prop desk-prop--contact" data-reveal data-depth="0.2">
+          <span class="desk-prop__tag">Contact / card</span>
+          <div class="contact-card">
+            <p class="contact-card__stamp">Roscosmo Studio</p>
+            <a class="contact-card__mail" href="mailto:hello@example.com">hello@example.com</a>
             <p>
-              Email-first contact for commissions, collaboration, and project
-              enquiries, with room to add better intake tools later.
+              For commissions, collaboration, prototypes, and strange useful
+              ideas that need a build-minded design partner.
             </p>
-            <div class="selector-card__meta" aria-hidden="true">
-              <span>Email</span>
-              <span>Collaboration</span>
-            </div>
-            <span class="selector-card__cta">Start a conversation</span>
+            <a class="paper-link paper-link--compact" href="contact.html">Go to contact</a>
           </div>
-          <div class="selector-card__rail" aria-hidden="true">
-            <span class="selector-card__number">03</span>
-            <span></span>
+        </article>
+
+        <nav class="desk-prop desk-prop--routes" data-reveal data-depth="0.12" aria-label="Sections on the table">
+          <span class="desk-prop__tag">Routes / tabletop stops</span>
+          <div class="route-strip">
+            <a class="route-chip" href="profile.html">
+              <strong>Profile</strong>
+              <span>Notes, background, philosophy</span>
+            </a>
+            <a class="route-chip" href="projects.html">
+              <strong>Projects</strong>
+              <span>Objects, experiments, documentation</span>
+            </a>
+            <a class="route-chip" href="contact.html">
+              <strong>Contact</strong>
+              <span>Email, links, collaboration</span>
+            </a>
           </div>
-        </a>
+        </nav>
       </section>
     </main>
 
