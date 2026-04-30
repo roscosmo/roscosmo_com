@@ -39,95 +39,117 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="site-header__inner">
-        <a class="brand-mark" href="home.html">
+        <a class="brand-mark" href="index.html">
           <span class="brand-mark__dot" aria-hidden="true"></span>
           <span>Roscosmo Studio</span>
         </a>
-        <nav class="site-nav" aria-label="Primary">
-          <a href="profile.html" data-nav="profile">Profile</a>
-          <a href="projects.html" data-nav="projects">Projects</a>
-          <a href="contact.html" data-nav="contact">Contact</a>
-        </nav>
+        <div class="scene-toolbar">
+          <p class="scene-toolbar__hint">Tabletop overview</p>
+          <button class="scene-toolbar__reset" type="button" data-scene-reset hidden>
+            Back to table
+          </button>
+        </div>
       </div>
     </header>
 
-    <main id="main" class="main-shell">
-      <section class="tabletop-scene" data-tabletop-scene data-depth-range-x="18" data-depth-range-y="14">
-        <a
-          class="desk-prop desk-prop--manual"
-          href="profile.html"
-          data-reveal
-          data-depth="0.28"
-          aria-label="Open profile notes"
-        >
-          <div class="manual-sheet">
-            <p class="manual-sheet__kicker">Profile</p>
-            <h1>Workshop notes.</h1>
-            <p>
-              Independent design practice focused on physical product work,
-              electronics, and buildable prototypes.
-            </p>
-            <ul class="manual-sheet__list">
-              <li>Background</li>
-              <li>Approach</li>
-              <li>Capabilities</li>
-            </ul>
-            <span class="prop-link-note">Open profile</span>
-          </div>
-        </a>
+    <main id="main" class="main-shell main-shell--home">
+      <section class="home-scene" data-home-scene data-depth-range-x="16" data-depth-range-y="12">
+        <div class="home-scene__viewport" data-reveal>
+          <p class="home-scene__guide">Click an object to move closer.</p>
 
-        <a
-          class="desk-prop desk-prop--projects"
-          href="projects.html"
-          data-reveal
-          data-depth="0.46"
-          aria-label="Open projects archive"
-        >
-          <div class="object-cradle">
-            <div
-              class="layered-object"
-              data-layered-scene
-              data-metadata="assets/scene/home-project-object/metadata.json"
-              data-scene-range-x="28"
-              data-scene-range-y="18"
+          <div class="home-scene__world">
+            <button
+              class="scene-object scene-object--profile"
+              type="button"
+              data-scene-target="profile"
+              data-depth="0.22"
+              aria-pressed="false"
             >
-              <img
-                class="layered-object__poster"
-                data-layer-poster
-                src="assets/images/placeholder-project-01.svg"
-                alt="Preview object representing selected project work"
-                width="1600"
-                height="1200"
-                decoding="async"
-              />
-              <div class="layered-object__stack" data-layer-stack hidden></div>
-            </div>
-            <div class="object-plaque">
-              <p class="object-plaque__label">Projects</p>
-              <strong>Selected work</strong>
-              <span>Click to move closer.</span>
-            </div>
-          </div>
-        </a>
+              <div class="scene-note">
+                <p class="scene-note__kicker">Profile</p>
+                <h1>Workshop notes.</h1>
+                <p>Background, approach, and capabilities.</p>
+              </div>
+            </button>
 
-        <a
-          class="desk-prop desk-prop--contact"
-          href="contact.html"
-          data-reveal
-          data-depth="0.16"
-          aria-label="Open contact details"
-        >
-          <div class="contact-card">
-            <p class="contact-card__stamp">Contact</p>
-            <p class="contact-card__mail">hello@example.com</p>
-            <p>Commissions, collaboration, prototypes.</p>
-            <span class="prop-link-note prop-link-note--dark">Contact details</span>
-          </div>
-        </a>
+            <button
+              class="scene-object scene-object--projects"
+              type="button"
+              data-scene-target="projects"
+              data-depth="0.34"
+              aria-pressed="false"
+            >
+              <div class="scene-tray">
+                <div
+                  class="layered-object"
+                  data-layered-scene
+                  data-metadata="assets/scene/home-project-object/metadata.json"
+                  data-scene-range-x="26"
+                  data-scene-range-y="16"
+                >
+                  <img
+                    class="layered-object__poster"
+                    data-layer-poster
+                    src="assets/images/placeholder-project-01.svg"
+                    alt="Preview object representing selected project work"
+                    width="1600"
+                    height="1200"
+                    decoding="async"
+                  />
+                  <div class="layered-object__stack" data-layer-stack hidden></div>
+                </div>
+                <div class="scene-plaque">
+                  <span>Projects</span>
+                  <strong>Selected work</strong>
+                </div>
+              </div>
+            </button>
 
-        <aside class="desk-prop desk-prop--guide" data-reveal data-depth="0.08">
-          <p class="desk-note">Tabletop overview. Click an object to move closer.</p>
-        </aside>
+            <button
+              class="scene-object scene-object--contact"
+              type="button"
+              data-scene-target="contact"
+              data-depth="0.16"
+              aria-pressed="false"
+            >
+              <div class="scene-card">
+                <p class="scene-card__kicker">Contact</p>
+                <p class="scene-card__mail">hello@example.com</p>
+                <p>Commissions and collaboration.</p>
+              </div>
+            </button>
+
+            <article class="scene-detail scene-detail--profile" data-scene-panel="profile">
+              <div class="detail-paper">
+                <p class="detail-paper__kicker">Profile detail</p>
+                <p>
+                  Independent design practice focused on physical product work,
+                  electronics, and buildable prototypes.
+                </p>
+                <ul class="detail-paper__list">
+                  <li>Background</li>
+                  <li>Approach</li>
+                  <li>Capabilities</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="scene-detail scene-detail--projects" data-scene-panel="projects">
+              <div class="detail-dark">
+                <p class="detail-dark__kicker">Projects detail</p>
+                <p>Product design, hardware, interface experiments, and fabrication work.</p>
+              </div>
+            </article>
+
+            <article class="scene-detail scene-detail--contact" data-scene-panel="contact">
+              <div class="detail-card">
+                <p class="detail-card__kicker">Contact detail</p>
+                <p class="detail-card__mail">hello@example.com</p>
+                <p>Best for commissions, prototypes, and collaboration.</p>
+              </div>
+            </article>
+          </div>
+        </div>
       </section>
     </main>
 

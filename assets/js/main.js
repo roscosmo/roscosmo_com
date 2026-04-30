@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setActiveNav();
   setupRevealAnimations();
   setupIntroMotion();
-  setupTabletopMotion();
+  setupHomeScene();
   setupLayeredScenes();
   setupModelLoaders();
   setupThemeLab();
@@ -585,9 +585,68 @@ function setupIntroMotion() {
   requestRender();
 }
 
-function setupTabletopMotion() {
-  const stage = document.querySelector("[data-tabletop-scene]");
-  if (!stage || prefersReducedMotion) {
+function setupHomeScene() {
+  const stage = document.querySelector("[data-home-scene]");
+  if (!stage) {
+    return;
+  }
+
+  const targets = stage.querySelectorAll("[data-scene-target]");
+  const resetButtons = document.querySelectorAll("[data-scene-reset]");
+  const validTargets = new Set(
+    Array.from(targets)
+      .map((node) => node.dataset.sceneTarget)
+      .filter(Boolean)
+  );
+
+  const applyFocus = (target = "", syncHash = true) => {
+    const focus = validTargets.has(target) ? target : "";
+    stage.dataset.sceneFocus = focus;
+
+    targets.forEach((node) => {
+      node.setAttribute("aria-pressed", String(node.dataset.sceneTarget === focus));
+    });
+
+    resetButtons.forEach((button) => {
+      button.hidden = !focus;
+    });
+
+    if (!syncHash) {
+      return;
+    }
+
+    if (focus) {
+      window.history.replaceState(null, "", `#${focus}`);
+    } else if (window.location.hash) {
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}`
+      );
+    }
+  };
+
+  targets.forEach((node) => {
+    node.addEventListener("click", () => {
+      const next = node.dataset.sceneTarget || "";
+      applyFocus(stage.dataset.sceneFocus === next ? "" : next);
+    });
+  });
+
+  resetButtons.forEach((button) => {
+    button.addEventListener("click", () => applyFocus(""));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      applyFocus("");
+    }
+  });
+
+  const hashTarget = window.location.hash.replace("#", "");
+  applyFocus(hashTarget, false);
+
+  if (prefersReducedMotion) {
     return;
   }
 
@@ -596,8 +655,8 @@ function setupTabletopMotion() {
     return;
   }
 
-  const rangeX = Number(stage.dataset.depthRangeX || "18");
-  const rangeY = Number(stage.dataset.depthRangeY || "14");
+  const rangeX = Number(stage.dataset.depthRangeX || "16");
+  const rangeY = Number(stage.dataset.depthRangeY || "12");
   let frameId = 0;
   let pointerX = 0.5;
   let pointerY = 0.5;
