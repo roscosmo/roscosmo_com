@@ -1,68 +1,90 @@
 :root {
-  --bg: #edf1ec;
-  --bg-deep: #d7ddd5;
-  --surface: rgba(250, 253, 249, 0.78);
-  --surface-strong: rgba(255, 255, 255, 0.94);
-  --surface-dark: #101513;
-  --text: #101513;
-  --text-light: #edf2ee;
-  --muted: #56615c;
-  --line: rgba(16, 21, 19, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.16);
-  --accent: #d95f20;
-  --accent-dark: #943914;
-  --accent-soft: rgba(217, 95, 32, 0.12);
-  --shadow: 0 24px 60px rgba(22, 28, 24, 0.1);
-  --shadow-strong: 0 32px 100px rgba(8, 10, 9, 0.28);
-  --radius-lg: 26px;
-  --radius-md: 18px;
-  --radius-sm: 12px;
-  --max-width: 1180px;
-  --font-heading: "Sora", "Segoe UI", sans-serif;
+  --bg: #07080d;
+  --bg-deep: #111521;
+  --surface: rgba(17, 20, 29, 0.84);
+  --surface-strong: rgba(22, 27, 38, 0.95);
+  --surface-dark: #04060a;
+  --text: #f1f3ee;
+  --text-light: #fbfaf5;
+  --muted: #adb4bf;
+  --line: rgba(213, 225, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --accent: #7cff35;
+  --accent-2: #ff43c4;
+  --accent-3: #ff8d1c;
+  --brand-blue: #5f8eff;
+  --brand-cream: #fff4db;
+  --moss: #2c6c2b;
+  --sand: #c89c5b;
+  --accent-dark: #329714;
+  --accent-soft: rgba(124, 255, 53, 0.16);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+  --shadow-strong: 0 36px 110px rgba(0, 0, 0, 0.44);
+  --radius-lg: 8px;
+  --radius-md: 4px;
+  --radius-sm: 0px;
+  --max-width: 1200px;
+  --font-heading: "Chakra Petch", "Segoe UI", sans-serif;
   --font-body: "Manrope", "Segoe UI", sans-serif;
+  --slime-texture: url("../images/slime-tile.png");
 
   --page-wash:
-    radial-gradient(circle at top left, rgba(217, 95, 32, 0.08), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(73, 106, 90, 0.1), transparent 28%),
-    linear-gradient(180deg, #f7faf6 0%, var(--bg) 42%, #e7ece7 100%);
+    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent-3) 16%, transparent), transparent 24%),
+    radial-gradient(circle at 84% 11%, color-mix(in srgb, var(--brand-blue) 18%, transparent), transparent 24%),
+    radial-gradient(circle at 72% 82%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 22%),
+    linear-gradient(180deg, #0f1218 0%, var(--bg) 52%, #020306 100%);
   --page-grid-image:
-    linear-gradient(rgba(16, 21, 19, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 21, 19, 0.022) 1px, transparent 1px);
-  --page-grid-size: 32px 32px;
-  --page-grid-mask: radial-gradient(circle at center, black 28%, transparent 88%);
-  --panel-glow: radial-gradient(circle, rgba(217, 95, 32, 0.14), transparent 70%);
+    linear-gradient(color-mix(in srgb, var(--accent) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--brand-blue) 8%, transparent) 1px, transparent 1px);
+  --page-grid-size: 30px 30px;
+  --page-grid-mask: radial-gradient(circle at center, black 34%, transparent 92%);
+  --panel-glow:
+    radial-gradient(circle, color-mix(in srgb, var(--brand-blue) 16%, transparent), transparent 64%),
+    radial-gradient(circle, color-mix(in srgb, var(--accent-3) 16%, transparent), transparent 72%);
   --panel-hero:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.08)),
-    linear-gradient(135deg, rgba(217, 95, 32, 0.1), rgba(255, 255, 255, 0));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--brand-blue) 16%, transparent), transparent 30%),
+    radial-gradient(circle at bottom left, color-mix(in srgb, var(--accent) 10%, transparent), transparent 26%),
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-3) 16%, transparent), rgba(255, 255, 255, 0));
   --panel-accent:
-    linear-gradient(145deg, rgba(217, 95, 32, 0.16), rgba(255, 252, 247, 0.9));
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--accent-2) 16%, transparent),
+      color-mix(in srgb, var(--accent-3) 18%, transparent)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
   --card-dark:
-    radial-gradient(circle at top left, rgba(239, 169, 111, 0.18), transparent 38%),
-    linear-gradient(180deg, #171b19 0%, #0d100f 100%);
-  --card-dark-border: rgba(255, 255, 255, 0.1);
-  --card-dark-border-hover: rgba(255, 255, 255, 0.16);
-  --card-media-overlay: linear-gradient(180deg, transparent, rgba(12, 15, 14, 0.82));
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-2) 16%, transparent), transparent 36%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 30%),
+    linear-gradient(180deg, #161c27 0%, #080b11 100%);
+  --card-dark-border: rgba(255, 255, 255, 0.12);
+  --card-dark-border-hover: color-mix(in srgb, var(--accent-2) 20%, rgba(255, 255, 255, 0.2));
+  --card-media-overlay: linear-gradient(180deg, transparent, rgba(5, 6, 10, 0.88));
   --signal-wash:
-    radial-gradient(circle at center, rgba(239, 169, 111, 0.24), transparent 58%),
-    rgba(255, 255, 255, 0.04);
-  --signal-line: rgba(255, 244, 234, 0.58);
-  --media-frame: rgba(255, 255, 255, 0.56);
-  --chip-bg: rgba(255, 255, 255, 0.54);
-  --project-card-bg: rgba(255, 252, 248, 0.88);
+    radial-gradient(circle at center, color-mix(in srgb, var(--accent-3) 18%, transparent), transparent 58%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 52%),
+    rgba(255, 255, 255, 0.03);
+  --signal-line: color-mix(in srgb, var(--accent) 36%, white);
+  --media-frame: rgba(255, 255, 255, 0.05);
+  --chip-bg: rgba(255, 255, 255, 0.06);
+  --project-card-bg: rgba(14, 18, 27, 0.94);
   --model-bg:
-    radial-gradient(circle at top left, rgba(239, 169, 111, 0.18), transparent 30%),
-    linear-gradient(180deg, #161a18 0%, #090b0a 100%);
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-3) 20%, transparent), transparent 30%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 36%),
+    linear-gradient(180deg, #131822 0%, #04060a 100%);
   --intro-bg:
-    radial-gradient(circle at top left, rgba(239, 169, 111, 0.18), transparent 28%),
-    linear-gradient(180deg, #161918 0%, #0d100f 100%);
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-2) 20%, transparent), transparent 26%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 24%),
+    linear-gradient(180deg, #11151d 0%, #06080d 100%);
   --intro-grid-image:
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 8%, transparent) 1px, transparent 1px);
   --intro-grid-size: 34px 34px;
-  --intro-panel-line: rgba(255, 255, 255, 0.14);
+  --intro-panel-line: rgba(255, 255, 255, 0.16);
   --intro-panel-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
-    rgba(10, 12, 11, 0.82);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-3) 14%, transparent), transparent 34%),
+    rgba(7, 9, 13, 0.88);
   --intro-scanline:
     repeating-linear-gradient(
       180deg,
@@ -71,164 +93,68 @@
       transparent 1px,
       transparent 5px
     );
-  --intro-orb-1: rgba(217, 95, 32, 0.3);
-  --intro-orb-2: rgba(255, 224, 189, 0.2);
-  --intro-orb-3: rgba(255, 255, 255, 0.1);
+  --intro-orb-1: color-mix(in srgb, var(--accent-2) 28%, transparent);
+  --intro-orb-2: color-mix(in srgb, var(--accent-3) 20%, transparent);
+  --intro-orb-3: color-mix(in srgb, var(--accent) 16%, transparent);
 }
 
 :root[data-theme="forge"] {
-  --bg: #efe8de;
-  --bg-deep: #ddcfbe;
-  --surface: rgba(255, 248, 241, 0.78);
-  --surface-strong: rgba(255, 251, 246, 0.94);
-  --surface-dark: #161210;
-  --text: #181311;
-  --text-light: #f7f0e7;
-  --muted: #64584e;
-  --line: rgba(24, 19, 17, 0.12);
-  --accent: #c86635;
-  --accent-dark: #8e411d;
-  --accent-soft: rgba(200, 102, 53, 0.12);
-  --shadow: 0 24px 60px rgba(43, 28, 18, 0.12);
-  --shadow-strong: 0 28px 90px rgba(18, 14, 11, 0.32);
+  --bg: #090707;
+  --bg-deep: #1b110d;
+  --surface: rgba(26, 18, 15, 0.86);
+  --surface-strong: rgba(36, 24, 20, 0.95);
+  --surface-dark: #040201;
+  --text: #f6ede2;
+  --text-light: #fff7ee;
+  --muted: #ccb29d;
+  --line: rgba(255, 231, 212, 0.12);
+  --accent: #ff8d1c;
+  --accent-2: #ff4dc8;
+  --accent-3: #fff24a;
+  --accent-soft: rgba(255, 141, 28, 0.18);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  --shadow-strong: 0 36px 110px rgba(0, 0, 0, 0.48);
   --font-heading: "Space Grotesk", "Segoe UI", sans-serif;
   --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
-  --page-wash:
-    radial-gradient(circle at top left, rgba(200, 102, 53, 0.1), transparent 34%),
-    radial-gradient(circle at bottom right, rgba(75, 53, 35, 0.08), transparent 28%),
-    linear-gradient(180deg, #f7f2ec 0%, var(--bg) 40%, #eee5d9 100%);
-  --page-grid-image:
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  --panel-glow: radial-gradient(circle, rgba(200, 102, 53, 0.14), transparent 70%);
-  --panel-hero:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.05)),
-    linear-gradient(135deg, rgba(200, 102, 53, 0.12), rgba(255, 255, 255, 0));
-  --panel-accent:
-    linear-gradient(145deg, rgba(200, 102, 53, 0.16), rgba(255, 251, 247, 0.86));
-  --card-dark:
-    radial-gradient(circle at top left, rgba(240, 173, 111, 0.26), transparent 38%),
-    linear-gradient(180deg, #1d1915 0%, #100d0b 100%);
-  --signal-wash:
-    radial-gradient(circle at center, rgba(240, 173, 111, 0.28), transparent 58%),
-    rgba(255, 255, 255, 0.03);
-  --signal-line: rgba(255, 245, 234, 0.58);
-  --media-frame: rgba(255, 255, 255, 0.52);
-  --project-card-bg: rgba(255, 252, 248, 0.85);
-  --model-bg:
-    radial-gradient(circle at top left, rgba(240, 173, 111, 0.2), transparent 30%),
-    linear-gradient(180deg, #1a1613 0%, #090807 100%);
-  --intro-bg:
-    radial-gradient(circle at top left, rgba(240, 173, 111, 0.24), transparent 28%),
-    linear-gradient(180deg, #1f1a16 0%, #100e0c 100%);
-  --intro-orb-1: rgba(200, 102, 53, 0.34);
-  --intro-orb-2: rgba(255, 211, 160, 0.22);
-  --intro-orb-3: rgba(255, 255, 255, 0.12);
+  --project-card-bg: rgba(22, 14, 11, 0.94);
 }
 
 :root[data-theme="field"] {
-  --bg: #e7eadf;
-  --bg-deep: #d0d7c7;
-  --surface: rgba(249, 251, 245, 0.76);
-  --surface-strong: rgba(255, 255, 251, 0.94);
-  --surface-dark: #141712;
-  --text: #131610;
-  --text-light: #edf1e7;
-  --muted: #5a6254;
-  --line: rgba(19, 22, 16, 0.12);
-  --accent: #7a8c3a;
-  --accent-dark: #576427;
-  --accent-soft: rgba(122, 140, 58, 0.14);
-  --shadow: 0 24px 60px rgba(34, 41, 27, 0.1);
-  --shadow-strong: 0 30px 90px rgba(9, 12, 8, 0.28);
-  --font-heading: "Sora", "Segoe UI", sans-serif;
-  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
-  --page-wash:
-    radial-gradient(circle at top left, rgba(122, 140, 58, 0.12), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(54, 67, 46, 0.08), transparent 28%),
-    linear-gradient(180deg, #f5f7f1 0%, var(--bg) 42%, #e0e5d8 100%);
-  --page-grid-image:
-    linear-gradient(rgba(24, 32, 20, 0.024) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(24, 32, 20, 0.024) 1px, transparent 1px);
-  --panel-glow: radial-gradient(circle, rgba(122, 140, 58, 0.14), transparent 70%);
-  --panel-hero:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.08)),
-    linear-gradient(135deg, rgba(122, 140, 58, 0.14), rgba(255, 255, 255, 0));
-  --panel-accent:
-    linear-gradient(145deg, rgba(122, 140, 58, 0.14), rgba(255, 254, 249, 0.88));
-  --card-dark:
-    radial-gradient(circle at top left, rgba(163, 181, 102, 0.18), transparent 38%),
-    linear-gradient(180deg, #1a1e18 0%, #0d100c 100%);
-  --signal-wash:
-    radial-gradient(circle at center, rgba(163, 181, 102, 0.22), transparent 58%),
-    rgba(255, 255, 255, 0.03);
-  --signal-line: rgba(241, 248, 224, 0.56);
-  --model-bg:
-    radial-gradient(circle at top left, rgba(163, 181, 102, 0.18), transparent 30%),
-    linear-gradient(180deg, #181b16 0%, #090b08 100%);
-  --intro-bg:
-    radial-gradient(circle at top left, rgba(163, 181, 102, 0.16), transparent 28%),
-    linear-gradient(180deg, #191d18 0%, #0d100d 100%);
-  --intro-orb-1: rgba(122, 140, 58, 0.28);
-  --intro-orb-2: rgba(216, 226, 168, 0.18);
-  --intro-orb-3: rgba(255, 255, 255, 0.08);
+  --bg: #050c08;
+  --bg-deep: #0d1711;
+  --surface: rgba(13, 22, 17, 0.86);
+  --surface-strong: rgba(18, 28, 22, 0.95);
+  --surface-dark: #020503;
+  --text: #eff5eb;
+  --text-light: #fcfff8;
+  --muted: #a9b9a6;
+  --line: rgba(223, 255, 224, 0.12);
+  --accent: #8cff39;
+  --accent-2: #ff4cb4;
+  --accent-3: #ff9623;
+  --accent-soft: rgba(140, 255, 57, 0.16);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.26);
+  --shadow-strong: 0 36px 110px rgba(0, 0, 0, 0.44);
+  --project-card-bg: rgba(10, 18, 13, 0.94);
 }
 
 :root[data-theme="nightshift"] {
-  --bg: #0f1312;
-  --bg-deep: #1a211f;
-  --surface: rgba(23, 29, 27, 0.72);
-  --surface-strong: rgba(29, 37, 34, 0.92);
-  --surface-dark: #090c0b;
-  --text: #e8efea;
-  --text-light: #f3f7f4;
-  --muted: #a8b3ae;
-  --line: rgba(232, 239, 234, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.2);
-  --accent: #f46a2d;
-  --accent-dark: #ba4413;
-  --accent-soft: rgba(244, 106, 45, 0.16);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
-  --shadow-strong: 0 34px 100px rgba(0, 0, 0, 0.42);
+  --bg: #0b0711;
+  --bg-deep: #140b1e;
+  --surface: rgba(19, 13, 27, 0.84);
+  --surface-strong: rgba(27, 18, 36, 0.95);
+  --surface-dark: #030106;
+  --text: #f6f0f7;
+  --text-light: #fffbff;
+  --muted: #c1adcb;
+  --line: rgba(255, 225, 255, 0.12);
+  --accent: #72ff3b;
+  --accent-2: #ff43d0;
+  --accent-3: #ff7d1b;
+  --accent-soft: rgba(114, 255, 59, 0.16);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  --shadow-strong: 0 38px 110px rgba(0, 0, 0, 0.5);
   --font-heading: "Syne", "Segoe UI", sans-serif;
   --font-body: "Instrument Sans", "Segoe UI", sans-serif;
-  --page-wash:
-    radial-gradient(circle at top left, rgba(244, 106, 45, 0.16), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(90, 132, 109, 0.1), transparent 28%),
-    linear-gradient(180deg, #151918 0%, var(--bg) 48%, #0c0f0e 100%);
-  --page-grid-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  --page-grid-mask: radial-gradient(circle at center, black 36%, transparent 92%);
-  --panel-glow: radial-gradient(circle, rgba(244, 106, 45, 0.18), transparent 70%);
-  --panel-hero:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-    linear-gradient(135deg, rgba(244, 106, 45, 0.16), rgba(255, 255, 255, 0));
-  --panel-accent:
-    linear-gradient(145deg, rgba(244, 106, 45, 0.18), rgba(34, 41, 38, 0.86));
-  --card-dark:
-    radial-gradient(circle at top left, rgba(244, 106, 45, 0.2), transparent 38%),
-    linear-gradient(180deg, #121615 0%, #080909 100%);
-  --card-dark-border: rgba(255, 255, 255, 0.12);
-  --card-dark-border-hover: rgba(255, 255, 255, 0.2);
-  --card-media-overlay: linear-gradient(180deg, transparent, rgba(8, 9, 9, 0.84));
-  --signal-wash:
-    radial-gradient(circle at center, rgba(244, 106, 45, 0.18), transparent 58%),
-    rgba(255, 255, 255, 0.03);
-  --signal-line: rgba(255, 234, 225, 0.54);
-  --media-frame: rgba(255, 255, 255, 0.06);
-  --chip-bg: rgba(255, 255, 255, 0.04);
-  --project-card-bg: rgba(18, 22, 21, 0.88);
-  --model-bg:
-    radial-gradient(circle at top left, rgba(244, 106, 45, 0.22), transparent 30%),
-    linear-gradient(180deg, #121514 0%, #050606 100%);
-  --intro-bg:
-    radial-gradient(circle at top left, rgba(244, 106, 45, 0.22), transparent 26%),
-    linear-gradient(180deg, #141715 0%, #070808 100%);
-  --intro-panel-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-    rgba(5, 6, 6, 0.84);
-  --intro-orb-1: rgba(244, 106, 45, 0.3);
-  --intro-orb-2: rgba(255, 205, 181, 0.14);
-  --intro-orb-3: rgba(255, 255, 255, 0.08);
+  --project-card-bg: rgba(17, 11, 23, 0.94);
 }

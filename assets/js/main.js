@@ -15,6 +15,12 @@ const THEME_EXPORT_TOKENS = [
   "--line",
   "--line-strong",
   "--accent",
+  "--accent-2",
+  "--accent-3",
+  "--brand-blue",
+  "--brand-cream",
+  "--moss",
+  "--sand",
   "--accent-dark",
   "--accent-soft",
   "--shadow",
@@ -54,13 +60,13 @@ const THEME_EXPORT_TOKENS = [
 ];
 
 const TYPOGRAPHY_PRESETS = {
+  retro: {
+    heading: '"Chakra Petch", "Segoe UI", sans-serif',
+    body: '"Manrope", "Segoe UI", sans-serif',
+  },
   technical: {
     heading: '"Space Grotesk", "Segoe UI", sans-serif',
     body: '"IBM Plex Sans", "Segoe UI", sans-serif',
-  },
-  studio: {
-    heading: '"Sora", "Segoe UI", sans-serif',
-    body: '"Manrope", "Segoe UI", sans-serif',
   },
   editorial: {
     heading: '"Syne", "Segoe UI", sans-serif',
@@ -68,7 +74,23 @@ const TYPOGRAPHY_PRESETS = {
   },
 };
 
-const COLOR_TOKENS = ["--bg", "--text", "--muted", "--accent", "--surface-dark"];
+const COLOR_TOKENS = [
+  "--bg",
+  "--text",
+  "--muted",
+  "--accent",
+  "--accent-2",
+  "--accent-3",
+  "--brand-blue",
+  "--brand-cream",
+  "--surface-dark",
+];
+const STALE_GRADIENT_OVERRIDE_TOKENS = [
+  "--panel-hero",
+  "--panel-glow",
+  "--card-dark",
+  "--intro-panel-bg",
+];
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let modelViewerPromise;
 
@@ -94,6 +116,7 @@ function restoreThemeState() {
     }
 
     applyThemeOverrides(savedOverrides);
+    syncDerivedAccentTokens();
   } catch (error) {
     console.warn("Theme preview could not be restored.", error);
   }
@@ -151,6 +174,7 @@ function setupThemeLab() {
       }
 
       clearThemeOverrides();
+      syncDerivedAccentTokens();
       if (typeSelect) {
         syncTypographySelect(typeSelect);
       }
@@ -229,6 +253,7 @@ function setupThemeLab() {
   if (resetButton) {
     resetButton.addEventListener("click", () => {
       clearThemeOverrides();
+      syncDerivedAccentTokens();
       syncThemeLabControls(editor);
       setLabStatus(status, "Manual overrides reset to the selected preset.");
     });
@@ -239,6 +264,7 @@ function setupThemeLab() {
       document.documentElement.removeAttribute("data-theme");
       localStorage.removeItem(STORAGE_KEYS.preset);
       clearThemeOverrides();
+      syncDerivedAccentTokens();
       if (presetSelect) {
         presetSelect.value = "";
       }
@@ -304,7 +330,7 @@ function syncTypographySelect(select) {
     );
   });
 
-  select.value = match ? match[0] : "studio";
+  select.value = match ? match[0] : "retro";
 }
 
 function buildThemeExport() {
@@ -348,8 +374,8 @@ function setLabStatus(statusNode, message, state = "") {
 
 function applyRadiusScale(radius) {
   document.documentElement.style.setProperty("--radius-lg", `${radius}px`);
-  document.documentElement.style.setProperty("--radius-md", `${Math.max(12, radius - 8)}px`);
-  document.documentElement.style.setProperty("--radius-sm", `${Math.max(8, radius - 14)}px`);
+  document.documentElement.style.setProperty("--radius-md", `${Math.max(0, radius - 6)}px`);
+  document.documentElement.style.setProperty("--radius-sm", `${Math.max(0, radius - 10)}px`);
 }
 
 function syncDerivedAccentTokens() {
@@ -363,7 +389,14 @@ function syncDerivedAccentTokens() {
 
 function readThemeOverrides() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.overrides) || "{}");
+    const overrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.overrides) || "{}");
+
+    STALE_GRADIENT_OVERRIDE_TOKENS.forEach((token) => {
+      delete overrides[token];
+    });
+
+    localStorage.setItem(STORAGE_KEYS.overrides, JSON.stringify(overrides));
+    return overrides;
   } catch (error) {
     return {};
   }

@@ -104,7 +104,7 @@
 
 .lab-swatch-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
   gap: 0.75rem;
 }
 
@@ -139,6 +139,14 @@
 
 .lab-swatch__chip--accent {
   background: var(--accent);
+}
+
+.lab-swatch__chip--accent-2 {
+  background: var(--accent-2);
+}
+
+.lab-swatch__chip--accent-3 {
+  background: var(--accent-3);
 }
 
 .lab-swatch__chip--dark {

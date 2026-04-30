@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -98,17 +98,17 @@
             <label class="lab-field">
               <span>Preset direction</span>
               <select data-theme-preset>
-                <option value="">Signal / clean studio</option>
-                <option value="forge">Forge / warm industrial</option>
-                <option value="field">Field / utilitarian</option>
-                <option value="nightshift">Nightshift / darker studio</option>
+                <option value="">Toybox / 90s dark</option>
+                <option value="forge">Forge / orange plastic</option>
+                <option value="field">Slimegrid / green bias</option>
+                <option value="nightshift">Afterglow / pink-orange</option>
               </select>
             </label>
 
             <label class="lab-field">
               <span>Typography pairing</span>
               <select data-type-preset>
-                <option value="studio">Sora + Manrope</option>
+                <option value="retro">Chakra Petch + Manrope</option>
                 <option value="technical">Space Grotesk + IBM Plex Sans</option>
                 <option value="editorial">Syne + Instrument Sans</option>
               </select>
@@ -140,10 +140,42 @@
 
             <label class="lab-field">
               <div class="lab-field__row">
-                <span>Accent</span>
+                <span>Slime green</span>
                 <span class="lab-field__value" data-token-label="--accent"></span>
               </div>
               <input type="color" data-theme-token="--accent" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Neon pink</span>
+                <span class="lab-field__value" data-token-label="--accent-2"></span>
+              </div>
+              <input type="color" data-theme-token="--accent-2" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Neon orange</span>
+                <span class="lab-field__value" data-token-label="--accent-3"></span>
+              </div>
+              <input type="color" data-theme-token="--accent-3" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Brand blue</span>
+                <span class="lab-field__value" data-token-label="--brand-blue"></span>
+              </div>
+              <input type="color" data-theme-token="--brand-blue" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Warm cream</span>
+                <span class="lab-field__value" data-token-label="--brand-cream"></span>
+              </div>
+              <input type="color" data-theme-token="--brand-cream" />
             </label>
 
             <label class="lab-field">
@@ -159,7 +191,7 @@
                 <span>Corner softness</span>
                 <span class="lab-field__value" data-radius-output></span>
               </div>
-              <input type="range" min="18" max="42" step="1" data-radius-control />
+              <input type="range" min="0" max="18" step="1" data-radius-control />
             </label>
 
             <label class="lab-field">
@@ -218,8 +250,28 @@
               </div>
               <div class="lab-swatch">
                 <div class="lab-swatch__chip lab-swatch__chip--accent"></div>
-                <strong>Accent</strong>
+                <strong>Slime</strong>
                 <code data-token-label="--accent"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--accent-2"></div>
+                <strong>Pink</strong>
+                <code data-token-label="--accent-2"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--accent-3"></div>
+                <strong>Orange</strong>
+                <code data-token-label="--accent-3"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip" style="background: var(--brand-blue)"></div>
+                <strong>Blue</strong>
+                <code data-token-label="--brand-blue"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip" style="background: var(--brand-cream)"></div>
+                <strong>Cream</strong>
+                <code data-token-label="--brand-cream"></code>
               </div>
               <div class="lab-swatch">
                 <div class="lab-swatch__chip lab-swatch__chip--dark"></div>
@@ -253,9 +305,9 @@
             </figure>
           </section>
 
-          <section class="hub-grid" data-reveal>
-            <article class="hub-card hub-card--profile">
-              <div class="hub-card__media">
+          <section class="selector-deck" data-reveal>
+            <article class="selector-card selector-card--profile">
+              <div class="selector-card__media">
                 <img
                   src="assets/images/placeholder-profile.svg"
                   alt="Profile preview card placeholder"
@@ -263,16 +315,25 @@
                   height="1200"
                 />
               </div>
-              <div class="hub-card__body">
-                <p class="hub-card__index">01</p>
-                <h3>Profile</h3>
-                <p>How the studio is introduced visually and structurally.</p>
-                <span class="hub-card__cta">Read more</span>
+              <div class="selector-card__body">
+                <p class="selector-card__code">Zone 01 / Profile</p>
+                <h3>How the studio is introduced visually and structurally.</h3>
+                <p>Checks the larger selector layout, the image treatment, and the copy density.</p>
+                <div class="selector-card__meta" aria-hidden="true">
+                  <span>Approach</span>
+                  <span>Profile</span>
+                  <span>Capabilities</span>
+                </div>
+                <span class="selector-card__cta">Read more</span>
+              </div>
+              <div class="selector-card__rail" aria-hidden="true">
+                <span class="selector-card__number">01</span>
+                <span></span>
               </div>
             </article>
 
-            <article class="hub-card hub-card--projects">
-              <div class="hub-card__media">
+            <article class="selector-card selector-card--projects">
+              <div class="selector-card__media">
                 <img
                   src="assets/images/placeholder-project-01.svg"
                   alt="Project preview card placeholder"
@@ -280,27 +341,43 @@
                   height="1200"
                 />
               </div>
-              <div class="hub-card__body">
-                <p class="hub-card__index">02</p>
-                <h3>Projects</h3>
-                <p>How dark cards, imagery, and motion cues feel together.</p>
-                <span class="hub-card__cta">View work</span>
+              <div class="selector-card__body">
+                <p class="selector-card__code">Zone 02 / Projects</p>
+                <h3>How dark media, labels, and navigation feel together.</h3>
+                <p>Useful for stress-testing the sharper page architecture at medium scale.</p>
+                <div class="selector-card__meta" aria-hidden="true">
+                  <span>Projects</span>
+                  <span>Hardware</span>
+                </div>
+                <span class="selector-card__cta">View work</span>
+              </div>
+              <div class="selector-card__rail" aria-hidden="true">
+                <span class="selector-card__number">02</span>
+                <span></span>
               </div>
             </article>
 
-            <article class="hub-card hub-card--contact">
-              <div class="hub-card__media hub-card__media--icon" aria-hidden="true">
+            <article class="selector-card selector-card--contact">
+              <div class="selector-card__media selector-card__media--icon" aria-hidden="true">
                 <div class="signal-icon">
                   <span></span>
                   <span></span>
                   <span></span>
                 </div>
               </div>
-              <div class="hub-card__body">
-                <p class="hub-card__index">03</p>
-                <h3>Contact</h3>
-                <p>How the accent and supporting surfaces read in darker panels.</p>
-                <span class="hub-card__cta">Get in touch</span>
+              <div class="selector-card__body">
+                <p class="selector-card__code">Zone 03 / Contact</p>
+                <h3>How the supporting panels read when they get simpler.</h3>
+                <p>A quick check for signal, contrast, and the smaller accent surfaces.</p>
+                <div class="selector-card__meta" aria-hidden="true">
+                  <span>Contact</span>
+                  <span>Signal</span>
+                </div>
+                <span class="selector-card__cta">Get in touch</span>
+              </div>
+              <div class="selector-card__rail" aria-hidden="true">
+                <span class="selector-card__number">03</span>
+                <span></span>
               </div>
             </article>
           </section>

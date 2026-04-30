@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -52,20 +52,57 @@
     </header>
 
     <main id="main" class="main-shell">
-      <section class="page-hero page-hero--compact">
-        <div class="panel panel--hero" data-reveal>
+      <section class="home-stage">
+        <div class="marquee-board" data-reveal>
           <p class="eyebrow">Main Hub</p>
-          <h1>Design work grounded in buildable outcomes.</h1>
-          <p class="lead">
-            A lightweight navigation hub for studio background, selected work,
-            and direct contact.
-          </p>
+          <div class="wordmark-lockup">
+            <div class="wordmark-lockup__frame">
+              <h1 class="wordmark-lockup__name">
+                <span class="wordmark-lockup__warm">Rosco</span>
+                <span class="wordmark-lockup__cool">smo</span>
+              </h1>
+              <span class="wordmark-lockup__stamp">R&amp;D</span>
+            </div>
+            <p class="wordmark-lockup__sub lead">
+              Selected work in physical design, electronics, and prototypes that
+              are meant to be built, tested, and understood.
+            </p>
+          </div>
+          <div class="meta-strip" aria-label="Studio disciplines">
+            <span>Industrial design</span>
+            <span>Embedded hardware</span>
+            <span>Fabrication</span>
+            <span>Documentation</span>
+          </div>
         </div>
+
+        <aside class="status-board" data-reveal>
+          <p class="eyebrow">Current Focus</p>
+          <div class="status-list">
+            <div class="status-list__item">
+              <strong>Buildable outcomes</strong>
+              <span>Products and prototypes that survive contact with reality.</span>
+            </div>
+            <div class="status-list__item">
+              <strong>Toy-lab energy</strong>
+              <span>Retro cues, bright accents, and tactile object thinking without the clutter.</span>
+            </div>
+            <div class="status-list__item">
+              <strong>Future-ready pages</strong>
+              <span>Static now, expandable later for richer case studies and 3D content.</span>
+            </div>
+          </div>
+          <div class="status-meter" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </aside>
       </section>
 
-      <section class="hub-grid" aria-label="Primary site sections">
-        <a class="hub-card hub-card--profile" href="profile.html" data-reveal>
-          <div class="hub-card__media">
+      <section class="selector-deck" aria-label="Primary site sections">
+        <a class="selector-card selector-card--profile" href="profile.html" data-reveal>
+          <div class="selector-card__media">
             <img
               src="assets/images/placeholder-profile.svg"
               alt="Abstract placeholder portrait for the profile page"
@@ -74,18 +111,28 @@
               decoding="async"
             />
           </div>
-          <div class="hub-card__body">
-            <p class="hub-card__index">01</p>
-            <h2>Profile</h2>
+          <div class="selector-card__body">
+            <p class="selector-card__code">Zone 01 / Profile</p>
+            <h2>Studio profile, approach, and capabilities.</h2>
             <p>
-              About the studio, design approach, background, and capabilities.
+              Background, design philosophy, methods, and the practical skills
+              the studio brings into product and hardware work.
             </p>
-            <span class="hub-card__cta">Open profile</span>
+            <div class="selector-card__meta" aria-hidden="true">
+              <span>Approach</span>
+              <span>Capabilities</span>
+              <span>Process</span>
+            </div>
+            <span class="selector-card__cta">Open profile</span>
+          </div>
+          <div class="selector-card__rail" aria-hidden="true">
+            <span class="selector-card__number">01</span>
+            <span></span>
           </div>
         </a>
 
-        <a class="hub-card hub-card--projects" href="projects.html" data-reveal>
-          <div class="hub-card__media">
+        <a class="selector-card selector-card--projects" href="projects.html" data-reveal>
+          <div class="selector-card__media">
             <img
               src="assets/images/placeholder-project-01.svg"
               alt="Abstract placeholder project composition"
@@ -94,33 +141,49 @@
               decoding="async"
             />
           </div>
-          <div class="hub-card__body">
-            <p class="hub-card__index">02</p>
-            <h2>Projects</h2>
+          <div class="selector-card__body">
+            <p class="selector-card__code">Zone 02 / Projects</p>
+            <h2>Case studies, prototypes, and experiments.</h2>
             <p>
-              A portfolio of product design, electronics, prototypes, and
-              experiments.
+              Product design, electronics, interactive objects, and mechanical
+              exploration collected into expandable project pages.
             </p>
-            <span class="hub-card__cta">View work</span>
+            <div class="selector-card__meta" aria-hidden="true">
+              <span>Case studies</span>
+              <span>Hardware</span>
+            </div>
+            <span class="selector-card__cta">View work</span>
+          </div>
+          <div class="selector-card__rail" aria-hidden="true">
+            <span class="selector-card__number">02</span>
+            <span></span>
           </div>
         </a>
 
-        <a class="hub-card hub-card--contact" href="contact.html" data-reveal>
-          <div class="hub-card__media hub-card__media--icon" aria-hidden="true">
+        <a class="selector-card selector-card--contact" href="contact.html" data-reveal>
+          <div class="selector-card__media selector-card__media--icon" aria-hidden="true">
             <div class="signal-icon">
               <span></span>
               <span></span>
               <span></span>
             </div>
           </div>
-          <div class="hub-card__body">
-            <p class="hub-card__index">03</p>
-            <h2>Contact</h2>
+          <div class="selector-card__body">
+            <p class="selector-card__code">Zone 03 / Contact</p>
+            <h2>Direct contact without fake forms.</h2>
             <p>
-              Get in touch for commissions, collaboration, or project
-              enquiries.
+              Email-first contact for commissions, collaboration, and project
+              enquiries, with room to add better intake tools later.
             </p>
-            <span class="hub-card__cta">Start a conversation</span>
+            <div class="selector-card__meta" aria-hidden="true">
+              <span>Email</span>
+              <span>Collaboration</span>
+            </div>
+            <span class="selector-card__cta">Start a conversation</span>
+          </div>
+          <div class="selector-card__rail" aria-hidden="true">
+            <span class="selector-card__number">03</span>
+            <span></span>
           </div>
         </a>
       </section>
