@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Style Lab | Roscosmo Studio</title>
+    <meta
+      name="description"
+      content="Theme lab for iterating on the visual direction of Roscosmo Studio."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      document.documentElement.classList.add("has-js");
+      try {
+        const savedPreset = localStorage.getItem("roscosmo-theme-preset");
+        const savedOverrides = localStorage.getItem("roscosmo-theme-overrides");
+        if (savedPreset) {
+          document.documentElement.dataset.theme = savedPreset;
+        }
+        if (savedOverrides) {
+          const overrides = JSON.parse(savedOverrides);
+          Object.keys(overrides).forEach((token) => {
+            document.documentElement.style.setProperty(token, overrides[token]);
+          });
+        }
+      } catch (error) {
+        console.warn("Theme preview could not be restored.", error);
+      }
+    </script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/main.js"></script>
+  </head>
+  <body data-page="style-lab" class="style-lab-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand-mark" href="home.html">
+          <span class="brand-mark__dot" aria-hidden="true"></span>
+          <span>Roscosmo Studio</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="profile.html" data-nav="profile">Profile</a>
+          <a href="projects.html" data-nav="projects">Projects</a>
+          <a href="contact.html" data-nav="contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="main-shell stack-xl">
+      <section class="page-hero">
+        <div class="panel panel--hero stack" data-reveal>
+          <p class="eyebrow">Style Lab</p>
+          <h1>Move the vibe without tearing apart the site.</h1>
+          <p class="lead">
+            This page is for art direction, not content editing. Pick a base
+            preset, push the palette and shape controls around, then copy the
+            generated CSS when a direction feels right.
+          </p>
+          <div class="button-row">
+            <a class="button-link" href="home.html">Preview the real site</a>
+            <a class="button-ghost" href="projects.html">Check project pages</a>
+          </div>
+        </div>
+
+        <article class="panel panel--accent stack" data-reveal>
+          <p class="eyebrow">Workflow</p>
+          <h2>Use this with Pinegrow or DevTools if you want even more control.</h2>
+          <p>
+            The key difference now is that the taste lives in shared tokens, not
+            scattered across the HTML. Small iterations should stay fast.
+          </p>
+          <div class="info-list">
+            <p><strong>1.</strong> Choose a preset direction.</p>
+            <p><strong>2.</strong> Adjust color, radius, width, and typography.</p>
+            <p><strong>3.</strong> Open other pages in another tab to check the mood in context.</p>
+            <p><strong>4.</strong> Copy the exported CSS block and send it back when a direction lands.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="lab-layout">
+        <aside class="panel stack lab-controls" data-reveal data-theme-editor>
+          <div class="stack">
+            <p class="eyebrow">Theme Controls</p>
+            <h2>One place for the visual decisions.</h2>
+            <p class="lead">
+              Preset changes reset manual overrides. Manual changes are saved in
+              this browser so you can compare pages without redoing the controls.
+            </p>
+          </div>
+
+          <form class="lab-form" aria-label="Theme editor">
+            <label class="lab-field">
+              <span>Preset direction</span>
+              <select data-theme-preset>
+                <option value="">Signal / clean studio</option>
+                <option value="forge">Forge / warm industrial</option>
+                <option value="field">Field / utilitarian</option>
+                <option value="nightshift">Nightshift / darker studio</option>
+              </select>
+            </label>
+
+            <label class="lab-field">
+              <span>Typography pairing</span>
+              <select data-type-preset>
+                <option value="studio">Sora + Manrope</option>
+                <option value="technical">Space Grotesk + IBM Plex Sans</option>
+                <option value="editorial">Syne + Instrument Sans</option>
+              </select>
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Page background</span>
+                <span class="lab-field__value" data-token-label="--bg"></span>
+              </div>
+              <input type="color" data-theme-token="--bg" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Text color</span>
+                <span class="lab-field__value" data-token-label="--text"></span>
+              </div>
+              <input type="color" data-theme-token="--text" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Muted copy</span>
+                <span class="lab-field__value" data-token-label="--muted"></span>
+              </div>
+              <input type="color" data-theme-token="--muted" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Accent</span>
+                <span class="lab-field__value" data-token-label="--accent"></span>
+              </div>
+              <input type="color" data-theme-token="--accent" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Dark surfaces</span>
+                <span class="lab-field__value" data-token-label="--surface-dark"></span>
+              </div>
+              <input type="color" data-theme-token="--surface-dark" />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Corner softness</span>
+                <span class="lab-field__value" data-radius-output></span>
+              </div>
+              <input type="range" min="18" max="42" step="1" data-radius-control />
+            </label>
+
+            <label class="lab-field">
+              <div class="lab-field__row">
+                <span>Layout width</span>
+                <span class="lab-field__value" data-width-output></span>
+              </div>
+              <input type="range" min="980" max="1440" step="10" data-width-control />
+            </label>
+
+            <div class="button-row">
+              <button class="button-link" type="button" data-copy-theme>
+                Copy theme CSS
+              </button>
+              <button class="button-ghost" type="button" data-reset-overrides>
+                Reset overrides
+              </button>
+              <button class="button-ghost" type="button" data-clear-theme>
+                Use repo default
+              </button>
+            </div>
+
+            <label class="lab-field">
+              <span>Export block</span>
+              <textarea readonly data-theme-export></textarea>
+            </label>
+
+            <p class="lab-status" data-copy-status aria-live="polite"></p>
+
+            <div class="lab-note">
+              These changes do not write back to the repository by themselves.
+              They are meant for rapid visual iteration, then promotion into the
+              theme files once the direction is right.
+            </div>
+          </form>
+        </aside>
+
+        <div class="lab-preview">
+          <section class="panel stack" data-reveal>
+            <p class="eyebrow">Palette Snapshot</p>
+            <div class="lab-swatch-grid">
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--bg"></div>
+                <strong>Background</strong>
+                <code data-token-label="--bg"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--surface"></div>
+                <strong>Surface</strong>
+                <code data-token-computed="--surface-strong"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--text"></div>
+                <strong>Text</strong>
+                <code data-token-label="--text"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--accent"></div>
+                <strong>Accent</strong>
+                <code data-token-label="--accent"></code>
+              </div>
+              <div class="lab-swatch">
+                <div class="lab-swatch__chip lab-swatch__chip--dark"></div>
+                <strong>Dark Surface</strong>
+                <code data-token-label="--surface-dark"></code>
+              </div>
+            </div>
+          </section>
+
+          <section class="page-hero">
+            <div class="panel panel--hero stack" data-reveal>
+              <p class="eyebrow">Hero Preview</p>
+              <h2>Selected work in design, electronics, and physical prototyping.</h2>
+              <p class="lead">
+                This preview is here to make large-scale changes obvious before
+                you go tweaking individual pages.
+              </p>
+              <div class="button-row">
+                <a class="button-link" href="projects.html">Primary action</a>
+                <a class="button-ghost" href="profile.html">Secondary action</a>
+              </div>
+            </div>
+
+            <figure class="media-card media-card--tall" data-reveal>
+              <img
+                src="assets/images/placeholder-hero.svg"
+                alt="Preview placeholder used for theme evaluation"
+                width="1600"
+                height="1200"
+              />
+            </figure>
+          </section>
+
+          <section class="hub-grid" data-reveal>
+            <article class="hub-card hub-card--profile">
+              <div class="hub-card__media">
+                <img
+                  src="assets/images/placeholder-profile.svg"
+                  alt="Profile preview card placeholder"
+                  width="1600"
+                  height="1200"
+                />
+              </div>
+              <div class="hub-card__body">
+                <p class="hub-card__index">01</p>
+                <h3>Profile</h3>
+                <p>How the studio is introduced visually and structurally.</p>
+                <span class="hub-card__cta">Read more</span>
+              </div>
+            </article>
+
+            <article class="hub-card hub-card--projects">
+              <div class="hub-card__media">
+                <img
+                  src="assets/images/placeholder-project-01.svg"
+                  alt="Project preview card placeholder"
+                  width="1600"
+                  height="1200"
+                />
+              </div>
+              <div class="hub-card__body">
+                <p class="hub-card__index">02</p>
+                <h3>Projects</h3>
+                <p>How dark cards, imagery, and motion cues feel together.</p>
+                <span class="hub-card__cta">View work</span>
+              </div>
+            </article>
+
+            <article class="hub-card hub-card--contact">
+              <div class="hub-card__media hub-card__media--icon" aria-hidden="true">
+                <div class="signal-icon">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+              <div class="hub-card__body">
+                <p class="hub-card__index">03</p>
+                <h3>Contact</h3>
+                <p>How the accent and supporting surfaces read in darker panels.</p>
+                <span class="hub-card__cta">Get in touch</span>
+              </div>
+            </article>
+          </section>
+
+          <section class="content-grid">
+            <article class="panel stack" data-reveal>
+              <p class="eyebrow">Components</p>
+              <h2>Shared pieces that define the visual language.</h2>
+              <div class="chip-list">
+                <span class="chip">Type</span>
+                <span class="chip">Panels</span>
+                <span class="chip">Grid texture</span>
+                <span class="chip">Corner radius</span>
+                <span class="chip">Accent logic</span>
+                <span class="chip">Shadow density</span>
+              </div>
+            </article>
+
+            <article class="panel panel--accent stack" data-reveal>
+              <p class="eyebrow">Note</p>
+              <h2>Once the mood lands, I can harden it into the real theme files.</h2>
+              <p>
+                This is the fast exploration layer. The final pass can be tighter,
+                more opinionated, and less generic once your preferences are clear.
+              </p>
+            </article>
+          </section>
+
+          <section class="project-grid" data-reveal>
+            <article class="project-card">
+              <img
+                src="assets/images/placeholder-project-01.svg"
+                alt="Project card preview for handheld concept"
+                width="1600"
+                height="1200"
+              />
+              <div class="project-card__body">
+                <p class="project-card__meta">Interactive Objects</p>
+                <h3>Handheld Device Concept</h3>
+                <p>Quick check for image framing, text balance, and surface tone.</p>
+                <span class="project-card__cta">Open case study</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <img
+                src="assets/images/placeholder-project-02.svg"
+                alt="Project card preview for mechanical prototype"
+                width="1600"
+                height="1200"
+              />
+              <div class="project-card__body">
+                <p class="project-card__meta">Fabrication</p>
+                <h3>Mechanical Prototype</h3>
+                <p>Good for checking whether the tone feels too soft or too corporate.</p>
+                <span class="project-card__cta">Open case study</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <img
+                src="assets/images/placeholder-project-03.svg"
+                alt="Project card preview for experimental interface"
+                width="1600"
+                height="1200"
+              />
+              <div class="project-card__body">
+                <p class="project-card__meta">Interface Research</p>
+                <h3>Experimental Interface</h3>
+                <p>Useful for stress-testing contrast and typography at smaller scale.</p>
+                <span class="project-card__cta">Open case study</span>
+              </div>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Use `style-lab.html` as the visual iteration surface.</p>
+      <p>&copy; <span data-year></span> Roscosmo Studio</p>
+    </footer>
+  </body>
+</html>

@@ -1,7 +1,79 @@
+const STORAGE_KEYS = {
+  preset: "roscosmo-theme-preset",
+  overrides: "roscosmo-theme-overrides",
+};
+
+const THEME_EXPORT_TOKENS = [
+  "--bg",
+  "--bg-deep",
+  "--surface",
+  "--surface-strong",
+  "--surface-dark",
+  "--text",
+  "--text-light",
+  "--muted",
+  "--line",
+  "--line-strong",
+  "--accent",
+  "--accent-dark",
+  "--accent-soft",
+  "--shadow",
+  "--shadow-strong",
+  "--radius-lg",
+  "--radius-md",
+  "--radius-sm",
+  "--max-width",
+  "--font-heading",
+  "--font-body",
+  "--page-wash",
+  "--page-grid-image",
+  "--page-grid-size",
+  "--page-grid-mask",
+  "--panel-glow",
+  "--panel-hero",
+  "--panel-accent",
+  "--card-dark",
+  "--card-dark-border",
+  "--card-dark-border-hover",
+  "--card-media-overlay",
+  "--signal-wash",
+  "--signal-line",
+  "--media-frame",
+  "--chip-bg",
+  "--project-card-bg",
+  "--model-bg",
+  "--intro-bg",
+  "--intro-grid-image",
+  "--intro-grid-size",
+  "--intro-panel-line",
+  "--intro-panel-bg",
+  "--intro-scanline",
+  "--intro-orb-1",
+  "--intro-orb-2",
+  "--intro-orb-3",
+];
+
+const TYPOGRAPHY_PRESETS = {
+  technical: {
+    heading: '"Space Grotesk", "Segoe UI", sans-serif',
+    body: '"IBM Plex Sans", "Segoe UI", sans-serif',
+  },
+  studio: {
+    heading: '"Sora", "Segoe UI", sans-serif',
+    body: '"Manrope", "Segoe UI", sans-serif',
+  },
+  editorial: {
+    heading: '"Syne", "Segoe UI", sans-serif',
+    body: '"Instrument Sans", "Segoe UI", sans-serif',
+  },
+};
+
+const COLOR_TOKENS = ["--bg", "--text", "--muted", "--accent", "--surface-dark"];
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let modelViewerPromise;
 
 document.documentElement.classList.add("reveal-ready");
+restoreThemeState();
 
 document.addEventListener("DOMContentLoaded", () => {
   setCurrentYear();
@@ -9,7 +81,23 @@ document.addEventListener("DOMContentLoaded", () => {
   setupRevealAnimations();
   setupIntroMotion();
   setupModelLoaders();
+  setupThemeLab();
 });
+
+function restoreThemeState() {
+  try {
+    const savedPreset = localStorage.getItem(STORAGE_KEYS.preset);
+    const savedOverrides = readThemeOverrides();
+
+    if (savedPreset) {
+      document.documentElement.dataset.theme = savedPreset;
+    }
+
+    applyThemeOverrides(savedOverrides);
+  } catch (error) {
+    console.warn("Theme preview could not be restored.", error);
+  }
+}
 
 function setCurrentYear() {
   document.querySelectorAll("[data-year]").forEach((node) => {
@@ -28,6 +116,359 @@ function setActiveNav() {
       link.setAttribute("aria-current", "page");
     }
   });
+}
+
+function setupThemeLab() {
+  const editor = document.querySelector("[data-theme-editor]");
+  if (!editor) {
+    refreshTokenLabels();
+    return;
+  }
+
+  const presetSelect = editor.querySelector("[data-theme-preset]");
+  const typeSelect = editor.querySelector("[data-type-preset]");
+  const exportField = editor.querySelector("[data-theme-export]");
+  const copyButton = editor.querySelector("[data-copy-theme]");
+  const resetButton = editor.querySelector("[data-reset-overrides]");
+  const clearButton = editor.querySelector("[data-clear-theme]");
+  const status = editor.querySelector("[data-copy-status]");
+  const radiusControl = editor.querySelector("[data-radius-control]");
+  const widthControl = editor.querySelector("[data-width-control]");
+  const radiusOutput = editor.querySelector("[data-radius-output]");
+  const widthOutput = editor.querySelector("[data-width-output]");
+  const tokenInputs = editor.querySelectorAll("[data-theme-token]");
+
+  if (presetSelect) {
+    presetSelect.value = document.documentElement.dataset.theme || "";
+
+    presetSelect.addEventListener("change", () => {
+      if (presetSelect.value) {
+        document.documentElement.dataset.theme = presetSelect.value;
+        localStorage.setItem(STORAGE_KEYS.preset, presetSelect.value);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.removeItem(STORAGE_KEYS.preset);
+      }
+
+      clearThemeOverrides();
+      if (typeSelect) {
+        syncTypographySelect(typeSelect);
+      }
+      syncThemeLabControls(editor);
+      setLabStatus(status, "Preset updated. Manual overrides were cleared.");
+    });
+  }
+
+  if (typeSelect) {
+    typeSelect.addEventListener("change", () => {
+      const preset = TYPOGRAPHY_PRESETS[typeSelect.value];
+      if (!preset) {
+        return;
+      }
+
+      document.documentElement.style.setProperty("--font-heading", preset.heading);
+      document.documentElement.style.setProperty("--font-body", preset.body);
+      persistThemeOverrides();
+      syncThemeLabControls(editor);
+      setLabStatus(status, "Typography pairing updated.");
+    });
+  }
+
+  tokenInputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      document.documentElement.style.setProperty(input.dataset.themeToken, input.value);
+      if (input.dataset.themeToken === "--accent") {
+        syncDerivedAccentTokens();
+      }
+      persistThemeOverrides();
+      syncThemeLabControls(editor);
+    });
+  });
+
+  if (radiusControl) {
+    radiusControl.addEventListener("input", () => {
+      const radius = Number(radiusControl.value);
+      applyRadiusScale(radius);
+      persistThemeOverrides();
+      syncThemeLabControls(editor);
+      radiusOutput.textContent = `${radius}px`;
+    });
+  }
+
+  if (widthControl) {
+    widthControl.addEventListener("input", () => {
+      document.documentElement.style.setProperty("--max-width", `${widthControl.value}px`);
+      persistThemeOverrides();
+      syncThemeLabControls(editor);
+      widthOutput.textContent = `${widthControl.value}px`;
+    });
+  }
+
+  if (copyButton && exportField) {
+    copyButton.addEventListener("click", async () => {
+      const block = buildThemeExport();
+      exportField.value = block;
+
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(block);
+          setLabStatus(status, "Theme CSS copied to the clipboard.", "success");
+        } else {
+          exportField.focus();
+          exportField.select();
+          setLabStatus(status, "Clipboard access unavailable. The export block is selected.", "error");
+        }
+      } catch (error) {
+        exportField.focus();
+        exportField.select();
+        setLabStatus(status, "Clipboard write failed. The export block is selected instead.", "error");
+      }
+    });
+  }
+
+  if (resetButton) {
+    resetButton.addEventListener("click", () => {
+      clearThemeOverrides();
+      syncThemeLabControls(editor);
+      setLabStatus(status, "Manual overrides reset to the selected preset.");
+    });
+  }
+
+  if (clearButton) {
+    clearButton.addEventListener("click", () => {
+      document.documentElement.removeAttribute("data-theme");
+      localStorage.removeItem(STORAGE_KEYS.preset);
+      clearThemeOverrides();
+      if (presetSelect) {
+        presetSelect.value = "";
+      }
+      if (typeSelect) {
+        syncTypographySelect(typeSelect);
+      }
+      syncThemeLabControls(editor);
+      setLabStatus(status, "Returned to the repository default theme.");
+    });
+  }
+
+  syncThemeLabControls(editor);
+}
+
+function syncThemeLabControls(editor) {
+  const rootStyle = getComputedStyle(document.documentElement);
+
+  editor.querySelectorAll("[data-theme-token]").forEach((input) => {
+    const token = input.dataset.themeToken;
+    input.value = toHex(rootStyle.getPropertyValue(token));
+  });
+
+  const radiusControl = editor.querySelector("[data-radius-control]");
+  const widthControl = editor.querySelector("[data-width-control]");
+  const radiusOutput = editor.querySelector("[data-radius-output]");
+  const widthOutput = editor.querySelector("[data-width-output]");
+  const exportField = editor.querySelector("[data-theme-export]");
+  const typeSelect = editor.querySelector("[data-type-preset]");
+
+  const radiusValue = Math.round(parseFloat(rootStyle.getPropertyValue("--radius-lg")) || 26);
+  const widthValue = Math.round(parseFloat(rootStyle.getPropertyValue("--max-width")) || 1180);
+
+  if (radiusControl) {
+    radiusControl.value = String(radiusValue);
+  }
+  if (widthControl) {
+    widthControl.value = String(widthValue);
+  }
+  if (radiusOutput) {
+    radiusOutput.textContent = `${radiusValue}px`;
+  }
+  if (widthOutput) {
+    widthOutput.textContent = `${widthValue}px`;
+  }
+  if (typeSelect) {
+    syncTypographySelect(typeSelect);
+  }
+  if (exportField) {
+    exportField.value = buildThemeExport();
+  }
+
+  refreshTokenLabels();
+}
+
+function syncTypographySelect(select) {
+  const heading = normalizeFontValue(getComputedStyle(document.documentElement).getPropertyValue("--font-heading"));
+  const body = normalizeFontValue(getComputedStyle(document.documentElement).getPropertyValue("--font-body"));
+
+  const match = Object.entries(TYPOGRAPHY_PRESETS).find(([, preset]) => {
+    return (
+      normalizeFontValue(preset.heading) === heading &&
+      normalizeFontValue(preset.body) === body
+    );
+  });
+
+  select.value = match ? match[0] : "studio";
+}
+
+function buildThemeExport() {
+  const rootStyle = getComputedStyle(document.documentElement);
+  const preset = document.documentElement.dataset.theme || "repo-default";
+  const lines = THEME_EXPORT_TOKENS.map((token) => {
+    return `  ${token}: ${rootStyle.getPropertyValue(token).trim()};`;
+  });
+
+  return [`/* Preset: ${preset} */`, ":root {", ...lines, "}"].join("\n");
+}
+
+function refreshTokenLabels() {
+  const rootStyle = getComputedStyle(document.documentElement);
+
+  document.querySelectorAll("[data-token-label]").forEach((node) => {
+    const token = node.dataset.tokenLabel;
+    if (!token) {
+      return;
+    }
+    node.textContent = toHex(rootStyle.getPropertyValue(token));
+  });
+
+  document.querySelectorAll("[data-token-computed]").forEach((node) => {
+    const token = node.dataset.tokenComputed;
+    if (!token) {
+      return;
+    }
+    node.textContent = rootStyle.getPropertyValue(token).trim();
+  });
+}
+
+function setLabStatus(statusNode, message, state = "") {
+  if (!statusNode) {
+    return;
+  }
+
+  statusNode.textContent = message;
+  statusNode.dataset.state = state;
+}
+
+function applyRadiusScale(radius) {
+  document.documentElement.style.setProperty("--radius-lg", `${radius}px`);
+  document.documentElement.style.setProperty("--radius-md", `${Math.max(12, radius - 8)}px`);
+  document.documentElement.style.setProperty("--radius-sm", `${Math.max(8, radius - 14)}px`);
+}
+
+function syncDerivedAccentTokens() {
+  const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+  const accentDark = shadeHex(accent, -26);
+  const accentSoft = hexToRgba(accent, 0.12);
+
+  document.documentElement.style.setProperty("--accent-dark", accentDark);
+  document.documentElement.style.setProperty("--accent-soft", accentSoft);
+}
+
+function readThemeOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.overrides) || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function persistThemeOverrides() {
+  const current = readThemeOverrides();
+  const next = { ...current };
+
+  COLOR_TOKENS.forEach((token) => {
+    next[token] = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  });
+
+  next["--accent-dark"] = getComputedStyle(document.documentElement).getPropertyValue("--accent-dark").trim();
+  next["--accent-soft"] = getComputedStyle(document.documentElement).getPropertyValue("--accent-soft").trim();
+  next["--radius-lg"] = getComputedStyle(document.documentElement).getPropertyValue("--radius-lg").trim();
+  next["--radius-md"] = getComputedStyle(document.documentElement).getPropertyValue("--radius-md").trim();
+  next["--radius-sm"] = getComputedStyle(document.documentElement).getPropertyValue("--radius-sm").trim();
+  next["--max-width"] = getComputedStyle(document.documentElement).getPropertyValue("--max-width").trim();
+  next["--font-heading"] = getComputedStyle(document.documentElement).getPropertyValue("--font-heading").trim();
+  next["--font-body"] = getComputedStyle(document.documentElement).getPropertyValue("--font-body").trim();
+
+  localStorage.setItem(STORAGE_KEYS.overrides, JSON.stringify(next));
+}
+
+function clearThemeOverrides() {
+  localStorage.removeItem(STORAGE_KEYS.overrides);
+  const tokens = [
+    ...COLOR_TOKENS,
+    "--accent-dark",
+    "--accent-soft",
+    "--radius-lg",
+    "--radius-md",
+    "--radius-sm",
+    "--max-width",
+    "--font-heading",
+    "--font-body",
+  ];
+
+  tokens.forEach((token) => {
+    document.documentElement.style.removeProperty(token);
+  });
+}
+
+function applyThemeOverrides(overrides) {
+  Object.entries(overrides || {}).forEach(([token, value]) => {
+    document.documentElement.style.setProperty(token, value);
+  });
+}
+
+function toHex(value) {
+  const normalized = value.trim();
+  if (!normalized) {
+    return "#000000";
+  }
+
+  if (normalized.startsWith("#")) {
+    return expandHex(normalized);
+  }
+
+  const match = normalized.match(/\d+(\.\d+)?/g);
+  if (!match || match.length < 3) {
+    return "#000000";
+  }
+
+  const [red, green, blue] = match.slice(0, 3).map((channel) => {
+    return Math.max(0, Math.min(255, Math.round(Number(channel))));
+  });
+
+  return `#${[red, green, blue]
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+function expandHex(value) {
+  const hex = value.replace("#", "").trim();
+  if (hex.length === 3) {
+    return `#${hex
+      .split("")
+      .map((char) => char + char)
+      .join("")}`;
+  }
+  return `#${hex.slice(0, 6)}`;
+}
+
+function normalizeFontValue(value) {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function hexToRgba(hex, alpha) {
+  const normalized = expandHex(hex);
+  const red = Number.parseInt(normalized.slice(1, 3), 16);
+  const green = Number.parseInt(normalized.slice(3, 5), 16);
+  const blue = Number.parseInt(normalized.slice(5, 7), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+function shadeHex(hex, delta) {
+  const normalized = expandHex(hex);
+  const channels = [1, 3, 5].map((index) => {
+    const channel = Number.parseInt(normalized.slice(index, index + 2), 16);
+    return Math.max(0, Math.min(255, channel + delta));
+  });
+
+  return `#${channels.map((channel) => channel.toString(16).padStart(2, "0")).join("")}`;
 }
 
 function setupRevealAnimations() {

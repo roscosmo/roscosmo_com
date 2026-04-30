@@ -1,0 +1,234 @@
+:root {
+  --bg: #edf1ec;
+  --bg-deep: #d7ddd5;
+  --surface: rgba(250, 253, 249, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.94);
+  --surface-dark: #101513;
+  --text: #101513;
+  --text-light: #edf2ee;
+  --muted: #56615c;
+  --line: rgba(16, 21, 19, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --accent: #d95f20;
+  --accent-dark: #943914;
+  --accent-soft: rgba(217, 95, 32, 0.12);
+  --shadow: 0 24px 60px rgba(22, 28, 24, 0.1);
+  --shadow-strong: 0 32px 100px rgba(8, 10, 9, 0.28);
+  --radius-lg: 26px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --max-width: 1180px;
+  --font-heading: "Sora", "Segoe UI", sans-serif;
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+
+  --page-wash:
+    radial-gradient(circle at top left, rgba(217, 95, 32, 0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(73, 106, 90, 0.1), transparent 28%),
+    linear-gradient(180deg, #f7faf6 0%, var(--bg) 42%, #e7ece7 100%);
+  --page-grid-image:
+    linear-gradient(rgba(16, 21, 19, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 21, 19, 0.022) 1px, transparent 1px);
+  --page-grid-size: 32px 32px;
+  --page-grid-mask: radial-gradient(circle at center, black 28%, transparent 88%);
+  --panel-glow: radial-gradient(circle, rgba(217, 95, 32, 0.14), transparent 70%);
+  --panel-hero:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.08)),
+    linear-gradient(135deg, rgba(217, 95, 32, 0.1), rgba(255, 255, 255, 0));
+  --panel-accent:
+    linear-gradient(145deg, rgba(217, 95, 32, 0.16), rgba(255, 252, 247, 0.9));
+  --card-dark:
+    radial-gradient(circle at top left, rgba(239, 169, 111, 0.18), transparent 38%),
+    linear-gradient(180deg, #171b19 0%, #0d100f 100%);
+  --card-dark-border: rgba(255, 255, 255, 0.1);
+  --card-dark-border-hover: rgba(255, 255, 255, 0.16);
+  --card-media-overlay: linear-gradient(180deg, transparent, rgba(12, 15, 14, 0.82));
+  --signal-wash:
+    radial-gradient(circle at center, rgba(239, 169, 111, 0.24), transparent 58%),
+    rgba(255, 255, 255, 0.04);
+  --signal-line: rgba(255, 244, 234, 0.58);
+  --media-frame: rgba(255, 255, 255, 0.56);
+  --chip-bg: rgba(255, 255, 255, 0.54);
+  --project-card-bg: rgba(255, 252, 248, 0.88);
+  --model-bg:
+    radial-gradient(circle at top left, rgba(239, 169, 111, 0.18), transparent 30%),
+    linear-gradient(180deg, #161a18 0%, #090b0a 100%);
+  --intro-bg:
+    radial-gradient(circle at top left, rgba(239, 169, 111, 0.18), transparent 28%),
+    linear-gradient(180deg, #161918 0%, #0d100f 100%);
+  --intro-grid-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  --intro-grid-size: 34px 34px;
+  --intro-panel-line: rgba(255, 255, 255, 0.14);
+  --intro-panel-bg:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(10, 12, 11, 0.82);
+  --intro-scanline:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.03) 0,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+  --intro-orb-1: rgba(217, 95, 32, 0.3);
+  --intro-orb-2: rgba(255, 224, 189, 0.2);
+  --intro-orb-3: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme="forge"] {
+  --bg: #efe8de;
+  --bg-deep: #ddcfbe;
+  --surface: rgba(255, 248, 241, 0.78);
+  --surface-strong: rgba(255, 251, 246, 0.94);
+  --surface-dark: #161210;
+  --text: #181311;
+  --text-light: #f7f0e7;
+  --muted: #64584e;
+  --line: rgba(24, 19, 17, 0.12);
+  --accent: #c86635;
+  --accent-dark: #8e411d;
+  --accent-soft: rgba(200, 102, 53, 0.12);
+  --shadow: 0 24px 60px rgba(43, 28, 18, 0.12);
+  --shadow-strong: 0 28px 90px rgba(18, 14, 11, 0.32);
+  --font-heading: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --page-wash:
+    radial-gradient(circle at top left, rgba(200, 102, 53, 0.1), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(75, 53, 35, 0.08), transparent 28%),
+    linear-gradient(180deg, #f7f2ec 0%, var(--bg) 40%, #eee5d9 100%);
+  --page-grid-image:
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  --panel-glow: radial-gradient(circle, rgba(200, 102, 53, 0.14), transparent 70%);
+  --panel-hero:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.05)),
+    linear-gradient(135deg, rgba(200, 102, 53, 0.12), rgba(255, 255, 255, 0));
+  --panel-accent:
+    linear-gradient(145deg, rgba(200, 102, 53, 0.16), rgba(255, 251, 247, 0.86));
+  --card-dark:
+    radial-gradient(circle at top left, rgba(240, 173, 111, 0.26), transparent 38%),
+    linear-gradient(180deg, #1d1915 0%, #100d0b 100%);
+  --signal-wash:
+    radial-gradient(circle at center, rgba(240, 173, 111, 0.28), transparent 58%),
+    rgba(255, 255, 255, 0.03);
+  --signal-line: rgba(255, 245, 234, 0.58);
+  --media-frame: rgba(255, 255, 255, 0.52);
+  --project-card-bg: rgba(255, 252, 248, 0.85);
+  --model-bg:
+    radial-gradient(circle at top left, rgba(240, 173, 111, 0.2), transparent 30%),
+    linear-gradient(180deg, #1a1613 0%, #090807 100%);
+  --intro-bg:
+    radial-gradient(circle at top left, rgba(240, 173, 111, 0.24), transparent 28%),
+    linear-gradient(180deg, #1f1a16 0%, #100e0c 100%);
+  --intro-orb-1: rgba(200, 102, 53, 0.34);
+  --intro-orb-2: rgba(255, 211, 160, 0.22);
+  --intro-orb-3: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="field"] {
+  --bg: #e7eadf;
+  --bg-deep: #d0d7c7;
+  --surface: rgba(249, 251, 245, 0.76);
+  --surface-strong: rgba(255, 255, 251, 0.94);
+  --surface-dark: #141712;
+  --text: #131610;
+  --text-light: #edf1e7;
+  --muted: #5a6254;
+  --line: rgba(19, 22, 16, 0.12);
+  --accent: #7a8c3a;
+  --accent-dark: #576427;
+  --accent-soft: rgba(122, 140, 58, 0.14);
+  --shadow: 0 24px 60px rgba(34, 41, 27, 0.1);
+  --shadow-strong: 0 30px 90px rgba(9, 12, 8, 0.28);
+  --font-heading: "Sora", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --page-wash:
+    radial-gradient(circle at top left, rgba(122, 140, 58, 0.12), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(54, 67, 46, 0.08), transparent 28%),
+    linear-gradient(180deg, #f5f7f1 0%, var(--bg) 42%, #e0e5d8 100%);
+  --page-grid-image:
+    linear-gradient(rgba(24, 32, 20, 0.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 32, 20, 0.024) 1px, transparent 1px);
+  --panel-glow: radial-gradient(circle, rgba(122, 140, 58, 0.14), transparent 70%);
+  --panel-hero:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.08)),
+    linear-gradient(135deg, rgba(122, 140, 58, 0.14), rgba(255, 255, 255, 0));
+  --panel-accent:
+    linear-gradient(145deg, rgba(122, 140, 58, 0.14), rgba(255, 254, 249, 0.88));
+  --card-dark:
+    radial-gradient(circle at top left, rgba(163, 181, 102, 0.18), transparent 38%),
+    linear-gradient(180deg, #1a1e18 0%, #0d100c 100%);
+  --signal-wash:
+    radial-gradient(circle at center, rgba(163, 181, 102, 0.22), transparent 58%),
+    rgba(255, 255, 255, 0.03);
+  --signal-line: rgba(241, 248, 224, 0.56);
+  --model-bg:
+    radial-gradient(circle at top left, rgba(163, 181, 102, 0.18), transparent 30%),
+    linear-gradient(180deg, #181b16 0%, #090b08 100%);
+  --intro-bg:
+    radial-gradient(circle at top left, rgba(163, 181, 102, 0.16), transparent 28%),
+    linear-gradient(180deg, #191d18 0%, #0d100d 100%);
+  --intro-orb-1: rgba(122, 140, 58, 0.28);
+  --intro-orb-2: rgba(216, 226, 168, 0.18);
+  --intro-orb-3: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="nightshift"] {
+  --bg: #0f1312;
+  --bg-deep: #1a211f;
+  --surface: rgba(23, 29, 27, 0.72);
+  --surface-strong: rgba(29, 37, 34, 0.92);
+  --surface-dark: #090c0b;
+  --text: #e8efea;
+  --text-light: #f3f7f4;
+  --muted: #a8b3ae;
+  --line: rgba(232, 239, 234, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --accent: #f46a2d;
+  --accent-dark: #ba4413;
+  --accent-soft: rgba(244, 106, 45, 0.16);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+  --shadow-strong: 0 34px 100px rgba(0, 0, 0, 0.42);
+  --font-heading: "Syne", "Segoe UI", sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", sans-serif;
+  --page-wash:
+    radial-gradient(circle at top left, rgba(244, 106, 45, 0.16), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(90, 132, 109, 0.1), transparent 28%),
+    linear-gradient(180deg, #151918 0%, var(--bg) 48%, #0c0f0e 100%);
+  --page-grid-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  --page-grid-mask: radial-gradient(circle at center, black 36%, transparent 92%);
+  --panel-glow: radial-gradient(circle, rgba(244, 106, 45, 0.18), transparent 70%);
+  --panel-hero:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    linear-gradient(135deg, rgba(244, 106, 45, 0.16), rgba(255, 255, 255, 0));
+  --panel-accent:
+    linear-gradient(145deg, rgba(244, 106, 45, 0.18), rgba(34, 41, 38, 0.86));
+  --card-dark:
+    radial-gradient(circle at top left, rgba(244, 106, 45, 0.2), transparent 38%),
+    linear-gradient(180deg, #121615 0%, #080909 100%);
+  --card-dark-border: rgba(255, 255, 255, 0.12);
+  --card-dark-border-hover: rgba(255, 255, 255, 0.2);
+  --card-media-overlay: linear-gradient(180deg, transparent, rgba(8, 9, 9, 0.84));
+  --signal-wash:
+    radial-gradient(circle at center, rgba(244, 106, 45, 0.18), transparent 58%),
+    rgba(255, 255, 255, 0.03);
+  --signal-line: rgba(255, 234, 225, 0.54);
+  --media-frame: rgba(255, 255, 255, 0.06);
+  --chip-bg: rgba(255, 255, 255, 0.04);
+  --project-card-bg: rgba(18, 22, 21, 0.88);
+  --model-bg:
+    radial-gradient(circle at top left, rgba(244, 106, 45, 0.22), transparent 30%),
+    linear-gradient(180deg, #121514 0%, #050606 100%);
+  --intro-bg:
+    radial-gradient(circle at top left, rgba(244, 106, 45, 0.22), transparent 26%),
+    linear-gradient(180deg, #141715 0%, #070808 100%);
+  --intro-panel-bg:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(5, 6, 6, 0.84);
+  --intro-orb-1: rgba(244, 106, 45, 0.3);
+  --intro-orb-2: rgba(255, 205, 181, 0.14);
+  --intro-orb-3: rgba(255, 255, 255, 0.08);
+}

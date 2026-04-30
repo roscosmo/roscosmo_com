@@ -11,11 +11,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <script>
       document.documentElement.classList.add("has-js");
+      try {
+        const savedPreset = localStorage.getItem("roscosmo-theme-preset");
+        const savedOverrides = localStorage.getItem("roscosmo-theme-overrides");
+        if (savedPreset) {
+          document.documentElement.dataset.theme = savedPreset;
+        }
+        if (savedOverrides) {
+          const overrides = JSON.parse(savedOverrides);
+          Object.keys(overrides).forEach((token) => {
+            document.documentElement.style.setProperty(token, overrides[token]);
+          });
+        }
+      } catch (error) {
+        console.warn("Theme preview could not be restored.", error);
+      }
     </script>
     <link rel="stylesheet" href="../assets/css/styles.css" />
     <script defer src="../assets/js/main.js"></script>
