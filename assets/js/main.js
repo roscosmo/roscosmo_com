@@ -592,6 +592,7 @@ function setupHomeScene() {
   }
 
   const targets = stage.querySelectorAll("[data-scene-target]");
+  const panels = stage.querySelectorAll("[data-scene-panel]");
   const resetButtons = document.querySelectorAll("[data-scene-reset]");
   const validTargets = new Set(
     Array.from(targets)
@@ -605,6 +606,10 @@ function setupHomeScene() {
 
     targets.forEach((node) => {
       node.setAttribute("aria-pressed", String(node.dataset.sceneTarget === focus));
+    });
+
+    panels.forEach((panel) => {
+      panel.setAttribute("aria-hidden", String(panel.dataset.scenePanel !== focus));
     });
 
     resetButtons.forEach((button) => {
@@ -631,6 +636,16 @@ function setupHomeScene() {
       const next = node.dataset.sceneTarget || "";
       applyFocus(stage.dataset.sceneFocus === next ? "" : next);
     });
+  });
+
+  stage.addEventListener("click", (event) => {
+    const interactiveTarget = event.target.closest(
+      "[data-scene-target], [data-scene-panel], [data-scene-reset], .scene-brand"
+    );
+
+    if (!interactiveTarget && stage.dataset.sceneFocus) {
+      applyFocus("");
+    }
   });
 
   resetButtons.forEach((button) => {
