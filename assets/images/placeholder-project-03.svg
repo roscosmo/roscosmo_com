@@ -1,0 +1,15 @@
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1200" fill="#171412"/>
+  <rect x="74" y="74" width="1452" height="1052" rx="52" fill="#12100F" stroke="rgba(255,255,255,0.12)"/>
+  <path d="M244 254C244 223.072 269.072 198 300 198H1300C1330.93 198 1356 223.072 1356 254V368H244V254Z" fill="#F5EFE5" fill-opacity="0.06" stroke="rgba(255,255,255,0.12)"/>
+  <rect x="242" y="430" width="1116" height="538" rx="46" fill="#211B17" stroke="rgba(255,255,255,0.08)"/>
+  <path d="M348 536H1252" stroke="#C86635" stroke-width="4" stroke-dasharray="16 16"/>
+  <path d="M348 652H1252" stroke="rgba(255,255,255,0.16)" stroke-width="4" stroke-dasharray="10 14"/>
+  <path d="M348 768H1252" stroke="#F0AD6F" stroke-width="4" stroke-dasharray="22 18"/>
+  <circle cx="452" cy="930" r="70" fill="#F5EFE5" fill-opacity="0.08" stroke="rgba(255,255,255,0.12)"/>
+  <circle cx="798" cy="930" r="70" fill="#F5EFE5" fill-opacity="0.08" stroke="rgba(255,255,255,0.12)"/>
+  <circle cx="1144" cy="930" r="70" fill="#F5EFE5" fill-opacity="0.08" stroke="rgba(255,255,255,0.12)"/>
+  <text x="244" y="154" fill="#D9CDBF" font-family="IBM Plex Sans, sans-serif" font-size="32" letter-spacing="6.4">PROJECT 03</text>
+  <text x="244" y="314" fill="#F8F1E8" font-family="Space Grotesk, sans-serif" font-size="98" font-weight="700">Experimental Interface</text>
+  <text x="244" y="1028" fill="#D9CDBF" font-family="IBM Plex Sans, sans-serif" font-size="36">Useful for interface diagrams, sensor studies, and behaviour maps.</text>
+</svg>

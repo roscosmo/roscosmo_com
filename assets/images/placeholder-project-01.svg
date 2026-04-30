@@ -1,0 +1,19 @@
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1200" fill="#181412"/>
+  <rect x="88" y="88" width="1424" height="1024" rx="48" fill="#211A16" stroke="rgba(255,255,255,0.12)"/>
+  <rect x="212" y="270" width="666" height="442" rx="72" fill="#2B221D" stroke="rgba(255,255,255,0.12)"/>
+  <rect x="308" y="364" width="476" height="254" rx="40" fill="#F5EFE5"/>
+  <rect x="934" y="250" width="374" height="528" rx="48" fill="#F5EFE5" fill-opacity="0.08" stroke="rgba(255,255,255,0.14)"/>
+  <circle cx="1176" cy="420" r="118" fill="url(#paint0_radial_3_2)"/>
+  <rect x="1018" y="790" width="222" height="52" rx="26" fill="#C86635"/>
+  <path d="M214 868H1386" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <text x="214" y="188" fill="#D9CDBF" font-family="IBM Plex Sans, sans-serif" font-size="32" letter-spacing="6.4">PROJECT 01</text>
+  <text x="214" y="980" fill="#F8F1E8" font-family="Space Grotesk, sans-serif" font-size="96" font-weight="700">Handheld Device Concept</text>
+  <text x="214" y="1048" fill="#D9CDBF" font-family="IBM Plex Sans, sans-serif" font-size="36">Swap with hero renders, in-hand photographs, or exploded views.</text>
+  <defs>
+    <radialGradient id="paint0_radial_3_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1176 420) rotate(90) scale(118)">
+      <stop stop-color="#F0AD6F"/>
+      <stop offset="1" stop-color="#C86635" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

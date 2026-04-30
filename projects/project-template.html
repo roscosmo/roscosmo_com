@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Template | Roscosmo Studio</title>
+    <meta
+      name="description"
+      content="Reusable project detail template for Roscosmo Studio."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      document.documentElement.classList.add("has-js");
+    </script>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <script defer src="../assets/js/main.js"></script>
+  </head>
+  <body data-page="projects">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand-mark" href="../home.html">
+          <span class="brand-mark__dot" aria-hidden="true"></span>
+          <span>Roscosmo Studio</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="../profile.html" data-nav="profile">Profile</a>
+          <a href="../projects.html" data-nav="projects">Projects</a>
+          <a href="../contact.html" data-nav="contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="main-shell stack-xl">
+      <article class="project-detail stack-xl">
+        <section class="page-hero">
+          <div class="panel panel--hero" data-reveal>
+            <p class="eyebrow">Project Template</p>
+            <h1>[Project Title]</h1>
+            <p class="lead">
+              Replace this summary with a short description of the project, what
+              it is, and why it matters.
+            </p>
+          </div>
+          <figure class="media-card media-card--tall" data-reveal>
+            <img
+              src="../assets/images/placeholder-project-01.svg"
+              alt="Placeholder project hero image"
+              width="1600"
+              height="1200"
+            />
+          </figure>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel stack" data-reveal>
+            <p class="eyebrow">Problem / Objective</p>
+            <h2>What the work needed to solve.</h2>
+            <p>
+              Outline the product goal, user need, technical constraint, or
+              design brief that shaped the work.
+            </p>
+          </article>
+
+          <article class="panel stack" data-reveal>
+            <p class="eyebrow">Process</p>
+            <h2>How the project evolved.</h2>
+            <p>
+              Explain the key stages: research, sketches, layout, prototyping,
+              testing, revisions, and validation.
+            </p>
+          </article>
+        </section>
+
+        <section class="panel stack" data-reveal>
+          <p class="eyebrow">Gallery</p>
+          <div class="gallery-grid">
+            <figure class="media-card">
+              <img
+                src="../assets/images/placeholder-project-01.svg"
+                alt="Placeholder gallery image one"
+                width="1600"
+                height="1200"
+                loading="lazy"
+              />
+            </figure>
+            <figure class="media-card">
+              <img
+                src="../assets/images/placeholder-project-02.svg"
+                alt="Placeholder gallery image two"
+                width="1600"
+                height="1200"
+                loading="lazy"
+              />
+            </figure>
+            <figure class="media-card">
+              <img
+                src="../assets/images/placeholder-project-03.svg"
+                alt="Placeholder gallery image three"
+                width="1600"
+                height="1200"
+                loading="lazy"
+              />
+            </figure>
+          </div>
+        </section>
+
+        <section class="panel stack" data-reveal>
+          <p class="eyebrow">Optional 3D Viewer</p>
+          <div
+            class="model-shell"
+            data-model-shell
+            data-model="../assets/models/placeholder-model.glb"
+            data-poster="../assets/images/placeholder-project-01.svg"
+            data-alt="Placeholder 3D project preview"
+          >
+            <div class="model-stage" data-model-stage>
+              <img
+                src="../assets/images/placeholder-project-01.svg"
+                alt="Fallback preview image for the 3D model placeholder"
+                width="1600"
+                height="1200"
+                loading="lazy"
+              />
+            </div>
+            <div class="model-shell__meta">
+              <button class="button-link" type="button" data-load-model>
+                Load interactive 3D model
+              </button>
+              <p class="model-status" data-model-status>
+                The viewer loads only after click, keeping 3D assets opt-in.
+              </p>
+            </div>
+            <noscript>
+              <p>JavaScript is required to load the interactive 3D model.</p>
+            </noscript>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel stack" data-reveal>
+            <p class="eyebrow">Technical Notes</p>
+            <div class="info-list">
+              <p><strong>Category:</strong> Replace with project type.</p>
+              <p><strong>Tools:</strong> Replace with software, hardware, and process tools.</p>
+              <p><strong>Status:</strong> Replace with current project stage.</p>
+            </div>
+          </article>
+
+          <article class="panel stack panel--accent" data-reveal>
+            <p class="eyebrow">Outcome / Next Steps</p>
+            <p>
+              Close with what the project achieved, what changed during the
+              process, and what would happen next.
+            </p>
+          </article>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <p>Reusable project page structure for future case studies.</p>
+      <p>&copy; <span data-year></span> Roscosmo Studio</p>
+    </footer>
+  </body>
+</html>

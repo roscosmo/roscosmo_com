@@ -1,0 +1,22 @@
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1200" fill="#EFE7DB"/>
+  <rect x="78" y="78" width="1444" height="1044" rx="52" fill="#FBF7F1" stroke="#D5C9BB"/>
+  <rect x="176" y="162" width="498" height="876" rx="34" fill="#161311"/>
+  <circle cx="425" cy="405" r="162" fill="url(#paint0_radial_2_2)"/>
+  <path d="M255 774C255 670.171 339.171 586 443 586H579V1038H443C339.171 1038 255 953.829 255 850V774Z" fill="#241D18"/>
+  <rect x="760" y="218" width="610" height="132" rx="24" fill="#F0E5D8"/>
+  <rect x="760" y="394" width="544" height="310" rx="30" fill="#F7F0E7"/>
+  <rect x="760" y="748" width="610" height="220" rx="30" fill="#F0E5D8"/>
+  <path d="M830 446H1234" stroke="#C86635" stroke-width="14" stroke-linecap="round"/>
+  <path d="M830 506H1198" stroke="#3E342D" stroke-width="10" stroke-linecap="round"/>
+  <path d="M830 546H1152" stroke="#3E342D" stroke-width="10" stroke-linecap="round"/>
+  <path d="M830 586H1184" stroke="#3E342D" stroke-width="10" stroke-linecap="round"/>
+  <text x="762" y="300" fill="#231C18" font-family="Space Grotesk, sans-serif" font-size="92" font-weight="700">Profile</text>
+  <text x="762" y="838" fill="#231C18" font-family="IBM Plex Sans, sans-serif" font-size="34">Use this placeholder for portraiture, studio images, or process photography.</text>
+  <defs>
+    <radialGradient id="paint0_radial_2_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(425 405) rotate(90) scale(162)">
+      <stop stop-color="#F0AD6F"/>
+      <stop offset="1" stop-color="#C86635"/>
+    </radialGradient>
+  </defs>
+</svg>
