@@ -36,49 +36,41 @@
     <script defer src="assets/js/main.js"></script>
   </head>
   <body class="page-intro" data-page="intro">
-    <main id="main" class="intro" data-intro-stage>
-      <div class="intro__grid" aria-hidden="true"></div>
-      <div class="intro__orb intro__orb--one" data-depth="1.4" aria-hidden="true"></div>
-      <div class="intro__orb intro__orb--two" data-depth="0.9" aria-hidden="true"></div>
-      <div class="intro__orb intro__orb--three" data-depth="1.2" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-      <section class="intro__panel" data-depth="0.45">
-        <p class="eyebrow eyebrow--light">Independent Design Practice</p>
-        <div class="wordmark-lockup">
-          <div class="wordmark-lockup__frame">
-            <h1 class="wordmark-lockup__name">
-              <span class="wordmark-lockup__warm">Rosco</span>
-              <span class="wordmark-lockup__cool">smo</span>
-            </h1>
-            <span class="wordmark-lockup__stamp">R&amp;D</span>
-          </div>
-          <p class="wordmark-lockup__sub lead lead--light">
-            Industrial design, electronics, fabrication, and experimental
-            product development.
-          </p>
-        </div>
-        <div class="meta-strip" aria-label="Studio focus areas">
+    <main id="main" class="entry-stage" data-intro-stage>
+      <div class="entry-stage__grid" aria-hidden="true"></div>
+      <div class="entry-stage__glow entry-stage__glow--orange" data-depth="1.05" aria-hidden="true"></div>
+      <div class="entry-stage__glow entry-stage__glow--blue" data-depth="0.8" aria-hidden="true"></div>
+      <div class="entry-stage__slime" aria-hidden="true"></div>
+
+      <section class="entry-card" data-depth="0.2">
+        <p class="entry-card__kicker">Roscosmo Studio / R&amp;D</p>
+
+        <h1 class="entry-wordmark" aria-label="Roscosmo">
+          <span class="entry-wordmark__warm">Rosco</span>
+          <span class="entry-wordmark__cool">smo</span>
+        </h1>
+
+        <p class="entry-card__lead">
+          Industrial design, electronics, fabrication, and experimental product development.
+        </p>
+
+        <div class="entry-card__chips" aria-label="Studio focus areas">
           <span>Objects</span>
           <span>Electronics</span>
-          <span>Buildable prototypes</span>
+          <span>Prototypes</span>
         </div>
-        <div class="button-row">
-          <a class="button-link" href="home.html">Enter the lab</a>
+
+        <div class="entry-card__meta">
+          <p>Single-page holding site while the full archive is rebuilt.</p>
+          <a class="entry-email" href="mailto:hello@example.com">hello@example.com</a>
         </div>
       </section>
 
-      <aside class="intro__sidecar" data-depth="0.22">
-        <article class="intro__note">
-          <p class="eyebrow eyebrow--light">Signal</p>
-          <p>
-            Dark-mode portfolio framing with retro toy energy, clean navigation,
-            and room for product images to do the real talking.
-          </p>
-        </article>
-        <article class="intro__note">
-          <strong>Selected work in</strong>
-          <p>Physical design, interactive hardware, fabrication, and visual documentation.</p>
-        </article>
+      <aside class="entry-note">
+        <p class="entry-note__title">Selected work in physical design, interactive hardware, fabrication, and visual documentation.</p>
+        <p class="entry-note__sub">One page only for now. Everything else routes back here.</p>
       </aside>
     </main>
   </body>

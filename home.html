@@ -3,162 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home | Roscosmo Studio</title>
-    <meta
-      name="description"
-      content="Roscosmo Studio portfolio hub for profile, projects, and contact details."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <title>Redirecting | Roscosmo Studio</title>
+    <meta http-equiv="refresh" content="0; url=index.html" />
+    <link rel="canonical" href="index.html" />
     <script>
-      document.documentElement.classList.add("has-js");
-      try {
-        const savedPreset = localStorage.getItem("roscosmo-theme-preset");
-        const savedOverrides = localStorage.getItem("roscosmo-theme-overrides");
-        if (savedPreset) {
-          document.documentElement.dataset.theme = savedPreset;
-        }
-        if (savedOverrides) {
-          const overrides = JSON.parse(savedOverrides);
-          Object.keys(overrides).forEach((token) => {
-            document.documentElement.style.setProperty(token, overrides[token]);
-          });
-        }
-      } catch (error) {
-        console.warn("Theme preview could not be restored.", error);
-      }
+      window.location.replace("index.html");
     </script>
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    <script defer src="assets/js/main.js"></script>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #07080c;
+        color: #fff5e5;
+        font: 16px/1.5 "Segoe UI", sans-serif;
+      }
+
+      main {
+        padding: 1.25rem;
+        text-align: center;
+      }
+
+      a {
+        color: inherit;
+      }
+    </style>
   </head>
-  <body data-page="home" class="page-home">
-    <a class="skip-link" href="#main">Skip to content</a>
-
-    <main id="main" class="home-shell">
-      <section class="tabletop-scene" data-home-scene data-depth-range-x="10" data-depth-range-y="8">
-        <a class="brand-mark scene-brand" href="index.html">
-          <span class="brand-mark__dot" aria-hidden="true"></span>
-          <span>Roscosmo Studio</span>
-        </a>
-
-        <div class="scene-ui">
-          <p class="scene-ui__hint">Tabletop overview. Click an object to move closer.</p>
-          <button class="scene-ui__reset" type="button" data-scene-reset hidden>
-            Back to table
-          </button>
-        </div>
-
-        <div class="tabletop-scene__viewport">
-          <div class="tabletop-scene__camera">
-            <div class="tabletop-scene__world">
-              <div class="scene-surface-tag scene-surface-tag--north" aria-hidden="true">
-                Tabletop overview
-              </div>
-              <div class="scene-surface-tag scene-surface-tag--south" aria-hidden="true">
-                Move across objects
-              </div>
-
-              <button
-                class="scene-object scene-object--profile"
-                type="button"
-                data-scene-target="profile"
-                data-depth="0.18"
-                aria-pressed="false"
-              >
-                <div class="scene-note">
-                  <p class="scene-note__kicker">Profile</p>
-                  <h1>Workshop notes.</h1>
-                  <p>Background, approach, and capabilities.</p>
-                </div>
-              </button>
-
-              <button
-                class="scene-object scene-object--projects"
-                type="button"
-                data-scene-target="projects"
-                data-depth="0.28"
-                aria-pressed="false"
-              >
-                <div class="scene-tray">
-                  <div
-                    class="layered-object"
-                    data-layered-scene
-                    data-metadata="assets/scene/home-project-object/metadata.json"
-                    data-scene-range-x="22"
-                    data-scene-range-y="14"
-                  >
-                    <img
-                      class="layered-object__poster"
-                      data-layer-poster
-                      src="assets/images/placeholder-project-01.svg"
-                      alt="Preview object representing selected project work"
-                      width="1600"
-                      height="1200"
-                      decoding="async"
-                    />
-                    <div class="layered-object__stack" data-layer-stack hidden></div>
-                  </div>
-                  <div class="scene-plaque">
-                    <span>Projects</span>
-                    <strong>Selected work</strong>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="scene-object scene-object--contact"
-                type="button"
-                data-scene-target="contact"
-                data-depth="0.14"
-                aria-pressed="false"
-              >
-                <div class="scene-card">
-                  <p class="scene-card__kicker">Contact</p>
-                  <p class="scene-card__mail">hello@example.com</p>
-                  <p>Commissions and collaboration.</p>
-                </div>
-              </button>
-
-              <article class="scene-detail scene-detail--profile" data-scene-panel="profile" aria-hidden="true">
-                <div class="detail-paper">
-                  <p class="detail-paper__kicker">Profile detail</p>
-                  <p>
-                    Independent design practice focused on physical product work,
-                    electronics, and buildable prototypes.
-                  </p>
-                  <ul class="detail-paper__list">
-                    <li>Background</li>
-                    <li>Approach</li>
-                    <li>Capabilities</li>
-                  </ul>
-                  <a class="detail-link detail-link--paper" href="profile.html">Open profile page</a>
-                </div>
-              </article>
-
-              <article class="scene-detail scene-detail--projects" data-scene-panel="projects" aria-hidden="true">
-                <div class="detail-dark">
-                  <p class="detail-dark__kicker">Projects detail</p>
-                  <p>Product design, hardware, interface experiments, and fabrication work.</p>
-                  <a class="detail-link" href="projects.html">Open projects page</a>
-                </div>
-              </article>
-
-              <article class="scene-detail scene-detail--contact" data-scene-panel="contact" aria-hidden="true">
-                <div class="detail-card">
-                  <p class="detail-card__kicker">Contact detail</p>
-                  <p class="detail-card__mail">hello@example.com</p>
-                  <p>Best for commissions, prototypes, and collaboration.</p>
-                  <a class="detail-link detail-link--paper" href="contact.html">Open contact page</a>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
+  <body>
+    <main>
+      <p>Redirecting to the landing page.</p>
+      <p><a href="index.html">Open landing page</a></p>
     </main>
   </body>
 </html>
