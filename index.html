@@ -6,72 +6,62 @@
     <title>Roscosmo Studio</title>
     <meta
       name="description"
-      content="Roscosmo Studio builds practical, playful product design, electronics, and fabrication work."
+      content="Roscosmo Studio."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script>
-      document.documentElement.classList.add("has-js");
-      try {
-        const savedPreset = localStorage.getItem("roscosmo-theme-preset");
-        const savedOverrides = localStorage.getItem("roscosmo-theme-overrides");
-        if (savedPreset) {
-          document.documentElement.dataset.theme = savedPreset;
-        }
-        if (savedOverrides) {
-          const overrides = JSON.parse(savedOverrides);
-          Object.keys(overrides).forEach((token) => {
-            document.documentElement.style.setProperty(token, overrides[token]);
-          });
-        }
-      } catch (error) {
-        console.warn("Theme preview could not be restored.", error);
+    <style>
+      * {
+        box-sizing: border-box;
       }
-    </script>
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    <script defer src="assets/js/main.js"></script>
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        min-height: 100%;
+        background: #000;
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+      }
+
+      main {
+        display: grid;
+        place-items: center;
+      }
+
+      img {
+        display: block;
+        width: min(680px, 88vw);
+        height: auto;
+        image-rendering: pixelated;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
   </head>
-  <body class="page-intro" data-page="intro">
-    <a class="skip-link" href="#main">Skip to content</a>
-
-    <main id="main" class="entry-stage" data-intro-stage>
-      <div class="entry-stage__grid" aria-hidden="true"></div>
-      <div class="entry-stage__glow entry-stage__glow--orange" data-depth="1.05" aria-hidden="true"></div>
-      <div class="entry-stage__glow entry-stage__glow--blue" data-depth="0.8" aria-hidden="true"></div>
-      <div class="entry-stage__slime" aria-hidden="true"></div>
-
-      <section class="entry-card" data-depth="0.2">
-        <p class="entry-card__kicker">Roscosmo Studio / R&amp;D</p>
-
-        <h1 class="entry-wordmark" aria-label="Roscosmo">
-          <span class="entry-wordmark__warm">Rosco</span>
-          <span class="entry-wordmark__cool">smo</span>
-        </h1>
-
-        <p class="entry-card__lead">
-          Industrial design, electronics, fabrication, and experimental product development.
-        </p>
-
-        <div class="entry-card__chips" aria-label="Studio focus areas">
-          <span>Objects</span>
-          <span>Electronics</span>
-          <span>Prototypes</span>
-        </div>
-
-        <div class="entry-card__meta">
-          <p>Single-page holding site while the full archive is rebuilt.</p>
-          <a class="entry-email" href="mailto:hello@example.com">hello@example.com</a>
-        </div>
-      </section>
-
-      <aside class="entry-note">
-        <p class="entry-note__title">Selected work in physical design, interactive hardware, fabrication, and visual documentation.</p>
-        <p class="entry-note__sub">One page only for now. Everything else routes back here.</p>
-      </aside>
+  <body>
+    <main>
+      <h1 class="sr-only">Roscosmo Studio</h1>
+      <img
+        src="assets/images/roscosmor&amp;d_logo_bitlvel.png"
+        alt="Roscosmo R and D logo"
+        width="116"
+        height="58"
+      />
     </main>
   </body>
 </html>
