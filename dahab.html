@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dahab | Roscosmo Studio</title>
+    <meta
+      name="description"
+      content="Dahab is a 2021 personal Unity Android prototype: a small Arabic-inspired round-based action game."
+    />
+    <style>
+      :root {
+        --page-bg: #000000;
+        --text: #ffffff;
+        --text-muted: rgba(255, 255, 255, 0.84);
+        --line: rgba(255, 255, 255, 0.16);
+        --overlay: rgba(0, 0, 0, 0.58);
+        --surface: rgba(0, 0, 0, 0.44);
+        --font-body: "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--page-bg);
+        color: var(--text);
+        font-family: var(--font-body);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.72)),
+          url("assets/images/dahab.png") center center / cover no-repeat;
+        pointer-events: none;
+        z-index: -2;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: var(--overlay);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      main {
+        width: min(1100px, calc(100vw - 2rem));
+        margin: 0 auto;
+        min-height: 100vh;
+        padding: clamp(1.5rem, 4vw, 3rem) 0;
+        display: grid;
+        align-content: start;
+        gap: 2rem;
+      }
+
+      .hero {
+        display: grid;
+        gap: 1rem;
+        max-width: 42rem;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3rem, 8vw, 6rem);
+        line-height: 0.92;
+        letter-spacing: -0.05em;
+      }
+
+      .summary {
+        margin: 0;
+        max-width: 38rem;
+        color: var(--text-muted);
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        line-height: 1.6;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 3rem;
+        padding: 0.85rem 1.15rem;
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+        text-decoration: none;
+        font-size: 0.92rem;
+        font-weight: 600;
+        transition:
+          background-color 160ms ease,
+          border-color 160ms ease,
+          transform 160ms ease;
+      }
+
+      .button:hover,
+      .button:focus-visible {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
+
+      .video-block {
+        width: 100%;
+        max-width: 980px;
+      }
+
+      .video-shell {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+
+      .video-shell iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .meta {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100vw - 1.5rem, 1100px);
+          padding: 1.25rem 0;
+          gap: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Android Game / Unity / 2021 Prototype</p>
+        <h1>Dahab</h1>
+        <p class="summary">
+          Dahab is a small Arabic-inspired, round-based action prototype built in Unity as a
+          personal Android proof of concept. The goal was to make something playable, mobile-friendly,
+          and atmospheric without aiming for a polished commercial release.
+        </p>
+        <div class="actions">
+          <a
+            class="button"
+            href="https://github.com/roscosmo/Dahab/releases/download/V1/Dahab-1.0.apk"
+          >
+            Download APK
+          </a>
+          <a class="button" href="https://github.com/roscosmo/Dahab">
+            View Source
+          </a>
+        </div>
+        <p class="meta">Latest APK: Dahab 1.0, published August 13, 2026.</p>
+      </section>
+
+      <section class="video-block" aria-label="Dahab gameplay trailer">
+        <div class="video-shell">
+          <iframe
+            src="https://www.youtube.com/embed/LYPKU8XFADE"
+            title="Dahab gameplay trailer"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
