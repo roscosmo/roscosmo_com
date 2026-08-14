@@ -31,8 +31,16 @@
          To change the file or path, update the `src` URL below. */
       @font-face {
         font-family: 'Arabian';
-        src: url('assets/fonts/arabian.ttf') format('truetype');
-        font-weight: 400 800;
+        /* Try multiple locations and filename variants so the font loads whether
+           it was placed in `assets/fonts/` or `assets/font/`, and whether the
+           filename uses capital letters. Add woff/woff2 if you generate them. */
+        src: url('assets/fonts/Arabian.woff2') format('woff2'),
+             url('assets/fonts/Arabian.woff') format('woff'),
+             url('assets/fonts/Arabian.ttf') format('truetype'),
+             url('assets/fonts/arabian.ttf') format('truetype'),
+             url('assets/font/Arabian.ttf') format('truetype'),
+             url('assets/font/arabian.ttf') format('truetype');
+        font-weight: 100 900;
         font-style: normal;
         font-display: swap;
       }
@@ -388,6 +396,29 @@
 
     </main>
   </body>
+  <script>
+    // Debug helper: logs whether the Arabian font has loaded. Remove after testing.
+    (function(){
+      try {
+        var name = 'Arabian';
+        if (document.fonts && document.fonts.load) {
+          document.fonts.load('1em ' + name).then(function(){
+            console.info(name + ' font loaded');
+          }).catch(function(){
+            console.warn(name + ' font failed to load');
+          });
+          // extra check a short time later
+          setTimeout(function(){
+            console.info('font check', name, document.fonts.check('1em ' + name));
+          }, 600);
+        } else {
+          console.info('Font Loading API not available in this browser');
+        }
+      } catch (e) {
+        console.error('font debug error', e);
+      }
+    })();
+  </script>
 </html>
 
 
