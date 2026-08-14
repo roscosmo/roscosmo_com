@@ -72,10 +72,11 @@
         width: min(1100px, calc(100vw - 2rem));
         margin: 0 auto;
         min-height: 100vh;
-        /* Add a subtle framed container around the page content.
-           Change or remove this border if you don't want the boxed look. */
-        border: var(--line-width) solid var(--line);
-        border-radius: calc(var(--radius) + 4px);
+          /* Framing removed: if you want a boxed/frame look again,
+            uncomment the `border` and `border-radius` lines below and tweak
+            `--line-width` and `--radius` in the `:root` section. */
+          /* border: var(--line-width) solid var(--line); */
+          /* border-radius: calc(var(--radius) + 4px); */
         padding: clamp(1.5rem, 4vw, 3rem) 0;
         display: grid;
         align-content: start;
