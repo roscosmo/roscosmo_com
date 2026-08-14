@@ -50,9 +50,11 @@
         content: "";
         position: fixed;
         inset: 0;
-        background:
-          linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.6)),
-          url("assets/images/dahab_bg.png") center center / cover no-repeat;
+        /* Explicitly set the page background layers for this page and use
+           !important so any site-wide grid/background overlays are overridden.
+           This removes thin guide/grid lines defined elsewhere. */
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.6)),
+          url("assets/images/dahab_bg.png") center center / cover no-repeat !important;
         pointer-events: none;
         z-index: 0;
       }
@@ -225,7 +227,7 @@
       <section class="video-block" aria-label="Dahab gameplay trailer">
         <div class="video-shell">
           <iframe
-            src="https://www.youtube.com/watch?v=9hDxcIAAMjc"
+            src="https://www.youtube.com/embed/9hDxcIAAMjc"
             title="Dahab gameplay trailer"
             loading="lazy"
             referrerpolicy="strict-origin-when-cross-origin"
