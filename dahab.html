@@ -191,6 +191,54 @@
         border-radius: var(--radius);
       }
 
+      /* Skills/logo grid */
+      .skills {
+        width: 100%;
+        max-width: 980px;
+      }
+
+      .skills-grid {
+        display: flex;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+        align-items: center;
+      }
+
+      .skill {
+        width: 88px;
+        height: 88px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--chip-bg);
+        border: var(--line-width) solid var(--line);
+        border-radius: calc(var(--radius) - 4px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .skill img {
+        max-width: 64%;
+        max-height: 64%;
+        display: block;
+      }
+
+      /* Fallback badge when logo file isn't available. Tweak font-size to fit longer initials. */
+      .skill .fallback {
+        color: var(--text);
+        font-weight: 700;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+      }
+
+      @media (max-width: 520px) {
+        .skill {
+          width: 68px;
+          height: 68px;
+        }
+      }
+
       @media (max-width: 720px) {
         main {
           width: min(100vw - 1.5rem, 1100px);
@@ -223,17 +271,58 @@
         </div>
         <p class="meta">Latest APK: Dahab 1.0, published August 13, 2026.</p>
       </section>
+      
+      <!-- Skills block: logos for technologies used in the project. 
+           To use real logos, place icons in `assets/images/skills/` and name
+           them `unity.svg`, `csharp.svg`, `shader-graph.svg`, `adb.svg`, etc.
+           Each `.skill` will attempt to load the image at the `data-src` path;
+           if the file is missing the CSS fallback (initials) will be shown. -->
+      <section class="skills" aria-label="Technologies used">
+        <div class="skills-grid">
+          <div class="skill" data-src="assets/images/skills/unity.svg" aria-label="Unity">
+            <img alt="Unity logo" src="assets/images/skills/unity.svg" onerror="this.style.display='none'"/>
+            <div class="fallback">U</div>
+          </div>
+
+          <div class="skill" data-src="assets/images/skills/csharp.svg" aria-label="C Sharp">
+            <img alt="C# logo" src="assets/images/skills/csharp.svg" onerror="this.style.display='none'"/>
+            <div class="fallback">C#</div>
+          </div>
+
+          <div class="skill" data-src="assets/images/skills/shader-graph.svg" aria-label="Shader Graph">
+            <img alt="Shader Graph logo" src="assets/images/skills/shader-graph.svg" onerror="this.style.display='none'"/>
+            <div class="fallback">SG</div>
+          </div>
+
+          <div class="skill" data-src="assets/images/skills/adb.svg" aria-label="Android Debug Bridge">
+            <img alt="ADB logo" src="assets/images/skills/adb.svg" onerror="this.style.display='none'"/>
+            <div class="fallback">ADB</div>
+          </div>
+
+          <div class="skill" data-src="assets/images/skills/cpp.svg" aria-label="C++">
+            <img alt="C++ logo" src="assets/images/skills/cpp.svg" onerror="this.style.display='none'"/>
+            <div class="fallback">C++</div>
+          </div>
+        </div>
+      </section>
 
       <section class="video-block" aria-label="Dahab gameplay trailer">
         <div class="video-shell">
           <iframe
-            src="https://www.youtube.com/embed/9hDxcIAAMjc?si=U0ONgs2pNJSeloFN"
+            src="https://www.youtube-nocookie.com/embed/9hDxcIAAMjc?si=U0ONgs2pNJSeloFN"
             title="Dahab gameplay trailer"
             loading="lazy"
             referrerpolicy="strict-origin-when-cross-origin"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
           ></iframe>
+          <!-- Fallback note: some videos may be blocked from embedding by the video owner
+               or by browser privacy settings. If the player is blocked in your browser,
+               click the link below to open the trailer directly on YouTube. -->
+          <p class="meta" style="margin-top:0.75rem;">
+            If the player is blocked, open the trailer on
+            <a class="text-link" href="https://www.youtube.com/watch?v=9hDxcIAAMjc" target="_blank" rel="noopener">YouTube</a>.
+          </p>
         </div>
       </section>
     </main>
