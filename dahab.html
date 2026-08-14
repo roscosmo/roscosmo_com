@@ -10,10 +10,18 @@
     />
     <style>
       :root {
+        /* ----- Page color tokens -----
+           Tweak these variables to adjust the page look globally.
+           - `--line` controls the color of subtle lines and borders.
+           - `--line-width` controls how thick those lines are.
+           - `--radius` controls corner rounding for elements.
+        */
         --page-bg: #000000;
         --text: #ffffff;
         --text-muted: rgba(255, 255, 255, 0.84);
         --line: rgba(255, 255, 255, 0.16);
+        --line-width: 2px; /* increase for thicker borders (try 3px for more weight) */
+        --radius: 10px; /* increase to make corners more rounded */
         --overlay: rgba(0, 0, 0, 0.20);
         --surface: rgba(0, 0, 0, 0.12);
         --font-body: "Segoe UI", sans-serif;
@@ -64,6 +72,10 @@
         width: min(1100px, calc(100vw - 2rem));
         margin: 0 auto;
         min-height: 100vh;
+        /* Add a subtle framed container around the page content.
+           Change or remove this border if you don't want the boxed look. */
+        border: var(--line-width) solid var(--line);
+        border-radius: calc(var(--radius) + 4px);
         padding: clamp(1.5rem, 4vw, 3rem) 0;
         display: grid;
         align-content: start;
@@ -74,6 +86,8 @@
         display: grid;
         gap: 1rem;
         max-width: 42rem;
+        /* Make hero corners match the rest of the page */
+        border-radius: calc(var(--radius) - 2px);
       }
 
       .eyebrow {
@@ -106,13 +120,15 @@
         gap: 0.85rem;
       }
 
+      /* Buttons: use the global line width and radius so borders feel consistent */
       .button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         min-height: 3rem;
         padding: 0.85rem 1.15rem;
-        border: 1px solid var(--line);
+        border: var(--line-width) solid var(--line);
+        border-radius: var(--radius);
         color: var(--text);
         background: rgba(255, 255, 255, 0.06);
         text-decoration: none;
@@ -136,15 +152,19 @@
         max-width: 980px;
       }
 
+      /* Video container: slightly more prominent border and rounded corners */
       .video-shell {
         position: relative;
         width: 100%;
         padding-top: 56.25%;
         background: var(--surface);
-        border: 1px solid var(--line);
-        overflow: hidden;
+        border: var(--line-width) solid var(--line);
+        border-radius: calc(var(--radius) - 2px);
+        overflow: hidden; /* keeps iframe clipped to the rounded corners */
       }
 
+      /* The iframe fills the container; it doesn't need its own radius because the
+         parent clips overflow. Keep `border: 0` so there are no default chrome lines. */
       .video-shell iframe {
         position: absolute;
         inset: 0;
@@ -157,6 +177,15 @@
         margin: 0;
         color: rgba(255, 255, 255, 0.72);
         font-size: 0.9rem;
+      }
+
+      /* Apply rounded corners to other common page blocks so the look is consistent.
+         Adjust selectors if you add more components that should match. */
+      section,
+      .video-block,
+      .actions,
+      .summary {
+        border-radius: var(--radius);
       }
 
       @media (max-width: 720px) {
@@ -195,7 +224,7 @@
       <section class="video-block" aria-label="Dahab gameplay trailer">
         <div class="video-shell">
           <iframe
-            src="https://www.youtube.com/embed/LYPKU8XFADE"
+            src="https://www.youtube.com/watch?v=9hDxcIAAMjc"
             title="Dahab gameplay trailer"
             loading="lazy"
             referrerpolicy="strict-origin-when-cross-origin"
