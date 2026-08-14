@@ -27,6 +27,16 @@
         --font-body: "Segoe UI", sans-serif;
       }
 
+      /* Game title font: loads the Arabian font used in the Unity project.
+         To change the file or path, update the `src` URL below. */
+      @font-face {
+        font-family: 'Arabian';
+        src: url('assets/fonts/arabian.ttf') format('truetype');
+        font-weight: 400 800;
+        font-style: normal;
+        font-display: swap;
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -104,6 +114,8 @@
 
       h1 {
         margin: 0;
+        /* Use the Arabian font for the page title; fallback to the site's heading font */
+        font-family: 'Arabian', var(--font-heading), sans-serif;
         font-size: clamp(3rem, 8vw, 6rem);
         line-height: 0.92;
         letter-spacing: -0.05em;
