@@ -199,43 +199,71 @@
 
       .skills-grid {
         display: flex;
-        gap: 0.9rem;
-        flex-wrap: wrap;
+        gap: 0.75rem;
+        flex-direction: column; /* vertical list */
         margin-top: 1rem;
-        align-items: center;
       }
 
       .skill {
-        width: 88px;
-        height: 88px;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        background: rgba(255,255,255,0.02);
+        border: var(--line-width) solid var(--line);
+        padding: 0.6rem;
+        border-radius: calc(var(--radius) - 2px);
+      }
+
+      .skill-logo {
+        width: 64px;
+        height: 64px;
+        min-width: 64px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         background: var(--chip-bg);
-        border: var(--line-width) solid var(--line);
         border-radius: calc(var(--radius) - 4px);
-        position: relative;
         overflow: hidden;
       }
 
-      .skill img {
+      .skill-logo img {
         max-width: 64%;
         max-height: 64%;
         display: block;
       }
 
-      /* Fallback badge when logo file isn't available. Tweak font-size to fit longer initials. */
       .skill .fallback {
         color: var(--text);
         font-weight: 700;
         font-size: 0.95rem;
-        letter-spacing: 0.02em;
+      }
+
+      .skill-body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .skill-title {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .skill-desc {
+        font-size: 0.9rem;
+        color: var(--text-muted);
       }
 
       @media (max-width: 520px) {
         .skill {
-          width: 68px;
-          height: 68px;
+          gap: 0.6rem;
+          padding: 0.5rem;
+        }
+
+        .skill-logo {
+          width: 56px;
+          height: 56px;
+          min-width: 56px;
         }
       }
 
@@ -272,36 +300,76 @@
         <p class="meta">Latest APK: Dahab 1.0, published August 13, 2026.</p>
       </section>
       
-      <!-- Skills block: logos for technologies used in the project. 
-           To use real logos, place icons in `assets/images/skills/` and name
-           them `unity.svg`, `csharp.svg`, `shader-graph.svg`, `adb.svg`, etc.
-           Each `.skill` will attempt to load the image at the `data-src` path;
-           if the file is missing the CSS fallback (initials) will be shown. -->
+      <!-- Skills block: vertical list of technologies used with short notes.
+           Place logo files in `assets/images/skills/` named like `unity.svg`,
+           `csharp.svg`, `shader-graph.svg`, `adb.svg`. If a logo file is missing
+           a compact text fallback will be shown. -->
       <section class="skills" aria-label="Technologies used">
         <div class="skills-grid">
-          <div class="skill" data-src="assets/images/skills/unity.svg" aria-label="Unity">
-            <img alt="Unity logo" src="assets/images/skills/unity.svg" onerror="this.style.display='none'"/>
-            <div class="fallback">U</div>
+          <div class="skill">
+            <div class="skill-logo">
+              <img alt="Unity logo" src="assets/images/skills/unity.svg" onerror="this.style.display='none'"/>
+              <div class="fallback">U</div>
+            </div>
+            <div class="skill-body">
+              <div class="skill-title">Unity</div>
+              <div class="skill-desc">Engine, scene setup, prefabs and Editor tools used to build gameplay and levels.</div>
+            </div>
           </div>
 
-          <div class="skill" data-src="assets/images/skills/csharp.svg" aria-label="C Sharp">
-            <img alt="C# logo" src="assets/images/skills/csharp.svg" onerror="this.style.display='none'"/>
-            <div class="fallback">C#</div>
+          <div class="skill">
+            <div class="skill-logo">
+              <img alt="C# logo" src="assets/images/skills/csharp.svg" onerror="this.style.display='none'"/>
+              <div class="fallback">C#</div>
+            </div>
+            <div class="skill-body">
+              <div class="skill-title">C#</div>
+              <div class="skill-desc">Gameplay scripting, game state, input handling and core logic.</div>
+            </div>
           </div>
 
-          <div class="skill" data-src="assets/images/skills/shader-graph.svg" aria-label="Shader Graph">
-            <img alt="Shader Graph logo" src="assets/images/skills/shader-graph.svg" onerror="this.style.display='none'"/>
-            <div class="fallback">SG</div>
+          <div class="skill">
+            <div class="skill-logo">
+              <img alt="Shader Graph logo" src="assets/images/skills/shader-graph.svg" onerror="this.style.display='none'"/>
+              <div class="fallback">SG</div>
+            </div>
+            <div class="skill-body">
+              <div class="skill-title">Shader Graph</div>
+              <div class="skill-desc">Custom materials and effects made with Unity's Shader Graph for the game's look.</div>
+            </div>
           </div>
 
-          <div class="skill" data-src="assets/images/skills/adb.svg" aria-label="Android Debug Bridge">
-            <img alt="ADB logo" src="assets/images/skills/adb.svg" onerror="this.style.display='none'"/>
-            <div class="fallback">ADB</div>
+          <div class="skill">
+            <div class="skill-logo">
+              <img alt="UI logo" src="assets/images/skills/ui.svg" onerror="this.style.display='none'"/>
+              <div class="fallback">UI</div>
+            </div>
+            <div class="skill-body">
+              <div class="skill-title">UI / UX</div>
+              <div class="skill-desc">Responsive HUD and menus using Unity UI and TextMeshPro for mobile-friendly UX.</div>
+            </div>
           </div>
 
-          <div class="skill" data-src="assets/images/skills/cpp.svg" aria-label="C++">
-            <img alt="C++ logo" src="assets/images/skills/cpp.svg" onerror="this.style.display='none'"/>
-            <div class="fallback">C++</div>
+          <div class="skill">
+            <div class="skill-logo">
+              <img alt="Mobile Input" src="assets/images/skills/mobile-input.svg" onerror="this.style.display='none'"/>
+              <div class="fallback">MI</div>
+            </div>
+            <div class="skill-body">
+              <div class="skill-title">Mobile Input</div>
+              <div class="skill-desc">Touch, gestures and accelerometer support tuned for Android devices.</div>
+            </div>
+          </div>
+
+          <div class="skill">
+            <div class="skill-logo">
+              <img alt="ADB logo" src="assets/images/skills/adb.svg" onerror="this.style.display='none'"/>
+              <div class="fallback">ADB</div>
+            </div>
+            <div class="skill-body">
+              <div class="skill-title">ADB / Android Tooling</div>
+              <div class="skill-desc">Device deploys, logs, and debugging using ADB and the Android SDK.</div>
+            </div>
           </div>
         </div>
       </section>
