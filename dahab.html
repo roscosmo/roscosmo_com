@@ -31,10 +31,16 @@
          To change the file or path, update the `src` URL below. */
       @font-face {
         font-family: 'Arabian';
-        /* Try multiple locations and filename variants so the font loads whether
-           it was placed in `assets/fonts/` or `assets/font/`, and whether the
-           filename uses capital letters. Add woff/woff2 if you generate them. */
-        src: url('assets/fonts/Arabian.woff2') format('woff2'),
+        /* Try absolute paths first (leading slash) to avoid relative path issues
+           when the page is served from a different directory. Keep the relative
+           fallbacks for local testing. */
+        src: url('/assets/fonts/Arabian.woff2') format('woff2'),
+             url('/assets/fonts/Arabian.woff') format('woff'),
+             url('/assets/fonts/Arabian.ttf') format('truetype'),
+             url('/assets/fonts/arabian.ttf') format('truetype'),
+             url('/assets/font/Arabian.ttf') format('truetype'),
+             url('/assets/font/arabian.ttf') format('truetype'),
+             url('assets/fonts/Arabian.woff2') format('woff2'),
              url('assets/fonts/Arabian.woff') format('woff'),
              url('assets/fonts/Arabian.ttf') format('truetype'),
              url('assets/fonts/arabian.ttf') format('truetype'),
