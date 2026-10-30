@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dahab | Roscosmo Studio</title>
-    <link rel="icon" type="image/png" href="assets/images/dahab-logo.png" />
+    <link rel="icon" type="image/png" href="assets/images/peepguy.png" />
     <meta
       name="description"
       content="Dahab is a 2021 personal Unity Android prototype: a small Arabic-themed round-based action game, where you have to collect your weapons and survive as long as possible. Monsters respawn larger and more dangerous after dying."
@@ -134,6 +134,18 @@
         font-size: clamp(3rem, 8vw, 6rem);
         line-height: 0.92;
         letter-spacing: -0.05em;
+      }
+
+      .title-logo-wrap {
+        display: block;
+        margin: 0;
+        max-width: min(100%, 28rem);
+      }
+
+      .title-logo {
+        display: block;
+        width: 100%;
+        height: auto;
       }
 
       .summary {
@@ -307,7 +319,9 @@
     <main>
       <section class="hero">
         <p class="eyebrow">Android Game / Unity / 2021 Prototype</p>
-        <h1>Dahab</h1>
+        <h1 class="title-logo-wrap" aria-label="Dahab">
+          <img class="title-logo" src="assets/images/dahab-logo.png" alt="Dahab" />
+        </h1>
         <p class="summary">
           Dahab is a small Arabic-themed, round-based action prototype built in Unity as a
           personal Android proof of concept. The goal was to make something playable, mobile-friendly,
