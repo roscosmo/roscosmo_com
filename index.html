@@ -6,7 +6,6 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="Roscosmo R&D. Engineering, design, and independent projects.">
-<link rel="icon" type="image/png" href="assets/images/peepguy.png" />
 <title>Roscosmo R&amp;D</title>
 <style>
   :root {
@@ -50,6 +49,8 @@
     max-width: 100%;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+    /* The anchor is not a rectangular click target. Only painted SVG shapes can receive pointer events. */
+    pointer-events: none;
   }
   .logo-link:focus-visible {
     outline: 2px solid #e8e8ec;
@@ -66,7 +67,24 @@
     touch-action: pan-y;
     shape-rendering: auto;
     text-rendering: geometricPrecision;
+    pointer-events: none;
   }
+  /* Re-enable pointer targeting only on actual vector artwork. */
+  #roscosmo .ink-path,
+  #roscosmo .glint,
+  #roscosmo .counter,
+  #roscosmo .sclera,
+  #roscosmo .pupil-ink,
+  #roscosmo .pupil-glint {
+    pointer-events: visiblePainted;
+  }
+  /* Letters are links, but their holes are empty space. The eye is a poke target. */
+  #roscosmo .ink-path,
+  #roscosmo .glint,
+  #roscosmo .sclera,
+  #roscosmo .pupil-ink,
+  #roscosmo .pupil-glint { cursor: pointer; }
+  #roscosmo .counter { cursor: default; }
   .ink-path, .pupil-ink {
     fill: url(#inkGradient);
     stroke: url(#edgeGradient);
@@ -120,9 +138,8 @@
 <main class="stage" aria-label="Roscosmo R and D landing page">
   <a class="logo-link" href="./site.html" aria-label="Enter Roscosmo R&amp;D website">
 <svg xmlns="http://www.w3.org/2000/svg" id="roscosmo" viewBox="0 0 1190.551 841.89" role="img" aria-labelledby="roscosmoTitle roscosmoDesc">
-    <link rel="icon" type="image/png" href="assets/images/peepguy.png" />
-<title id="roscosmoTitle">ROSCOSMO R&amp;D</title>
-    <desc id="roscosmoDesc">Animated original vector wordmark with subtle monochrome edge glow, moving letterforms and one curious alien eye.</desc>
+    <title id="roscosmoTitle">ROSCOSMO R&amp;D</title>
+    <desc id="roscosmoDesc">Animated original vector wordmark with subtle monochrome edge glow, moving letters and a curious eye. Click or tap the eye to make it blink.</desc>
     <defs>
       <clipPath id="eyeOpening" clipPathUnits="userSpaceOnUse">
         <path d="M587.755 401.445 C587.865 359.947 617.733 319.296 658.135 308.656 C710.236 294.935 754.849 334.545 754.855 386.9 C754.86 424.643 732.846 460.818 697.396 475.022 C687.336 479.053 676.411 480.699 665.612 480.7 C620.043 480.704 587.636 446.652 587.755 401.445 Z" />
@@ -260,6 +277,27 @@
   let pointerPresent = false, lastPointer = -1e6, mouseX = 0, mouseY = 0;
   let lookX = 0, lookY = 0, wanderX = 0, wanderY = 0, nextWander = 0;
   let nextBlink = 6, blinkStart = -1, firstT = null, lastT = 0;
+  let lastPoke = -Infinity;
+
+  // Eye-poke reaction: snap shut, reopen, then give a smaller startled blink.
+  function smoothstep(u) {
+    const x = Math.max(0, Math.min(1, u));
+    return x * x * (3 - 2 * x);
+  }
+  function pokeClosure(age) {
+    if (age < 0 || age >= .62) return 0;
+    if (age < .09) return smoothstep(age / .09);
+    if (age < .18) return 1;
+    if (age < .34) return 1 - smoothstep((age - .18) / .16);
+    if (age < .44) return 0;
+    if (age < .50) return .55 * smoothstep((age - .44) / .06);
+    return .55 * (1 - smoothstep((age - .50) / .12));
+  }
+  function pokeEye() {
+    lastPoke = performance.now() * .001;
+    blinkStart = -1; // The deliberate reaction takes priority over idle blinking.
+    nextBlink = lastT + 4 + Math.random() * 6;
+  }
 
   // Existing SVG face details still use the chosen monochrome highlights.
   document.documentElement.style.setProperty('--edge', String(Math.min(1, .16 + EDGE_DEFINITION * .68)));
@@ -351,12 +389,23 @@
   window.addEventListener('touchend', finishTouch, {passive: true});
   window.addEventListener('touchcancel', finishTouch, {passive: true});
 
-  // A drag that starts on the clickable logo must not enter the website.
-  // A stationary tap still follows the link normally.
+  // The HTML anchor has pointer-events:none. Painted letter paths are the
+  // only link targets, so gaps around and inside the logo are not clickable.
+  // Clicking the white eye or pupil pokes the creature without navigating.
   logoLink.addEventListener('click', e => {
-    if (!suppressDragClick) return;
-    e.preventDefault();
-    suppressDragClick = false;
+    if (suppressDragClick) {
+      e.preventDefault();
+      suppressDragClick = false;
+      return;
+    }
+    const target = e.target;
+    if (target instanceof Element && target.closest('#eyeArtwork')) {
+      e.preventDefault();
+      pokeEye();
+    } else if (target instanceof Element && target.closest('.counter')) {
+      // Counter shapes paint the lettering's holes black; keep them inert.
+      e.preventDefault();
+    }
   });
 
   function tick(ms) {
@@ -384,12 +433,18 @@
     pupil.setAttribute('transform', `translate(${(pupilBase.x + clamped.x).toFixed(2)} ${(pupilBase.y + clamped.y).toFixed(2)})`);
 
     // Masking eyelids never resize or translate the eyeball.
-    if (t >= nextBlink && blinkStart < 0) blinkStart = t;
+    const pokeAge = ms * .001 - lastPoke;
+    const poking = pokeAge >= 0 && pokeAge < .62;
     let closure = 0;
-    if (blinkStart >= 0) {
-      const u = (t - blinkStart) / .24;
-      if (u >= 1) {blinkStart = -1; nextBlink = t + 4 + Math.random() * 6;}
-      else closure = Math.sin(Math.PI * Math.max(0, u));
+    if (poking) {
+      closure = pokeClosure(pokeAge);
+    } else {
+      if (t >= nextBlink && blinkStart < 0) blinkStart = t;
+      if (blinkStart >= 0) {
+        const u = (t - blinkStart) / .24;
+        if (u >= 1) {blinkStart = -1; nextBlink = t + 4 + Math.random() * 6;}
+        else closure = Math.sin(Math.PI * Math.max(0, u));
+      }
     }
     const cover = 97 * closure;
     blinkTop.setAttribute('height', cover.toFixed(2));
