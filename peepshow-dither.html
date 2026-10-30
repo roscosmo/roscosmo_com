@@ -1,25 +1,188 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PeepShow Dither Studio</title>
+<title>PeepShow Dither Studio v2.1</title>
 <style>
-:root{color-scheme:dark;--bg:#10121a;--panel:#1b2030;--edge:#414b63;--text:#e9edf5;--muted:#aeb9cc;--accent:#a3c6ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,sans-serif}main{max-width:1350px;margin:auto;padding:24px}h1{font-size:26px;margin:0 0 4px}h2{font-size:16px;margin:0 0 14px}p{margin:6px 0 15px;color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(290px,370px) 1fr;gap:18px;align-items:start}.panel{background:var(--panel);padding:18px;border:1px solid var(--edge);border-radius:12px}.controls{display:grid;gap:16px}.field label{display:block;font-weight:650;margin-bottom:5px}.field small,.hint{display:block;color:var(--muted);font-size:12px;margin-top:5px}input[type=file],select,input[type=number]{width:100%;padding:9px;background:#111827;color:var(--text);border:1px solid var(--edge);border-radius:7px}input[type=range]{width:100%;accent-color:var(--accent)}button{border:1px solid var(--edge);border-radius:7px;background:#303b54;color:var(--text);padding:9px 12px;cursor:pointer}button:hover{background:#414f70}button:disabled{opacity:.5;cursor:not-allowed}.primary{background:#b2ceff;color:#101a32;font-weight:750;border:0}.row{display:flex;align-items:center;gap:10px}.row>input[type=number]{width:70px}.row>input[type=range]{flex:1}.toggle{display:flex;align-items:center;gap:8px}.toggle input{accent-color:var(--accent)}.preview{display:grid;grid-template-columns:1fr 1fr;gap:14px}.viewbox{background-color:#272d3d;background-image:linear-gradient(45deg,#343b4e 25%,transparent 25%),linear-gradient(-45deg,#343b4e 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#343b4e 75%),linear-gradient(-45deg,transparent 75%,#343b4e 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;min-height:280px;height:370px;display:flex;justify-content:center;align-items:center;overflow:auto;border:1px solid var(--edge);border-radius:8px;padding:12px}.viewbox canvas{image-rendering:pixelated;max-width:100%;max-height:100%;object-fit:contain}.viewlabel{font-weight:700;margin-bottom:8px}.toneRow{display:grid;grid-template-columns:90px 32px 1fr;gap:7px;align-items:center;margin-top:9px}.swatch{height:28px;width:28px;border:1px solid #8b98ad;border-radius:4px}.patternRow{border:1px solid var(--edge);border-radius:7px;padding:9px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:8px 0}.paintGrid{display:grid;grid-template-columns:repeat(var(--n),26px);gap:2px;touch-action:none}.paintCell{padding:0;width:26px;height:26px;background:#fff;border:1px solid #7f8998;border-radius:2px}.paintCell.black{background:#000}.tools{display:flex;gap:8px;flex-wrap:wrap}.stats{color:var(--muted);margin-top:12px}.section{border-top:1px solid var(--edge);padding-top:15px}.hidden{display:none!important}#status{margin-top:12px;color:var(--muted);white-space:pre-line}#error{color:#ffb2b2}input[type=checkbox]{width:16px;height:16px}@media(max-width:850px){.layout{grid-template-columns:1fr}.preview{grid-template-columns:1fr}.viewbox{height:320px}}@media(max-width:420px){main{padding:12px}}
-</style></head><body><main><h1>PeepShow Dither Studio</h1><p>Convert five-colour Aseprite sprites and transparency to scaled monochrome PNGs. Runs locally in your browser. No uploads, dependencies or network requests.</p>
-<div class="layout"><section class="panel controls">
-<div class="field"><label for="art">Artwork (PNG or other browser-supported image)</label><input id="art" type="file" accept="image/*"></div>
-<div class="field"><label for="pal">Palette (.aseprite, .ase, .gpl, .pal, .hex)</label><input id="pal" type="file" accept=".aseprite,.ase,.gpl,.pal,.hex,.txt"><small id="paletteStatus">Optional. Load a palette for exact five-tone selection.</small><div id="toneMap" class="hidden"></div></div>
-<div class="section field"><label for="scale">Output scale</label><div class="row"><input id="scale" type="range" min="1" max="8" value="2"><input id="scaleN" type="number" min="1" max="8" value="2"></div></div>
-<div class="field"><label for="resize">Resampling</label><select id="resize"><option value="nearest">Nearest-neighbour (crisp pixel boundaries)</option><option value="smooth">Smooth / blended (soft tone transitions)</option></select><small>Both modes export only black, white and transparent pixels.</small></div>
-<div class="field"><label for="algorithm">Dither method</label><select id="algorithm"><option value="atkinson">Atkinson</option><option value="floyd">Floyd–Steinberg</option><option value="jarvis">Jarvis–Judice–Ninke</option><option value="bayer4">Ordered Bayer 4×4</option><option value="bayer8">Ordered Bayer 8×8</option><option value="threshold">Threshold (no dithering)</option><option value="custom">Custom painted patterns</option></select></div>
-<div id="paintPanel" class="section hidden"><label class="toggle"><input type="checkbox" id="linkSize" checked>Link painted grid size to output scale</label><div class="field" style="margin-top:12px"><label for="gridSize">Pattern grid</label><select id="gridSize"></select><small id="gridHelp"></small></div><div id="patternRows"></div><div class="tools"><button id="reset" type="button">Reset patterns</button></div><small class="hint">Left-click/drag to paint. Right-click/drag to erase. At 2× output scale, the default pattern is 2×2. Manual grid sizes can span multiple output pixels.</small></div>
-<div class="field" id="thresholdField"><label for="threshold">Threshold: <output id="thresholdOut">128</output></label><input id="threshold" type="range" min="0" max="255" value="128"></div>
-<div class="field" id="gammaField"><label for="gamma">Gamma: <output id="gammaOut">1.00</output></label><input id="gamma" type="range" min="0.4" max="2.2" step="0.05" value="1"></div>
-<div class="field"><label for="alpha">Transparency cutoff: <output id="alphaOut">1</output></label><input id="alpha" type="range" min="1" max="255" value="1"></div>
-<button class="primary" id="download" type="button" disabled>Download monochrome PNG</button>
-</section><section class="panel"><h2>Preview</h2><div class="preview"><div><div class="viewlabel">Source</div><div class="viewbox"><canvas id="source"></canvas></div></div><div><div class="viewlabel">Monochrome output</div><div class="viewbox"><canvas id="output"></canvas></div></div></div><div class="stats" id="stats">Load artwork to preview it.</div><div id="status"></div><div id="error" role="alert"></div></section></div></main>
+:root{color-scheme:dark;--bg:#11141c;--panel:#1b2130;--panel-alt:#202838;--edge:#3a465b;--text:#e9eef8;--muted:#aeb9c9;--accent:#a8c7fa}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,"Segoe UI",sans-serif}
+main{max-width:1560px;margin:0 auto;padding:18px 24px 28px}
+h1{font-size:24px;margin:0 0 3px;letter-spacing:-.5px}
+h2{font-size:16px;margin:0}
+p{margin:4px 0 16px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(310px,390px) minmax(0,1fr);gap:16px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--edge);border-radius:12px;min-width:0}
+.sidebar{padding:12px;position:sticky;top:12px;max-height:calc(100dvh - 24px);overflow-y:auto;scrollbar-gutter:stable}
+.sidebar-head{padding:4px 5px 12px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.hint,.field small{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+.fold{border:1px solid var(--edge);border-radius:9px;background:#161c29;margin-bottom:9px}
+.fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;padding:12px 11px;user-select:none}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:'›';font-size:22px;font-weight:500;line-height:.7;display:inline-block;transform-origin:center;transition:transform .12s;color:var(--muted)}
+.fold[open]>summary::before{transform:rotate(90deg)}
+.fold>summary:hover{background:#243149;border-radius:9px}
+.fold-body{padding:4px 12px 13px;display:grid;gap:12px}
+.field label{display:block;font-weight:650;margin-bottom:6px}
+input[type=file],select,input[type=number]{width:100%;padding:8px;background:#0f1624;color:var(--text);border:1px solid var(--edge);border-radius:7px;min-width:0;font:inherit}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{border:1px solid var(--edge);border-radius:7px;background:#2c3952;color:var(--text);padding:7px 10px;cursor:pointer;font:inherit}
+button:hover{background:#3c4b68}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--accent);color:#0d1a2e;font-weight:750;border:0;padding:11px}
+.primary:hover{background:#c1d6ff}
+.row{display:flex;align-items:center;gap:8px}
+.row>input[type=number]{width:68px;flex:none}
+.row>input[type=range]{flex:1;min-width:0}
+.toggle{display:flex;align-items:center;gap:9px;cursor:pointer}
+.toggle input{accent-color:var(--accent)}
+input[type=checkbox]{width:16px;height:16px;flex:none}
+.toneRow{display:grid;grid-template-columns:88px 26px 1fr;gap:7px;align-items:center;margin-top:8px;font-size:12px}
+.swatch{height:25px;width:25px;border:1px solid #95a0b1;border-radius:4px}
+.toneRow select{font-size:12px;padding:5px;max-width:100%}
+.patternRow{border:1px solid var(--edge);border-radius:7px;padding:9px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin:0}
+.patternRow>span:first-child{font-weight:650;font-size:12px;min-width:90px}
+.patternRow>span:last-child{font-size:12px;color:var(--muted)}
+.paintGrid{display:grid;grid-template-columns:repeat(var(--n),minmax(13px,25px));gap:2px;touch-action:none}
+.paintCell{padding:0;width:25px;height:25px;background:#fff;border:1px solid #8b91a0;border-radius:2px}
+.paintCell.black{background:#000}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.export-bar{display:grid;gap:5px;padding:5px 1px 1px}
+.preview-panel{padding:14px;position:sticky;top:12px}
+.preview-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.preview{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.preview-item{min-width:0}
+.viewbar{display:flex;align-items:center;gap:7px;justify-content:space-between;flex-wrap:wrap;margin-bottom:7px}
+.viewlabel{font-weight:700;white-space:nowrap}
+.zoomtools{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}
+.zoomtools button{padding:3px 7px;min-width:29px;min-height:28px;font-size:12px}
+.zoomtools .zoomvalue{font-size:11px;min-width:56px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.zoomtools .fitbutton{padding-inline:6px}
+.viewbox{background-color:#252c3b;background-image:linear-gradient(45deg,#343b4e 25%,transparent 25%),linear-gradient(-45deg,#343b4e 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#343b4e 75%),linear-gradient(-45deg,transparent 75%,#343b4e 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px;height:clamp(330px,53vh,620px);overflow:auto;border:1px solid var(--edge);border-radius:8px;overscroll-behavior:contain;cursor:grab}
+.viewbox.dragging{cursor:grabbing;user-select:none}
+.canvasStage{display:flex;align-items:center;justify-content:center;width:max-content;height:max-content;min-width:100%;min-height:100%;padding:10px}
+.canvasStage canvas{image-rendering:pixelated;display:block;max-width:none;max-height:none;flex:none}
+.canvasMeta{font-size:12px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums;min-height:18px}
+.stats{color:var(--muted);margin-top:14px;font-size:12px;line-height:1.6}
+#status{margin-top:5px;color:var(--muted);white-space:pre-line;font-size:12px}
+#error{color:#ffb2b2}
+.hidden{display:none!important}
+@media(max-width:1080px){.layout{grid-template-columns:minmax(290px,340px) minmax(0,1fr)}.preview{grid-template-columns:1fr}.preview-panel{position:static}.viewbox{height:270px}}
+@media(max-width:760px){main{padding:12px}.layout{display:flex;flex-direction:column}.preview-panel{order:-1;width:100%;position:sticky;top:0;z-index:5;padding:10px}.sidebar{max-height:none;overflow:visible;width:100%;position:static}.preview{grid-template-columns:1fr 1fr;gap:7px}.viewbox{height:230px}.zoomtools{gap:1px}.zoomtools button{min-width:24px;padding:3px 5px}}
+@media(max-width:500px){.preview{grid-template-columns:1fr 1fr}.viewbox{height:180px}.viewbar{align-items:flex-start}.zoomtools{width:100%;justify-content:space-between}.preview-heading .hint{display:none}}
+</style></head><body><main><h1>PeepShow Dither Studio <span style="font-size:.55em;font-weight:500;color:#9eabc5">v2.1</span></h1><p>Convert five-colour Aseprite sprites and transparency to scaled monochrome PNGs. Runs locally in your browser. No uploads, dependencies or network requests.</p>
+<div class="layout">
+<aside class="panel sidebar" aria-label="Dither controls">
+  <div class="sidebar-head"><h2>Controls</h2><span class="hint">Collapse sections to make room</span></div>
+  <details class="fold" id="filesSection" open><summary>Artwork &amp; palette</summary><div class="fold-body">
+    <div class="field"><label for="art">Artwork (PNG or other image)</label><input id="art" type="file" accept="image/*"></div>
+    <div class="field"><label for="pal">Aseprite palette</label><input id="pal" type="file" accept=".aseprite,.ase,.gpl,.pal,.hex,.txt"><small id="paletteStatus">Optional. Load an .aseprite, .ase, .gpl, .pal or .hex palette to assign exact tones.</small><div id="toneMap" class="hidden"></div></div>
+  </div></details>
+  <details class="fold" id="outputSection" open><summary>Scaling &amp; resampling</summary><div class="fold-body">
+    <div class="field"><label for="scale">Output scale</label><div class="row"><input id="scale" type="range" min="1" max="8" value="2"><input id="scaleN" type="number" min="1" max="8" value="2"></div><small>Changes the exported PNG dimensions. Preview zoom is separate.</small></div>
+    <div class="field"><label for="resize">Resampling</label><select id="resize"><option value="nearest">Nearest-neighbour (crisp pixel boundaries)</option><option value="smooth">Smooth / blended (soft tone transitions)</option></select><small>Output remains black, white and transparent.</small></div>
+  </div></details>
+  <details class="fold" id="ditherSection" open><summary>Dithering &amp; transparency</summary><div class="fold-body">
+    <div class="field"><label for="algorithm">Dither method</label><select id="algorithm"><option value="atkinson">Atkinson</option><option value="floyd">Floyd–Steinberg</option><option value="jarvis">Jarvis–Judice–Ninke</option><option value="bayer4">Ordered Bayer 4×4</option><option value="bayer8">Ordered Bayer 8×8</option><option value="threshold">Threshold (no dithering)</option><option value="custom">Custom painted patterns</option></select></div>
+    <div class="field" id="thresholdField"><label for="threshold">Threshold: <output id="thresholdOut">128</output></label><input id="threshold" type="range" min="0" max="255" value="128"></div>
+    <div class="field" id="gammaField"><label for="gamma">Gamma: <output id="gammaOut">1.00</output></label><input id="gamma" type="range" min="0.4" max="2.2" step="0.05" value="1"></div>
+    <div class="field"><label for="alpha">Transparency cutoff: <output id="alphaOut">1</output></label><input id="alpha" type="range" min="1" max="255" value="1"></div>
+  </div></details>
+  <details class="fold hidden" id="paintPanel" open><summary>Painted tone patterns</summary><div class="fold-body">
+    <label class="toggle"><input type="checkbox" id="linkSize" checked>Link grid size to output scale</label>
+    <div class="field"><label for="gridSize">Pattern grid</label><select id="gridSize"></select><small id="gridHelp"></small></div>
+    <div id="patternRows" style="display:grid;gap:8px"></div>
+    <div class="tools"><button id="reset" type="button">Reset patterns</button></div>
+    <small class="hint">Left-click/drag to paint. Right-click/drag to erase. A 2× scale uses 2×2 patterns by default. The preview remains visible while editing.</small>
+  </div></details>
+  <div class="export-bar"><button class="primary" id="download" type="button" disabled>Download monochrome PNG</button><span class="hint">Full-resolution export. View zoom does not affect the PNG.</span></div>
+</aside>
+<section class="panel preview-panel" aria-label="Image previews">
+  <div class="preview-heading"><h2>Live preview</h2><span class="hint">Zoom to inspect pixels. Fit for the whole sprite.</span></div>
+  <div class="preview">
+    <div class="preview-item">
+      <div class="viewbar"><div class="viewlabel">Source</div><div class="zoomtools" aria-label="Source zoom">
+        <button type="button" data-zoom="source:-1" title="Zoom out source" aria-label="Zoom out source">−</button>
+        <span class="zoomvalue" id="sourceZoom">Fit</span>
+        <button type="button" data-zoom="source:1" title="Zoom in source" aria-label="Zoom in source">+</button>
+        <button class="fitbutton" type="button" data-zoom="source:fit" title="Fit source">Fit</button>
+        <button type="button" data-zoom="source:one" title="Show source at 100%">1:1</button>
+      </div></div>
+      <div class="viewbox" id="sourceView"><div class="canvasStage"><canvas id="source"></canvas></div></div>
+      <div id="sourceSize" class="canvasMeta">No artwork</div>
+    </div>
+    <div class="preview-item">
+      <div class="viewbar"><div class="viewlabel">Monochrome output</div><div class="zoomtools" aria-label="Output zoom">
+        <button type="button" data-zoom="output:-1" title="Zoom out output" aria-label="Zoom out output">−</button>
+        <span class="zoomvalue" id="outputZoom">Fit</span>
+        <button type="button" data-zoom="output:1" title="Zoom in output" aria-label="Zoom in output">+</button>
+        <button class="fitbutton" type="button" data-zoom="output:fit" title="Fit output">Fit</button>
+        <button type="button" data-zoom="output:one" title="Show output at 100%">1:1</button>
+      </div></div>
+      <div class="viewbox" id="outputView"><div class="canvasStage"><canvas id="output"></canvas></div></div>
+      <div id="outputSize" class="canvasMeta">No output</div>
+    </div>
+  </div>
+  <div class="stats" id="stats">Load artwork to preview it.</div><div id="status"></div><div id="error" role="alert"></div>
+</section></div></main>
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id), art=el('art'),pal=el('pal'),scale=el('scale'),scaleN=el('scaleN'),resize=el('resize'),algorithm=el('algorithm'),gridSize=el('gridSize'),linkSize=el('linkSize'),patternRows=el('patternRows'),source=el('source'),output=el('output');
-let img=null, palette=null, assigned=[0,1,2,3,4],patterns=[],painting=null;const labels=['100% black','75% black','50% black','25% black','0% black (white)'];
+let img=null, palette=null, assigned=[0,1,2,3,4],patterns=[],painting=null;
+// Canvas bitmap dimensions are never altered by zoom; only their CSS display size changes.
+const zoomState={source:'fit',output:'fit'};
+const zoomStops=[.125,.25,.5,.75,1,1.5,2,3,4,6,8,12,16,24,32];
+function fitZoom(id){
+  const cv=el(id),view=el(id+'View');
+  if(!cv.width||!cv.height)return 1;
+  return Math.min((view.clientWidth-24)/cv.width,(view.clientHeight-24)/cv.height);
+}
+function updateViewZoom(id,center=false){
+  const cv=el(id),view=el(id+'View'),status=el(id+'Zoom');
+  if(!cv.width||!cv.height)return;
+  const setting=zoomState[id],factor=setting==='fit'?Math.max(.01,fitZoom(id)):setting;
+  const oldX=view.scrollLeft+(view.clientWidth/2),oldY=view.scrollTop+(view.clientHeight/2);
+  const oldWidth=cv.getBoundingClientRect().width||cv.width;
+  const oldHeight=cv.getBoundingClientRect().height||cv.height;
+  cv.style.width=(cv.width*factor)+'px';
+  cv.style.height=(cv.height*factor)+'px';
+  status.textContent=(setting==='fit'?'Fit · ':'')+Math.round(factor*100)+'%';
+  if(center){
+    // Preserve the relative image location being inspected when changing zoom.
+    const scaleX=oldWidth?oldX/oldWidth:.5,scaleY=oldHeight?oldY/oldHeight:.5;
+    view.scrollLeft=Math.max(0,cv.width*factor*scaleX-view.clientWidth/2);
+    view.scrollTop=Math.max(0,cv.height*factor*scaleY-view.clientHeight/2);
+  }
+}
+function zoomBy(id,dir){
+  const current=zoomState[id]==='fit'?fitZoom(id):zoomState[id];
+  const epsilon=.000001;
+  const next=dir>0?zoomStops.find(v=>v>current+epsilon):[...zoomStops].reverse().find(v=>v<current-epsilon);
+  zoomState[id]=next===undefined?(dir>0?32:.125):next;
+  updateViewZoom(id,true);
+}
+document.querySelectorAll('[data-zoom]').forEach(btn=>btn.addEventListener('click',()=>{
+  const [id,command]=btn.dataset.zoom.split(':');
+  if(command==='fit'||command==='one'){
+    zoomState[id]=command==='fit'?'fit':1;
+    updateViewZoom(id,true);
+  }else zoomBy(id,Number(command));
+}));
+// Drag to pan zoomed images, independently of the actual image data.
+['source','output'].forEach(id=>{
+  const view=el(id+'View'); let drag=null;
+  view.addEventListener('pointerdown',e=>{
+    if(e.button!==0||view.scrollWidth<=view.clientWidth&&view.scrollHeight<=view.clientHeight)return;
+    drag={x:e.clientX,y:e.clientY,left:view.scrollLeft,top:view.scrollTop};
+    view.setPointerCapture(e.pointerId);view.classList.add('dragging');
+  });
+  view.addEventListener('pointermove',e=>{if(!drag)return;view.scrollLeft=drag.left-(e.clientX-drag.x);view.scrollTop=drag.top-(e.clientY-drag.y);});
+  const stop=()=>{drag=null;view.classList.remove('dragging');};
+  view.addEventListener('pointerup',stop);view.addEventListener('pointercancel',stop);view.addEventListener('lostpointercapture',stop);
+  view.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();zoomBy(id,e.deltaY<0?1:-1);},{passive:false});
+});
+new ResizeObserver(()=>{if(zoomState.source==='fit')updateViewZoom('source');if(zoomState.output==='fit')updateViewZoom('output');}).observe(el('sourceView'));
+new ResizeObserver(()=>{if(zoomState.output==='fit')updateViewZoom('output');}).observe(el('outputView'));
+const labels=['100% black','75% black','50% black','25% black','0% black (white)'];
 const bayer4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5],bayer2=[0,2,3,1];
 function makeBayer(n){if(n===1)return [0];let prev=makeBayer(n/2),out=new Array(n*n);for(let y=0;y<n;y++)for(let x=0;x<n;x++)out[y*n+x]=4*prev[(y%(n/2))*(n/2)+x%(n/2)]+[0,2,3,1][Math.floor(y/(n/2))*2+Math.floor(x/(n/2))];return out;}
 const bayer8=makeBayer(8);const ranks=n=>n===2?bayer2:n===4?bayer4:n===8?bayer8:makeBayer(n);
@@ -34,12 +197,12 @@ function renderPalette(){let host=el('toneMap');host.replaceChildren();host.clas
 pal.addEventListener('change',async()=>{let f=pal.files[0];if(!f)return;try{palette=/\.(ase|aseprite)$/i.test(f.name)?parseAse(await f.arrayBuffer()):parseTextPalette(await f.text());assigned=palette.map((c,i)=>c?{i,l:luminance(c)}:null).filter(Boolean).sort((a,b)=>a.l-b.l).slice(0,5).map(o=>o.i);renderPalette();el('paletteStatus').textContent=`Loaded ${palette.filter(Boolean).length} entries. Verify the five mappings.`;err();render();}catch(e){palette=null;el('toneMap').classList.add('hidden');el('paletteStatus').textContent='Palette could not be loaded.';err(e.message);render();}});
 function patternN(){return Number(gridSize.value);}
 function updateGridOptions(){let s=Number(scale.value),sizes=linkSize.checked?[s]:[1,2,3,4,5,6,7,8],old=Number(gridSize.value);gridSize.replaceChildren();for(let n of sizes){let op=document.createElement('option');op.value=n;op.textContent=`${n} × ${n}`;gridSize.append(op);}gridSize.disabled=linkSize.checked;gridSize.value=linkSize.checked?String(s):String(sizes.includes(old)?old:s);el('gridHelp').textContent=linkSize.checked?`Exactly one ${s}×${s} pattern per source pixel.`:'Independent repeating grid size.';resetPatterns();}
-function resetPatterns(){let n=patternN(),rank=ranks(n===1?1:n===2?2:n===4?4:n===8?8:Math.pow(2,Math.ceil(Math.log2(n))));let rm=Math.pow(2,Math.ceil(Math.log2(n)));patterns=labels.map((_,t)=>Array.from({length:n*n},(_,i)=>{let r=n===1?0:rank[(Math.floor(i/n)%rm)*rm+(i%n)];return r<Math.round((4-t)*n*n/4);}));drawPatterns();render();}
+function resetPatterns(){let n=patternN(),rm=Math.pow(2,Math.ceil(Math.log2(n))),rank=ranks(rm);let slots=Array.from({length:n*n},(_,i)=>({i,r:rank[Math.floor(i/n)*rm+i%n]})).sort((a,b)=>a.r-b.r),ordering=new Array(n*n);slots.forEach(({i},pos)=>ordering[i]=pos);patterns=labels.map((_,t)=>Array.from({length:n*n},(_,i)=>ordering[i]<Math.round((4-t)*n*n/4)));drawPatterns();render();}
 function drawPatterns(){let n=patternN();patternRows.replaceChildren();patterns.forEach((pattern,t)=>{let row=document.createElement('div');row.className='patternRow';let text=document.createElement('span');text.textContent=labels[t];let grid=document.createElement('div');grid.className='paintGrid';grid.style.setProperty('--n',n);let ct=document.createElement('span');function update(){ct.textContent=`${pattern.filter(Boolean).length}/${n*n} black`;}pattern.forEach((black,i)=>{let cell=document.createElement('button');cell.type='button';cell.className='paintCell'+(black?' black':'');cell.setAttribute('aria-label',`${labels[t]} pattern pixel ${i+1}`);cell.addEventListener('contextmenu',e=>e.preventDefault());function apply(v){if(pattern[i]===v)return;pattern[i]=v;cell.classList.toggle('black',v);update();render();}cell.addEventListener('pointerdown',e=>{e.preventDefault();painting={t,val:e.button===2?false:!pattern[i]};apply(painting.val);});cell.addEventListener('pointerenter',e=>{if(painting&&painting.t===t&&e.buttons)apply(painting.val);});grid.append(cell);});update();row.append(text,grid,ct);patternRows.append(row);});}
 document.addEventListener('pointerup',()=>painting=null);el('reset').addEventListener('click',resetPatterns);linkSize.addEventListener('change',updateGridOptions);gridSize.addEventListener('change',resetPatterns);
 function setScale(v){v=clamp(Number(v)||2,1,8);scale.value=v;scaleN.value=v;if(linkSize.checked)updateGridOptions();render();}scale.addEventListener('input',()=>setScale(scale.value));scaleN.addEventListener('change',()=>setScale(scaleN.value));
-for(let name of ['resize','algorithm','threshold','gamma','alpha'])el(name).addEventListener('input',()=>{el('thresholdOut').textContent=el('threshold').value;el('gammaOut').textContent=Number(el('gamma').value).toFixed(2);el('alphaOut').textContent=el('alpha').value;let custom=algorithm.value==='custom';el('paintPanel').classList.toggle('hidden',!custom);el('gammaField').classList.toggle('hidden',custom);el('thresholdField').classList.toggle('hidden',custom);render();});
-art.addEventListener('change',()=>{let f=art.files[0];if(!f)return;let url=URL.createObjectURL(f),i=new Image();i.onload=()=>{URL.revokeObjectURL(url);img=i;source.width=i.width;source.height=i.height;source.getContext('2d').drawImage(i,0,0);err();render();};i.onerror=()=>{URL.revokeObjectURL(url);err('Cannot open this image.');};i.src=url;});
+for(let name of ['resize','algorithm','threshold','gamma','alpha'])el(name).addEventListener('input',()=>{el('thresholdOut').textContent=el('threshold').value;el('gammaOut').textContent=Number(el('gamma').value).toFixed(2);el('alphaOut').textContent=el('alpha').value;let custom=algorithm.value==='custom';el('paintPanel').classList.toggle('hidden',!custom);if(custom){el('paintPanel').open=true;el('outputSection').open=false;el('ditherSection').open=false;}el('gammaField').classList.toggle('hidden',custom);el('thresholdField').classList.toggle('hidden',custom);render();});
+art.addEventListener('change',()=>{let f=art.files[0];if(!f)return;let url=URL.createObjectURL(f),i=new Image();i.onload=()=>{URL.revokeObjectURL(url);img=i;source.width=i.width;source.height=i.height;source.getContext('2d').drawImage(i,0,0);el('sourceSize').textContent=`${i.width} × ${i.height} source pixels`;updateViewZoom('source');err();render();};i.onerror=()=>{URL.revokeObjectURL(url);err('Cannot open this image.');};i.src=url;});
 const kernels={atkinson:[[1,0,1/8],[2,0,1/8],[-1,1,1/8],[0,1,1/8],[1,1,1/8],[0,2,1/8]],floyd:[[1,0,7/16],[-1,1,3/16],[0,1,5/16],[1,1,1/16]],jarvis:[[1,0,7/48],[2,0,5/48],[-2,1,3/48],[-1,1,5/48],[0,1,7/48],[1,1,5/48],[2,1,3/48],[-2,2,1/48],[-1,2,3/48],[0,2,5/48],[1,2,3/48],[2,2,1/48]]};
 function sourceTones(){let w=img.width,h=img.height,ctx=source.getContext('2d',{willReadFrequently:true}),raw=ctx.getImageData(0,0,w,h).data,shade=new Float32Array(w*h),alphaSrc=new Uint8Array(w*h);let unique=0;for(let p=0;p<w*h;p++){let k=p*4,a=raw[k+3];alphaSrc[p]=a;let rgb=[raw[k],raw[k+1],raw[k+2]];if(palette){let best=Infinity,tone=0;for(let t=0;t<5;t++){let c=palette[assigned[t]];let d=rgb.reduce((q,x,i)=>q+(x-c[i])**2,0);if(d<best){best=d;tone=t;}}shade[p]=tone*63.75;}else shade[p]=luminance(rgb);}return {shade,alphaSrc};}
 function upscaleMap(shade,alphaSrc){let sw=img.width,sh=img.height,s=Number(scale.value),w=sw*s,h=sh*s,out=new Float32Array(w*h),visible=new Uint8Array(w*h),cutoff=Number(el('alpha').value);let smooth=resize.value==='smooth';for(let y=0;y<h;y++)for(let x=0;x<w;x++){let p=y*w+x,sx=Math.floor(x/s),sy=Math.floor(y/s),a=alphaSrc[sy*sw+sx];if(a<cutoff)continue;visible[p]=1;if(!smooth){out[p]=shade[sy*sw+sx];continue;}
@@ -51,7 +214,7 @@ if(method==='custom'){for(let y=0;y<h;y++)for(let x=0;x<w;x++){let p=y*w+x;if(!v
 else if(method==='bayer4'||method==='bayer8'){let m=method==='bayer4'?bayer4:bayer8,N=method==='bayer4'?4:8;for(let y=0;y<h;y++)for(let x=0;x<w;x++){let p=y*w+x;if(!visible[p])continue;let v=Math.pow(clamp(lum[p]/255,0,1),gamma)*255+((m[(y%N)*N+x%N]+.5)/(N*N)-.5)*255;done(p,v<threshold);}}
 else if(method==='threshold'){for(let p=0;p<w*h;p++)if(visible[p])done(p,Math.pow(clamp(lum[p]/255,0,1),gamma)*255<threshold);}
 else{let arr=new Float32Array(w*h);for(let p=0;p<w*h;p++)arr[p]=Math.pow(clamp(lum[p]/255,0,1),gamma)*255;let kernel=kernels[method];for(let y=0;y<h;y++){let rev=!!(y&1);for(let i=0;i<w;i++){let x=rev?w-i-1:i,p=y*w+x;if(!visible[p])continue;let v=arr[p],b=v<threshold,next=b?0:255,e=v-next;done(p,b);for(let [dx,dy,k] of kernel){let xx=x+(rev?-dx:dx),yy=y+dy,q=yy*w+xx;if(xx>=0&&xx<w&&yy<h&&visible[q])arr[q]+=e*k;}}}}
-output.width=w;output.height=h;output.getContext('2d').putImageData(dat,0,0);el('stats').textContent=`Input: ${img.width}×${img.height} · Output: ${w}×${h} · Visible: ${shown.toLocaleString()} · Black: ${black.toLocaleString()} · Transparent: ${(w*h-shown).toLocaleString()}`;el('status').textContent=palette?'Using explicitly assigned Aseprite palette tones.':'No palette loaded. Mapping from RGB luminance.';el('download').disabled=false;err();}catch(e){err(e.message);el('download').disabled=true;}}
+output.width=w;output.height=h;output.getContext('2d').putImageData(dat,0,0);el('outputSize').textContent=`${w} × ${h} output pixels · ${scale.value}× export scale`;updateViewZoom('output');el('stats').textContent=`Input: ${img.width}×${img.height} · Output: ${w}×${h} · Visible: ${shown.toLocaleString()} · Black: ${black.toLocaleString()} · Transparent: ${(w*h-shown).toLocaleString()}`;el('status').textContent=palette?'Using explicitly assigned Aseprite palette tones.':'No palette loaded. Mapping from RGB luminance.';el('download').disabled=false;err();}catch(e){err(e.message);el('download').disabled=true;}}
 el('download').addEventListener('click',()=>{if(!img)return;output.toBlob(blob=>{if(!blob){err('PNG export failed.');return;}let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(art.files[0]?.name||'peepshow').replace(/\.[^.]+$/,'')+`-dither-x${scale.value}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'image/png');});
 updateGridOptions();
 })();
