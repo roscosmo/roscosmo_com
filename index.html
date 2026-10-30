@@ -271,12 +271,13 @@
     return {x: x * k, y: y * k};
   }
 
-  function fromPointer(e) {
-    if (e.pointerType === 'touch') return;
+  // One coordinate conversion for desktop pointer events and mobile touches.
+  // Use SVG-local coordinates so tracking follows the displayed logo at any size.
+  function trackAt(clientX, clientY) {
     const matrix = svg.getScreenCTM();
     if (!matrix) return;
     const p = svg.createSVGPoint();
-    p.x = e.clientX; p.y = e.clientY;
+    p.x = clientX; p.y = clientY;
     const local = p.matrixTransform(matrix.inverse());
     const dx = local.x - eyeCenter.x, dy = local.y - eyeCenter.y;
     const len = Math.hypot(dx, dy);
@@ -286,9 +287,75 @@
     lastPointer = performance.now() * .001;
     pointerPresent = true;
   }
-  window.addEventListener('pointermove', fromPointer, {passive: true});
-  window.addEventListener('pointerleave', () => {pointerPresent = false;}, {passive: true});
-  window.addEventListener('blur', () => {pointerPresent = false;});
+
+  // Mouse and pen movement: retain the existing desktop behaviour.
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch' || touchActive) return;
+    trackAt(e.clientX, e.clientY);
+  }, {passive: true});
+  window.addEventListener('pointerleave', () => {
+    if (!touchActive) pointerPresent = false;
+  }, {passive: true});
+  window.addEventListener('blur', () => {
+    touchActive = false;
+    activeTouchId = null;
+    pointerPresent = false;
+  });
+
+  // A pan-y gesture may cancel Pointer Events when the browser takes over
+  // scrolling. Passive Touch Events continue reporting finger movement,
+  // without calling preventDefault() or blocking page scrolling.
+  const logoLink = document.querySelector('.logo-link');
+  let touchActive = false;
+  let activeTouchId = null;
+  let touchOriginX = 0, touchOriginY = 0;
+  let suppressDragClick = false;
+
+  function trackedTouch(touchList) {
+    for (let i = 0; i < touchList.length; i++) {
+      if (touchList[i].identifier === activeTouchId) return touchList[i];
+    }
+    return null;
+  }
+
+  window.addEventListener('touchstart', e => {
+    if (touchActive || e.changedTouches.length === 0) return;
+    const touch = e.changedTouches[0];
+    activeTouchId = touch.identifier;
+    touchActive = true;
+    suppressDragClick = false;
+    touchOriginX = touch.clientX;
+    touchOriginY = touch.clientY;
+    trackAt(touch.clientX, touch.clientY);
+  }, {passive: true});
+
+  window.addEventListener('touchmove', e => {
+    if (!touchActive) return;
+    const touch = trackedTouch(e.touches);
+    if (!touch) return;
+    trackAt(touch.clientX, touch.clientY);
+    if (Math.hypot(touch.clientX - touchOriginX,
+                   touch.clientY - touchOriginY) > 10) {
+      suppressDragClick = true;
+    }
+  }, {passive: true});
+
+  function finishTouch(e) {
+    if (!touchActive || !trackedTouch(e.changedTouches)) return;
+    touchActive = false;
+    activeTouchId = null;
+    pointerPresent = false; // Resume natural wandering on release.
+  }
+  window.addEventListener('touchend', finishTouch, {passive: true});
+  window.addEventListener('touchcancel', finishTouch, {passive: true});
+
+  // A drag that starts on the clickable logo must not enter the website.
+  // A stationary tap still follows the link normally.
+  logoLink.addEventListener('click', e => {
+    if (!suppressDragClick) return;
+    e.preventDefault();
+    suppressDragClick = false;
+  });
 
   function tick(ms) {
     if (firstT === null) firstT = ms;
