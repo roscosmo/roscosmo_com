@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PPK2 Current Profiler v12</title>
+<title>PPK2 Current Profiler v14</title>
 <style>
 /* Dark instrument theme */
 :root {color-scheme:dark; --bg:#0c1219; --panel:#151e28; --panel-alt:#1b2937; --field:#101922; --plot:#0f1822; --line:#2c3c49; --text:#e5eef5; --muted:#93a7b7; --blue:#69bfff; --bluewash:#20384e; --red:#ff9494; --green:#76d8b1; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,"SFMono-Regular",monospace; }
@@ -69,17 +69,21 @@ input[type=number]{width:95px;border:1px solid var(--line);background:var(--fiel
 .small{font-size:11px;color:var(--muted)}
 select{border:1px solid var(--line);border-radius:6px;padding:6px 9px;color:var(--text);background:var(--field);font-size:12px}
 .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
-.stat{padding:14px 16px;border-right:1px solid var(--line)}.stat:last-child{border-right:0}
+.stat{padding:14px 16px;border-right:1px solid var(--line);min-width:0}.stat:last-child{border-right:0}
 .stat-label{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.stat-value{font-family:var(--mono);font-size:clamp(16px,1.8vw,24px);font-weight:600;letter-spacing:-.035em;margin-top:5px;white-space:nowrap}
-.stat-foot{font-size:10px;color:var(--muted);margin-top:2px}
+.stat-value{font-family:var(--mono);font-size:clamp(16px,1.65vw,24px);font-weight:600;letter-spacing:-.035em;margin-top:5px;white-space:nowrap}
+.stat-foot{font-size:10px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.battery-life-group{border-top:1px solid var(--line);padding-top:8px;margin-top:10px}
+.battery-life-group .stat-value{font-size:clamp(15px,1.45vw,20px)}
+#batteryCapacity:invalid{border-color:var(--red)}
 #messages{font-family:var(--mono);font-size:11px;color:var(--muted);padding:0 3px;min-height:17px;word-break:break-word}
 #messages.error{color:var(--red)}
 #messages.good{color:var(--green)}
 footer{font-size:11px;color:var(--muted);padding:0 3px 5px}
 footer a{color:var(--blue)}
-@media(max-width:880px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat:nth-child(3){border-right:0}.stat:nth-child(n+4){border-top:1px solid var(--line)}.chart-toolbar{align-items:flex-start}.chart-actions{margin-left:0}.chart-panel{min-height:410px}}
-@media(max-width:540px){main{padding:10px;gap:10px}header{padding:12px}.toolbar{padding:12px;gap:13px}.control{flex:1 1 125px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:12px}.stat:nth-child(3){border-right:1px solid var(--line);border-top:1px solid var(--line)}.stat:nth-child(2n){border-right:0}.stat:nth-child(5){border-top:1px solid var(--line)}.chart-toolbar{padding:12px}.chart-actions{gap:9px}.chart-panel{min-height:440px}}
+@media(max-width:1150px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat:nth-child(3n){border-right:0}.stat:nth-child(n+4){border-top:1px solid var(--line)}}
+@media(max-width:880px){.chart-toolbar{align-items:flex-start}.chart-actions{margin-left:0}.chart-panel{min-height:410px}}
+@media(max-width:540px){main{padding:10px;gap:10px}header{padding:12px}.toolbar{padding:12px;gap:13px}.control{flex:1 1 125px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:12px}.stat:nth-child(3){border-right:1px solid var(--line)}.stat:nth-child(3n){border-right:1px solid var(--line)}.stat:nth-child(2n){border-right:0}.stat:nth-child(n+3){border-top:1px solid var(--line)}.stat:last-child{grid-column:span 2}.chart-toolbar{padding:12px}.chart-actions{gap:9px}.chart-panel{min-height:440px}}
 </style>
 </head>
 <body>
@@ -96,6 +100,7 @@ footer a{color:var(--blue)}
       <div class="control"><label>Power output</label><div class="group"><button id="outputBtn" aria-pressed="false" disabled>OFF</button></div></div>
       <div class="control"><label>Acquisition</label><div class="group"><button id="startBtn" class="primary" disabled>Start fresh</button></div></div>
       <div class="control"><label for="recordInterval">Plot / export sample rate</label><div class="group"><select id="recordInterval" title="Effective sample rate after averaging the 100 kS/s PPK2 input"><option value="1">1,000 Hz · 1 ms</option><option value="10">100 Hz · 10 ms</option><option value="100" selected>10 Hz · 100 ms</option><option value="1000">1 Hz · 1 s</option><option value="10000">0.1 Hz · 10 s</option><option value="60000">1/min · 60 s</option></select></div><div class="rate-hint" id="rateDescription">10 Hz selected</div></div>
+      <div class="control"><label for="batteryCapacity">Battery capacity</label><div class="group"><input id="batteryCapacity" type="number" min="0.1" max="100000" step="any" value="450" title="Nominal capacity of a fully charged battery" aria-describedby="batteryCapacityHint"><span class="unit">mAh</span></div><div class="secondary-note" id="batteryCapacityHint">Runtime estimated from mean current</div></div>
     </div>
     <div class="mode-note" id="modeNote">Select a device, then choose its meter mode. Start and Stop do not change DUT power.</div>
   </section>
@@ -133,8 +138,12 @@ footer a{color:var(--blue)}
   <section class="panel stats">
     <div class="stat"><div class="stat-label">Latest interval average</div><div id="latestStat" class="stat-value">—</div><div class="stat-foot">Mean over selected plot interval</div></div>
     <div class="stat"><div class="stat-label">Overall mean current</div><div id="meanStat" class="stat-value">—</div><div class="stat-foot">All samples since Start</div></div>
-    <div class="stat"><div class="stat-label">Instantaneous peak</div><div id="peakStat" class="stat-value">—</div><div class="stat-foot">Highest single acquired sample</div></div>
     <div class="stat"><div class="stat-label">Charge</div><div id="chargeStat" class="stat-value">—</div><div class="stat-foot">Integrated, µAh / mAh</div></div>
+    <div class="stat" aria-label="Battery consumption and full-charge lifetime estimate">
+      <div class="stat-label">Battery used</div><div id="batteryUsedStat" class="stat-value">—</div>
+      <div id="batteryUsedDetail" class="stat-foot">Since Start · 450 mAh capacity</div>
+      <div class="battery-life-group"><div class="stat-label">Projected full-charge life</div><div id="batteryLifeStat" class="stat-value">—</div><div class="stat-foot">At measured overall mean current</div></div>
+    </div>
     <div class="stat"><div class="stat-label">Elapsed</div><div id="timeStat" class="stat-value">00:00:00</div><div class="stat-foot" id="samplesStat">0 averaged points retained · 10 Hz</div><div class="stat-foot" id="rawSamplesStat">0 raw samples processed</div></div>
   </section>
   <section class="panel chart-bottom" aria-label="Recording export and plot details">
@@ -143,7 +152,7 @@ footer a{color:var(--blue)}
   </section>
   <div class="small" id="integrityNote">Data integrity: awaiting samples.</div>
   <div id="messages" role="status" aria-live="polite">Measurements remain in this browser. PPK2 acquisition is fixed at 100 kS/s; plotted and exported data is averaged to the selected rate.</div>
-  <footer>Plots and CSV exports contain averaged current only. The separate instantaneous peak readout is diagnostic and is not saved in the interval history. Runs from HTTPS or localhost in a Web Serial-enabled desktop browser. External supply in Ampere mode must be 800–5000 mV. The sample-rate selector controls plot and CSV aggregation, not the 100 kS/s hardware stream. Do not leave the computer sleeping during long captures. <a href="https://docs.nordicsemi.com/r/bundle/ug_ppk2/page/ug/ppk/ppk_user_guide_intro.html" target="_blank" rel="noopener">PPK2 hardware limits</a>.</footer>
+  <footer>Battery used is the measured charge since Start expressed as a percentage of entered nominal capacity; it is not a battery state-of-charge reading. Projected full-charge life assumes the same average current throughout discharge and that measured current equals battery current. It does not account for regulator losses, battery ageing, self-discharge or voltage cutoff. Plots and CSV exports contain averaged current only. Runs from HTTPS or localhost in a Web Serial-enabled desktop browser. External supply in Ampere mode must be 800–5000 mV. The sample-rate selector controls plot and CSV aggregation, not the 100 kS/s hardware stream. Do not leave the computer sleeping during long captures. <a href="https://docs.nordicsemi.com/r/bundle/ug_ppk2/page/ug/ppk/ppk_user_guide_intro.html" target="_blank" rel="noopener">PPK2 hardware limits</a>.</footer>
 </main>
 
 <script id="worker-source" type="text/plain">
@@ -153,13 +162,13 @@ footer a{color:var(--blue)}
 const RAW_RATE=100000;
 let mods=null, refV=3.7;
 let carry = new Uint8Array(4), carryN=0;
-let count=0, sum=0, latest=NaN, max=-Infinity;
+let count=0, sum=0;
 let roll=null, roll4=null, prevRange=null, consecutive=0, after=0;
 let bSum=0,bN=0,bIndex=0;
 let previousCounter=null, sequenceErrors=0, invalidRanges=0;
 let queued=[], queuedIndex=0, lastStats=0;
 function reset() {
-  carryN=0; count=0; sum=0; latest=NaN; max=-Infinity;
+  carryN=0; count=0; sum=0;
   roll=null;roll4=null;prevRange=null;consecutive=0;after=0;
   bSum=0;bN=0;bIndex=0;queued=[]; queuedIndex=0; lastStats=0;
   previousCounter=null;sequenceErrors=0;invalidRanges=0;
@@ -189,7 +198,7 @@ function cal(raw) {
 function emitStats(force=false) {
   const now=Date.now();if(!force && now-lastStats<150)return;
   lastStats=now;
-  postMessage({type:'stats',count,sum,latest,max,sequenceErrors,invalidRanges});
+  postMessage({type:'stats',count,sum,sequenceErrors,invalidRanges});
 }
 function flushBins() {
   if(!queued.length)return;
@@ -205,8 +214,7 @@ function sample(raw) {
   previousCounter=counter;
   const v=cal(raw);
   if(!Number.isFinite(v))return;
-  sum+=v; count++; latest=v;
-  if(v>max)max=v;
+  sum+=v; count++;
   bSum+=v;bN++;
   if(bN===100){
     if(queued.length===0)queuedIndex=bIndex;
@@ -245,8 +253,8 @@ const SAMPLE_RATE=100000;
 const periods=[['3s',3],['10s',10],['30s',30],['1m',60],['5m',300],['15m',900],['1h',3600],['6h',21600],['12h',43200],['1d',86400]];
 let mode=null,appliedVoltage=null,powerOn=false,connected=false,demo=false,running=false,finishing=false,calibration=null;
 let port=null,reader=null,writer=null,readPromise=null,shutdown=false,serialPhase='idle',metadataPending=null,metaBuffer='';
-let viewSpan=3,viewEnd=3,latestTime=0, live=true,graphDirty=true,plotCols=null,recordingStart=null,sampleCount=0,lastSum=0,lastLatest=NaN,lastPeak=-Infinity;
-let demoTimer=null,demoTick=0,demoSum=0,demoMax=-Infinity,demoLatest=NaN;
+let viewSpan=3,viewEnd=3,latestTime=0, live=true,graphDirty=true,plotCols=null,recordingStart=null,sampleCount=0,lastSum=0;
+let demoTimer=null,demoTick=0,demoSum=0;
 let sourceApplied = false, recordResolution=100, recorder=null, recordDropped=0;
 let yScaleMode='auto', yManual={lo:0,hi:100};
 const el={
@@ -255,7 +263,8 @@ const el={
   power:$('outputBtn'),start:$('startBtn'),periods:$('periodButtons'),live:$('liveToggle'),recordInterval:$('recordInterval'),
   rateDescription:$('rateDescription'),heading:$('chartHeading'),plot:$('plot'),info:$('plotInfo'),placeholder:$('placeholder'),tip:$('graphTip'),axis:$('axisMode'),export:$('exportBtn'),
   yScale:$('yScaleMode'),yManualControls:$('yManualControls'),yMin:$('yMin'),yMax:$('yMax'),yUnit:$('yUnit'),yApply:$('yApply'),yIn:$('yZoomIn'),yOut:$('yZoomOut'),yReset:$('yReset'),
-  latest:$('latestStat'),mean:$('meanStat'),peak:$('peakStat'),charge:$('chargeStat'),time:$('timeStat'),samples:$('samplesStat'),rawSamples:$('rawSamplesStat'),message:$('messages'),modeNote:$('modeNote'),integrity:$('integrityNote'),chartModeDescription:$('chartModeDescription')
+  batteryCapacity:$('batteryCapacity'),batteryUsed:$('batteryUsedStat'),batteryUsedDetail:$('batteryUsedDetail'),batteryLife:$('batteryLifeStat'),
+  latest:$('latestStat'),mean:$('meanStat'),charge:$('chargeStat'),time:$('timeStat'),samples:$('samplesStat'),rawSamples:$('rawSamplesStat'),message:$('messages'),modeNote:$('modeNote'),integrity:$('integrityNote'),chartModeDescription:$('chartModeDescription')
 };
 function say(msg,kind=''){el.message.textContent=msg;el.message.className=kind;}
 function bytes(...v){return new Uint8Array(v)}
@@ -263,6 +272,52 @@ function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 function validMv(value){const n=Number(value);return Number.isInteger(n)&&n>=800&&n<=5000?n:null;}
 function fmtI(u){if(!Number.isFinite(u))return '—';if(u===0)return '0 µA';const a=Math.abs(u);if(a<1)return `${(u*1000).toFixed(1)} nA`;if(a<1000)return `${u.toFixed(a<10?2:1)} µA`;if(a<1000000)return `${(u/1000).toFixed(a<10000?3:2)} mA`;return `${(u/1000000).toFixed(2)} A`;}
 function fmtCharge(uAh){if(!Number.isFinite(uAh))return '—';return uAh<1000?`${uAh.toFixed(2)} µAh`:`${(uAh/1000).toFixed(3)} mAh`;}
+// Battery estimates use the same integrated charge and all-sample mean as the
+// existing statistics. Nominal capacity is supplied by the user in mAh.
+function validBatteryMah(){
+  const value=el.batteryCapacity.value.trim();
+  const mAh=Number(value);
+  return value!==''&&Number.isFinite(mAh)&&mAh>=0.1&&mAh<=100000?mAh:null;
+}
+function fmtBatteryPercent(percent){
+  if(percent===0)return '0%';
+  if(percent<.00001)return '<0.00001%';
+  if(percent<.001)return `${percent.toFixed(5)}%`;
+  if(percent<.1)return `${percent.toFixed(3)}%`;
+  if(percent<10)return `${percent.toFixed(2)}%`;
+  return `${percent.toFixed(1)}%`;
+}
+function fmtLife(hours){
+  if(!Number.isFinite(hours)||hours<=0)return '—';
+  if(hours<1/60)return '<1 min';
+  const minutes=Math.round(hours*60);
+  if(minutes<60)return `${minutes} min`;
+  const roundedMinutes=Math.round(hours*60);
+  if(roundedMinutes<24*60){const h=Math.floor(roundedMinutes/60),m=roundedMinutes%60;return `${h} h ${m} min`;}
+  const roundedHours=Math.round(hours);
+  const days=Math.floor(roundedHours/24),remaining=roundedHours%24;
+  return `${days.toLocaleString()} d ${remaining} h`;
+}
+function updateBatteryStats(n=sampleCount,s=lastSum){
+  const capacity=validBatteryMah();
+  el.batteryCapacity.setAttribute('aria-invalid',String(capacity===null));
+  if(capacity===null){
+    el.batteryUsed.textContent='—';el.batteryUsedDetail.textContent='Enter a valid capacity (mAh)';
+    el.batteryLife.textContent='—';return;
+  }
+  const capacityLabel=capacity.toLocaleString(undefined,{maximumFractionDigits:2});
+  if(!n){
+    el.batteryUsed.textContent='—';el.batteryUsedDetail.textContent=`Since Start · ${capacityLabel} mAh capacity`;
+    el.batteryLife.textContent='—';return;
+  }
+  const usedUAh=Math.max(0,s/SAMPLE_RATE/3600);
+  el.batteryUsed.textContent=fmtBatteryPercent(100*(usedUAh/1000)/capacity);
+  el.batteryUsedDetail.textContent=`${fmtCharge(usedUAh)} of ${capacityLabel} mAh since Start`;
+  // Avoid unstable extrapolation from the first fraction of a second.
+  if(n<SAMPLE_RATE){el.batteryLife.textContent='Measuring…';return;}
+  const avgUA=s/n;
+  el.batteryLife.textContent=avgUA>0?fmtLife(1000*capacity/avgUA):'No positive draw';
+}
 function fmtRate(ms){
   if(ms===60000)return '1/min';
   const hz=1000/ms;
@@ -310,9 +365,9 @@ function resetHistory(){
   const capacity=Math.min(1728000,Math.ceil(7*86400/(recordResolution/1000)));
   recorder=new Ring(recordResolution/1000,capacity);
   updateRateLabel();
-  recordDropped=0;recordingStart=Date.now();latestTime=0;viewEnd=viewSpan;sampleCount=0;lastSum=0;lastLatest=NaN;lastPeak=-Infinity;
+  recordDropped=0;recordingStart=Date.now();latestTime=0;viewEnd=viewSpan;sampleCount=0;lastSum=0;
   el.latest.textContent='—';el.integrity.textContent='Data integrity: awaiting samples.';el.integrity.style.color='';
-  setStats(0,0,NaN,-Infinity);
+  setStats(0,0);
   el.export.disabled=true;el.placeholder.style.display='none';graphDirty=true;
 }
 function addTier(level,index,mean){
@@ -348,11 +403,12 @@ function updateSampleStatus(){
   el.samples.textContent=`${retained.toLocaleString()} averaged points retained · ${fmtRate(recordResolution)}`;
   el.rawSamples.textContent=`${sampleCount.toLocaleString()} raw samples processed${recordDropped?` · ${recordDropped.toLocaleString()} old points overwritten`:``}`;
 }
-function setStats(n,s,latest,peak){
-  sampleCount=n;lastSum=s;lastLatest=latest;lastPeak=peak;
+function setStats(n,s){
+  sampleCount=n;lastSum=s;
   const elapsed=n/SAMPLE_RATE;
-  el.mean.textContent=n?fmtI(s/n):'—';el.peak.textContent=Number.isFinite(peak)?fmtI(peak):'—';
+  el.mean.textContent=n?fmtI(s/n):'—';
   el.charge.textContent=n?fmtCharge(s/SAMPLE_RATE/3600):'—';el.time.textContent=fmtClock(elapsed);
+  updateBatteryStats(n,s);
   updateSampleStatus();
 }
 const workerBlob = new Blob([$('worker-source').textContent],{type:'text/javascript'});
@@ -362,7 +418,7 @@ worker.onmessage=e=>{
   const m=e.data;
   if(m.type==='bins')onBins(m);
   if(m.type==='stats'){
-    setStats(m.count,m.sum,m.latest,m.max);
+    setStats(m.count,m.sum);
     el.integrity.textContent=(m.sequenceErrors||m.invalidRanges)
       ? `DATA WARNING: ${m.sequenceErrors} sample-counter discontinuities, ${m.invalidRanges} invalid range codes. Current and charge may be unreliable.`
       : `Data integrity: ${m.count.toLocaleString()} consecutive, valid-range samples (PPK2 rolling counter).`;
@@ -489,7 +545,7 @@ async function toggleOutput(){
   }catch(e){say('Power command failed: '+e.message,'error');}
 }
 function startDemo(){
-  demoTick=0;demoSum=0;demoMax=-Infinity;demoLatest=NaN;
+  demoTick=0;demoSum=0;
   demoTimer=setInterval(()=>{
     if(!running)return;
     const bins=new Float32Array(20);
@@ -499,10 +555,10 @@ function startDemo(){
       const spike=(Math.floor(t*1.37)%23===7 && (t*1.37%1)<.001)?11000:0;
       const v=powerOn?23+ripple+1.8*Math.sin(t*8)+spike:0;
       bins[i]=v;
-      demoSum+=v*100;demoLatest=v;demoMax=Math.max(demoMax,v);
+      demoSum+=v*100;
     }
     onBins({first:demoTick,count:20,values:bins});demoTick+=20;
-    setStats(demoTick*100,demoSum,demoLatest,demoMax);
+    setStats(demoTick*100,demoSum);
   },20);
 }
 async function startAcquisition(){
@@ -559,7 +615,7 @@ function graph(){
       sums[c]+=ring.mean[p];counts[c]++;
     }
   }
-  // Y bounds use interval averages, never the stored instantaneous peaks.
+  // Y bounds use interval averages only.
   // The drawing floor is zero. Raw calibrated readings are not modified.
   let observedLo=Infinity,observedHi=-Infinity,smallestPositive=Infinity;
   for(let i=0;i<colN;i++)if(counts[i]){
@@ -615,8 +671,7 @@ function graph(){
   }
   if(hasData){
     ctx.save();ctx.beginPath();ctx.rect(L,T,W,H);ctx.clip();
-    // Draw the averaged current alone. Never connect the instantaneous
-    // maxima or draw min/max stems, regardless of zoom or recording rate.
+    // Draw averaged current only; no instantaneous samples or min/max stems.
     ctx.lineWidth=1.7;ctx.strokeStyle='#7ad1ff';ctx.beginPath();let prev=-1;
     // Bins may be separated by many display pixels at slow sample rates.
     // Join consecutive time bins, but break the line across missing data.
@@ -811,6 +866,18 @@ el.axis.addEventListener('change',()=>{
 });
 el.export.addEventListener('click',exportCSV);
 el.recordInterval.addEventListener('change',()=>{updateRateLabel();graphDirty=true;});
+// Capacity is an assumption, independent of the acquisition. Editing it
+// recalculates the estimate without touching hardware, samples, or history.
+try {
+  const saved=localStorage.getItem('ppk2-battery-capacity-mAh');
+  if(saved!==null&&Number.isFinite(Number(saved))&&Number(saved)>=0.1&&Number(saved)<=100000)el.batteryCapacity.value=saved;
+} catch (_) { /* Local storage might be disabled or unavailable on file: URLs. */ }
+el.batteryCapacity.addEventListener('input',()=>{
+  const capacity=validBatteryMah();
+  if(capacity!==null){try{localStorage.setItem('ppk2-battery-capacity-mAh',String(capacity));}catch(_){}}
+  updateBatteryStats();
+});
+updateBatteryStats();
 window.addEventListener('resize',()=>{graphDirty=true;});
 window.addEventListener('beforeunload',()=>{if(running){ /* Browser close may interrupt capture. Never silently change output. */ }});
 navigator.serial?.addEventListener?.('disconnect',()=>{if(connected&&!demo)say('PPK2 disconnected. Check USB connection and DUT power.','error');});
