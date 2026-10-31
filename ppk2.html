@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PPK2 Current Profiler v10</title>
+<title>PPK2 Current Profiler v12</title>
 <style>
 /* Dark instrument theme */
 :root {color-scheme:dark; --bg:#0c1219; --panel:#151e28; --panel-alt:#1b2937; --field:#101922; --plot:#0f1822; --line:#2c3c49; --text:#e5eef5; --muted:#93a7b7; --blue:#69bfff; --bluewash:#20384e; --red:#ff9494; --green:#76d8b1; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,"SFMono-Regular",monospace; }
@@ -39,11 +39,10 @@ input[type=number]{width:95px;border:1px solid var(--line);background:var(--fiel
 .mode-note{padding:0 16px 12px;color:var(--muted);font-size:11px}
 #modeDetails{display:none}.warn{color:#8d4a25}
 .chart-panel{flex:1;min-height:460px;display:flex;flex-direction:column;overflow:hidden}
-.chart-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px 12px;flex-wrap:wrap}
-h2{font-size:14px;margin:0;font-weight:740}
-.chart-title{display:flex;flex-direction:column;gap:3px}
-#chartModeDescription{font-size:11px;color:var(--muted)}
-.chart-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.chart-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px 18px;padding:14px 16px;flex-wrap:wrap}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.chart-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-left:auto}
+.chart-caption{border-top:1px solid var(--line);padding:8px 16px;color:var(--muted);font-size:11px}
 
 .pillgroup{display:flex;flex-wrap:wrap;gap:3px;background:#101923;padding:3px;border-radius:7px}
 .pillgroup button{padding:6px 9px;font-size:11px;border-color:transparent;background:transparent;border-radius:5px;min-width:31px}
@@ -54,18 +53,18 @@ h2{font-size:14px;margin:0;font-weight:740}
 #plot{width:100%;height:100%;min-height:320px;display:block;touch-action:none;cursor:crosshair}
 #graphTip{display:none;position:absolute;z-index:3;pointer-events:none;background:#273e50f5;color:#f4faff;border-radius:5px;padding:8px 11px;font-size:11px;font-family:var(--mono);box-shadow:0 3px 12px #08182324;min-width:215px;max-width:270px;white-space:pre-line;line-height:1.7}
 #placeholder{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:#8a9cab;font-size:13px}
-.chart-bottom{border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.chart-bottom{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .chart-bottom-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.y-toolbar{border-top:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap}
+.y-toolbar{display:flex;align-items:center;gap:9px 14px;flex:1 1 510px;min-width:0;flex-wrap:wrap}
 .y-main,.y-manual{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .y-main>.small{font-weight:750}
+.y-toolbar select{max-width:145px}
 .y-toolbar button{padding:6px 10px;font-size:12px}
 .y-toolbar button.y-zoom{min-width:35px;font-weight:700}
 .y-toolbar .y-manual[hidden]{display:none}
 .y-manual label{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
 .y-manual input[type=number]{width:100px;padding:6px 8px;font-size:12px}
-.y-hint{margin-left:auto;max-width:320px;font-size:11px;color:var(--muted)}
-@media(max-width:920px){.y-hint{flex-basis:100%;margin-left:0}}
+.y-hint{display:none}
 
 .small{font-size:11px;color:var(--muted)}
 select{border:1px solid var(--line);border-radius:6px;padding:6px 9px;color:var(--text);background:var(--field);font-size:12px}
@@ -79,7 +78,7 @@ select{border:1px solid var(--line);border-radius:6px;padding:6px 9px;color:var(
 #messages.good{color:var(--green)}
 footer{font-size:11px;color:var(--muted);padding:0 3px 5px}
 footer a{color:var(--blue)}
-@media(max-width:880px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat:nth-child(3){border-right:0}.stat:nth-child(n+4){border-top:1px solid var(--line)}.chart-toolbar{align-items:flex-start}.chart-panel{min-height:410px}}
+@media(max-width:880px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat:nth-child(3){border-right:0}.stat:nth-child(n+4){border-top:1px solid var(--line)}.chart-toolbar{align-items:flex-start}.chart-actions{margin-left:0}.chart-panel{min-height:410px}}
 @media(max-width:540px){main{padding:10px;gap:10px}header{padding:12px}.toolbar{padding:12px;gap:13px}.control{flex:1 1 125px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:12px}.stat:nth-child(3){border-right:1px solid var(--line);border-top:1px solid var(--line)}.stat:nth-child(2n){border-right:0}.stat:nth-child(5){border-top:1px solid var(--line)}.chart-toolbar{padding:12px}.chart-actions{gap:9px}.chart-panel{min-height:440px}}
 </style>
 </head>
@@ -103,19 +102,32 @@ footer a{color:var(--blue)}
 
   <section class="panel chart-panel">
     <div class="chart-toolbar">
-      <div class="chart-title"><h2 id="chartHeading">Average current over time (µA)</h2><div id="chartModeDescription">Each point is the mean current over its plotted interval</div></div>
+      <div class="y-toolbar" aria-label="Y-axis scaling controls">
+        <div class="y-main">
+          <label for="axisMode" class="small">Y axis</label>
+          <select id="axisMode" title="Current axis scale"><option value="linear">Linear</option><option value="log">Logarithmic</option></select>
+          <label for="yScaleMode" class="small">Range</label>
+          <select id="yScaleMode" title="Automatic fit, zero baseline, or fixed manual range"><option value="auto">Auto fit</option><option value="zero">Start at zero</option><option value="manual">Manual</option></select>
+          <button class="y-zoom" id="yZoomOut" title="Zoom out vertically" aria-label="Zoom Y out">−</button>
+          <button class="y-zoom" id="yZoomIn" title="Zoom in vertically" aria-label="Zoom Y in">+</button>
+          <button id="yReset" title="Reset Y-axis to automatic fit">Reset Y</button>
+        </div>
+        <div class="y-manual" id="yManualControls" hidden>
+          <label for="yMin">Min <input type="number" id="yMin" min="0" step="any" value="0"></label>
+          <label for="yMax">Max <input type="number" id="yMax" min="0" step="any" value="100"></label>
+          <label for="yUnit" class="small">Units</label>
+          <select id="yUnit"><option value="0.001">nA</option><option value="1" selected>µA</option><option value="1000">mA</option><option value="1000000">A</option></select>
+          <button id="yApply">Apply</button>
+        </div>
+      </div>
       <div class="chart-actions">
-        <div class="pillgroup" id="periodButtons" aria-label="Graph window"></div><label class="checkbox-wrap"><input type="checkbox" id="liveToggle" checked>Live view</label>
+        <div class="pillgroup" id="periodButtons" aria-label="Graph window"></div>
+        <label class="checkbox-wrap"><input type="checkbox" id="liveToggle" checked>Live view</label>
       </div>
     </div>
+    <h2 id="chartHeading" class="sr-only">Average current over time (µA)</h2>
     <div class="chart-surface"><canvas id="plot" aria-label="Average current versus time, plotted at the selected recording resolution or a coarser display resolution"></canvas><div id="placeholder">Connect a PPK2 or try the demo to start a trace.</div><div id="graphTip"></div></div>
-    <div class="chart-bottom"><div class="small" id="plotInfo">3 s window · 10 Hz plot · drag to pan · wheel zooms at cursor</div><div class="chart-bottom-actions"><label for="axisMode" class="small">Current axis</label><select id="axisMode"><option value="linear">Linear</option><option value="log">Logarithmic</option></select><button id="exportBtn" disabled>Export CSV</button></div></div>
-    <div class="y-toolbar" aria-label="Y-axis scaling controls">
-      <div class="y-main"><label for="yScaleMode" class="small">Y range</label><select id="yScaleMode" title="Automatic fit, zero baseline, or fixed manual range"><option value="auto">Auto fit</option><option value="zero">Start at zero</option><option value="manual">Manual</option></select><button class="y-zoom" id="yZoomOut" title="Zoom out vertically" aria-label="Zoom Y out">−</button><button class="y-zoom" id="yZoomIn" title="Zoom in vertically" aria-label="Zoom Y in">+</button><button id="yReset" title="Reset Y-axis to automatic fit">Reset Y</button></div>
-      <div class="y-manual" id="yManualControls" hidden><label for="yMin">Min <input type="number" id="yMin" min="0" step="any" value="0"></label><label for="yMax">Max <input type="number" id="yMax" min="0" step="any" value="100"></label><label for="yUnit" class="small">Units</label><select id="yUnit"><option value="0.001">nA</option><option value="1" selected>µA</option><option value="1000">mA</option><option value="1000000">A</option></select><button id="yApply">Apply</button></div>
-      <span class="y-hint">Wheel over the left Y-axis to zoom, drag it to pan. Double-click to reset.</span>
-    </div>
-    <div class="mode-note" style="padding-top:8px">The Y axis never extends below zero. Only averaged current is plotted; changing the scale does not change measurements or exports.</div>
+    <div class="chart-caption" id="chartModeDescription">Each point is the mean current over its plotted interval</div>
   </section>
 
   <section class="panel stats">
@@ -124,6 +136,10 @@ footer a{color:var(--blue)}
     <div class="stat"><div class="stat-label">Instantaneous peak</div><div id="peakStat" class="stat-value">—</div><div class="stat-foot">Highest single acquired sample</div></div>
     <div class="stat"><div class="stat-label">Charge</div><div id="chargeStat" class="stat-value">—</div><div class="stat-foot">Integrated, µAh / mAh</div></div>
     <div class="stat"><div class="stat-label">Elapsed</div><div id="timeStat" class="stat-value">00:00:00</div><div class="stat-foot" id="samplesStat">0 averaged points retained · 10 Hz</div><div class="stat-foot" id="rawSamplesStat">0 raw samples processed</div></div>
+  </section>
+  <section class="panel chart-bottom" aria-label="Recording export and plot details">
+    <div class="small" id="plotInfo">3 s window · 10 Hz recorded · drag plot to pan · wheel zooms around latest sample in Live View</div>
+    <div class="chart-bottom-actions"><button id="exportBtn" disabled>Export CSV</button></div>
   </section>
   <div class="small" id="integrityNote">Data integrity: awaiting samples.</div>
   <div id="messages" role="status" aria-live="polite">Measurements remain in this browser. PPK2 acquisition is fixed at 100 kS/s; plotted and exported data is averaged to the selected rate.</div>
@@ -318,7 +334,7 @@ function onBins(data){
     addTier(0,data.first+k,values[k]);
   }
   latestTime=Math.max(latestTime,(data.first+data.count)*.001);
-  if(live)viewEnd=Math.max(viewSpan,latestTime);
+  if(live)viewEnd=latestTime>0?latestTime:viewSpan;
   if(recorder?.count){
     el.export.disabled=false;
     const last=recorder.pos(recorder.count-1);
@@ -595,7 +611,7 @@ function graph(){
   for(let i=0;i<=6;i++){
     const x=L+(W/6)*i;
     ctx.strokeStyle='#202e3c';ctx.beginPath();ctx.moveTo(x+.5,T);ctx.lineTo(x+.5,T+H);ctx.stroke();
-    ctx.fillStyle='#8ca4b6';ctx.fillText(secLabel(start+(viewSpan/6)*i),x,h-13);
+    ctx.fillStyle='#8ca4b6';const tickTime=start+(viewSpan/6)*i; if(tickTime>=0)ctx.fillText(secLabel(tickTime),x,h-13);
   }
   if(hasData){
     ctx.save();ctx.beginPath();ctx.rect(L,T,W,H);ctx.clip();
@@ -616,13 +632,14 @@ function graph(){
   ctx.strokeStyle='#3a4d5e';ctx.strokeRect(L+.5,T+.5,W,H);
   plotCols={sums,counts,start,span:viewSpan,L,T,W,H,yLo,yHi,log,binSeconds:ring?.dt||0};
   const modeStr=ring?`${ring.dt<1?Math.round(ring.dt*1000)+' ms':ring.dt+' s'} bins`:'awaiting first bin';
-  el.info.textContent=`${viewSpan<60?viewSpan.toFixed(viewSpan<1?2:0)+' s':secLabel(viewSpan)} window · ${fmtRate(recordResolution)} recorded · ${modeStr} displayed · drag plot to pan time · wheel zooms at cursor (pauses Live View)`;
+  const zoomDescription=live?'wheel zooms around newest sample (Live View stays on)':'wheel zooms at cursor';
+  el.info.textContent=`${viewSpan<60?viewSpan.toFixed(viewSpan<1?2:0)+' s':secLabel(viewSpan)} window · ${fmtRate(recordResolution)} recorded · ${modeStr} displayed · drag plot to pan time · ${zoomDescription}`;
   if(!running && latestTime<=0)el.placeholder.style.display='grid';else el.placeholder.style.display='none';
 }
 function scheduleGraph(){if(graphDirty){graph();graphDirty=false;}requestAnimationFrame(scheduleGraph);}
-function setPeriod(s){viewSpan=s;if(live)viewEnd=Math.max(latestTime,viewSpan);else viewEnd=Math.max(viewSpan,viewEnd);for(const b of el.periods.children)b.classList.toggle('selected',Number(b.dataset.seconds)===s);graphDirty=true;}
+function setPeriod(s){viewSpan=s;if(live)viewEnd=latestTime>0?latestTime:viewSpan;else viewEnd=Math.max(viewSpan,viewEnd);for(const b of el.periods.children)b.classList.toggle('selected',Number(b.dataset.seconds)===s);graphDirty=true;}
 periods.forEach(([label,seconds])=>{const b=document.createElement('button');b.textContent=label;b.dataset.seconds=seconds;b.type='button';b.addEventListener('click',()=>setPeriod(seconds));el.periods.append(b);});
-el.live.onchange=()=>{live=el.live.checked;if(live)viewEnd=Math.max(latestTime,viewSpan);graphDirty=true;};
+el.live.onchange=()=>{live=el.live.checked;if(live)viewEnd=latestTime>0?latestTime:viewSpan;graphDirty=true;};
 // Vertical scaling is view-only; it never modifies current, charge, or CSV data.
 function rangeText(uA){
   if(uA===0)return '0';
@@ -738,22 +755,23 @@ el.plot.addEventListener('pointerleave',()=>{el.tip.style.display='none';el.plot
 el.plot.addEventListener('dblclick',e=>{
   const r=plotCols,rect=el.plot.getBoundingClientRect();if(r&&e.clientX-rect.left<r.L)resetY();
 });
-// Zoom the time window about the cursor's TIME, not the newest sample.
-// A manual wheel zoom also detaches Live View so subsequent samples cannot
-// shift the window away from the cursor. Re-enable Live View to follow again.
+// Live View: wheel zooms the time window while keeping the newest sample
+// on the right edge. Historical view: zoom around the cursor's timestamp.
 function zoomTimeAt(factor,localX){
   const r=plotCols;
   if(!r)return;
   const newSpan=Math.max(.3,Math.min(86400*2,r.span*factor));
   if(Math.abs(newSpan-r.span)<1e-10)return;
-  const fraction=Math.max(0,Math.min(1,(localX-r.L)/r.W));
-  const anchorTime=r.start+fraction*r.span;
-  live=false;el.live.checked=false;
-  viewSpan=newSpan;
-  // Keep the original timestamp under the same pixel after scaling.
-  // Empty time before/after the capture is allowed at the boundaries,
-  // rather than moving the cursor's selected time to the edge.
-  viewEnd=anchorTime+(1-fraction)*newSpan;
+  if(live){
+    viewSpan=newSpan;
+    viewEnd=latestTime>0?latestTime:newSpan;
+  }else{
+    const fraction=Math.max(0,Math.min(1,(localX-r.L)/r.W));
+    const anchorTime=r.start+fraction*r.span;
+    viewSpan=newSpan;
+    // Keep the original timestamp under the same pixel after scaling.
+    viewEnd=anchorTime+(1-fraction)*newSpan;
+  }
   for(const b of el.periods.children)b.classList.remove('selected');
   graphDirty=true;
 }
