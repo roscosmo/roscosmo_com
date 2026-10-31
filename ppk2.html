@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPK2 Current Profiler v10</title>
+<style>
+/* Dark instrument theme */
+:root {color-scheme:dark; --bg:#0c1219; --panel:#151e28; --panel-alt:#1b2937; --field:#101922; --plot:#0f1822; --line:#2c3c49; --text:#e5eef5; --muted:#93a7b7; --blue:#69bfff; --bluewash:#20384e; --red:#ff9494; --green:#76d8b1; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,"SFMono-Regular",monospace; }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.38}
+button,input,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--field);border-radius:6px;color:var(--text);padding:8px 12px;white-space:nowrap}
+button:hover:not(:disabled){background:#223343}
+button:focus-visible,input:focus-visible,select:focus-visible {outline:2px solid var(--blue);outline-offset:2px}
+button:disabled,input:disabled,select:disabled{opacity:.43;cursor:not-allowed}
+button.selected{background:var(--bluewash);border-color:#437ba4;color:#a9deff;font-weight:650}
+button.primary{background:#c5e4f8;border-color:#c5e4f8;color:#112532;font-weight:700}
+button.primary:hover:not(:disabled){background:#9bd0f4;color:#112532}
+button.stop{background:#34232a;border-color:#8d4c54;color:#ffb7b9}
+header {display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:1px solid var(--line);background:#111b24;flex-wrap:wrap}
+.brand{display:flex;gap:13px;align-items:center}.device-icon{display:flex;justify-content:center;align-items:center;width:37px;height:37px;border:1px solid #486073;border-radius:9px;font-family:var(--mono);font-weight:800;font-size:13px}
+h1{font-size:17px;letter-spacing:.01em;margin:0;font-weight:760}.subtitle{font-size:12px;color:var(--muted);margin:1px 0 0}
+.connect{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.statusdot{height:8px;width:8px;background:#758594;border-radius:100%;display:inline-block;margin-right:3px}.statusdot.active{background:var(--green)}.statusdot.demo{background:#d58a23}
+#connectionStatus{font-size:12px;color:var(--muted);font-weight:600}
+main{max-width:1620px;padding:16px 20px 20px;margin:auto;display:flex;flex-direction:column;gap:14px;min-height:calc(100vh - 76px)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:9px}
+.toolbar{padding:13px 16px;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center}
+.control{display:flex;flex-direction:column;gap:5px}.control>label,.eyebrow{font-size:10px;font-weight:750;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.control .group{display:flex;align-items:center;gap:6px}
+input[type=number]{width:95px;border:1px solid var(--line);background:var(--field);border-radius:6px;padding:8px 9px;color:var(--text);font-family:var(--mono)}
+.unit{font-size:12px;color:var(--muted);font-family:var(--mono)}
+#outputBtn[aria-pressed=true]{background:#163a32;color:#8beac1;border-color:#347f66;font-weight:750}
+#startBtn{min-width:114px}
+.secondary-note{font-size:11px;color:var(--muted)}
+.rate-hint{font-size:11px;color:#92b7ce;white-space:nowrap}
+.mode-note{padding:0 16px 12px;color:var(--muted);font-size:11px}
+#modeDetails{display:none}.warn{color:#8d4a25}
+.chart-panel{flex:1;min-height:460px;display:flex;flex-direction:column;overflow:hidden}
+.chart-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px 12px;flex-wrap:wrap}
+h2{font-size:14px;margin:0;font-weight:740}
+.chart-title{display:flex;flex-direction:column;gap:3px}
+#chartModeDescription{font-size:11px;color:var(--muted)}
+.chart-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+.pillgroup{display:flex;flex-wrap:wrap;gap:3px;background:#101923;padding:3px;border-radius:7px}
+.pillgroup button{padding:6px 9px;font-size:11px;border-color:transparent;background:transparent;border-radius:5px;min-width:31px}
+.pillgroup button.selected{background:#2b475b;color:#bcdef3;border-color:#4a6e83;box-shadow:0 1px 3px #0003}
+.checkbox-wrap{font-size:12px;display:flex;align-items:center;gap:7px;white-space:nowrap;cursor:pointer;user-select:none}
+.checkbox-wrap input{accent-color:var(--blue);width:14px;height:14px;margin:0}
+.chart-surface{position:relative;min-height:320px;flex:1;overflow:hidden;padding:0 8px 5px}
+#plot{width:100%;height:100%;min-height:320px;display:block;touch-action:none;cursor:crosshair}
+#graphTip{display:none;position:absolute;z-index:3;pointer-events:none;background:#273e50f5;color:#f4faff;border-radius:5px;padding:8px 11px;font-size:11px;font-family:var(--mono);box-shadow:0 3px 12px #08182324;min-width:215px;max-width:270px;white-space:pre-line;line-height:1.7}
+#placeholder{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:#8a9cab;font-size:13px}
+.chart-bottom{border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.chart-bottom-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.y-toolbar{border-top:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap}
+.y-main,.y-manual{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.y-main>.small{font-weight:750}
+.y-toolbar button{padding:6px 10px;font-size:12px}
+.y-toolbar button.y-zoom{min-width:35px;font-weight:700}
+.y-toolbar .y-manual[hidden]{display:none}
+.y-manual label{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.y-manual input[type=number]{width:100px;padding:6px 8px;font-size:12px}
+.y-hint{margin-left:auto;max-width:320px;font-size:11px;color:var(--muted)}
+@media(max-width:920px){.y-hint{flex-basis:100%;margin-left:0}}
+
+.small{font-size:11px;color:var(--muted)}
+select{border:1px solid var(--line);border-radius:6px;padding:6px 9px;color:var(--text);background:var(--field);font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+.stat{padding:14px 16px;border-right:1px solid var(--line)}.stat:last-child{border-right:0}
+.stat-label{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.stat-value{font-family:var(--mono);font-size:clamp(16px,1.8vw,24px);font-weight:600;letter-spacing:-.035em;margin-top:5px;white-space:nowrap}
+.stat-foot{font-size:10px;color:var(--muted);margin-top:2px}
+#messages{font-family:var(--mono);font-size:11px;color:var(--muted);padding:0 3px;min-height:17px;word-break:break-word}
+#messages.error{color:var(--red)}
+#messages.good{color:var(--green)}
+footer{font-size:11px;color:var(--muted);padding:0 3px 5px}
+footer a{color:var(--blue)}
+@media(max-width:880px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat:nth-child(3){border-right:0}.stat:nth-child(n+4){border-top:1px solid var(--line)}.chart-toolbar{align-items:flex-start}.chart-panel{min-height:410px}}
+@media(max-width:540px){main{padding:10px;gap:10px}header{padding:12px}.toolbar{padding:12px;gap:13px}.control{flex:1 1 125px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:12px}.stat:nth-child(3){border-right:1px solid var(--line);border-top:1px solid var(--line)}.stat:nth-child(2n){border-right:0}.stat:nth-child(5){border-top:1px solid var(--line)}.chart-toolbar{padding:12px}.chart-actions{gap:9px}.chart-panel{min-height:440px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="device-icon">µA</div><div><h1>PPK2 Current Profiler</h1><div class="subtitle">Browser-based power monitor</div></div></div>
+  <div class="connect"><span id="connectionStatus"><span class="statusdot" id="statusDot"></span> Disconnected</span><button id="demoBtn" title="Preview controls and graph without a PPK2">Try demo</button><button id="connectBtn" class="primary">Connect PPK2</button></div>
+</header>
+<main>
+  <section class="panel">
+    <div class="toolbar">
+      <div class="control"><label>Meter mode</label><div class="group"><button id="sourceBtn" disabled>Source</button><button id="ampereBtn" disabled>Ampere</button></div></div>
+      <div class="control" id="sourceControl" style="display:none"><label for="sourceMv">Source voltage</label><div class="group"><input id="sourceMv" type="number" min="800" max="5000" step="10" value="3300"><span class="unit">mV</span><button id="applyMvBtn">Set</button></div></div>
+      <div class="control" id="ampereControl" style="display:none"><label for="referenceMv">External reference</label><div class="group"><input id="referenceMv" type="number" min="800" max="5000" step="50" value="3700"><span class="unit">mV</span></div></div>
+      <div class="control"><label>Power output</label><div class="group"><button id="outputBtn" aria-pressed="false" disabled>OFF</button></div></div>
+      <div class="control"><label>Acquisition</label><div class="group"><button id="startBtn" class="primary" disabled>Start fresh</button></div></div>
+      <div class="control"><label for="recordInterval">Plot / export sample rate</label><div class="group"><select id="recordInterval" title="Effective sample rate after averaging the 100 kS/s PPK2 input"><option value="1">1,000 Hz · 1 ms</option><option value="10">100 Hz · 10 ms</option><option value="100" selected>10 Hz · 100 ms</option><option value="1000">1 Hz · 1 s</option><option value="10000">0.1 Hz · 10 s</option><option value="60000">1/min · 60 s</option></select></div><div class="rate-hint" id="rateDescription">10 Hz selected</div></div>
+    </div>
+    <div class="mode-note" id="modeNote">Select a device, then choose its meter mode. Start and Stop do not change DUT power.</div>
+  </section>
+
+  <section class="panel chart-panel">
+    <div class="chart-toolbar">
+      <div class="chart-title"><h2 id="chartHeading">Average current over time (µA)</h2><div id="chartModeDescription">Each point is the mean current over its plotted interval</div></div>
+      <div class="chart-actions">
+        <div class="pillgroup" id="periodButtons" aria-label="Graph window"></div><label class="checkbox-wrap"><input type="checkbox" id="liveToggle" checked>Live view</label>
+      </div>
+    </div>
+    <div class="chart-surface"><canvas id="plot" aria-label="Average current versus time, plotted at the selected recording resolution or a coarser display resolution"></canvas><div id="placeholder">Connect a PPK2 or try the demo to start a trace.</div><div id="graphTip"></div></div>
+    <div class="chart-bottom"><div class="small" id="plotInfo">3 s window · 10 Hz plot · drag to pan · wheel zooms at cursor</div><div class="chart-bottom-actions"><label for="axisMode" class="small">Current axis</label><select id="axisMode"><option value="linear">Linear</option><option value="log">Logarithmic</option></select><button id="exportBtn" disabled>Export CSV</button></div></div>
+    <div class="y-toolbar" aria-label="Y-axis scaling controls">
+      <div class="y-main"><label for="yScaleMode" class="small">Y range</label><select id="yScaleMode" title="Automatic fit, zero baseline, or fixed manual range"><option value="auto">Auto fit</option><option value="zero">Start at zero</option><option value="manual">Manual</option></select><button class="y-zoom" id="yZoomOut" title="Zoom out vertically" aria-label="Zoom Y out">−</button><button class="y-zoom" id="yZoomIn" title="Zoom in vertically" aria-label="Zoom Y in">+</button><button id="yReset" title="Reset Y-axis to automatic fit">Reset Y</button></div>
+      <div class="y-manual" id="yManualControls" hidden><label for="yMin">Min <input type="number" id="yMin" min="0" step="any" value="0"></label><label for="yMax">Max <input type="number" id="yMax" min="0" step="any" value="100"></label><label for="yUnit" class="small">Units</label><select id="yUnit"><option value="0.001">nA</option><option value="1" selected>µA</option><option value="1000">mA</option><option value="1000000">A</option></select><button id="yApply">Apply</button></div>
+      <span class="y-hint">Wheel over the left Y-axis to zoom, drag it to pan. Double-click to reset.</span>
+    </div>
+    <div class="mode-note" style="padding-top:8px">The Y axis never extends below zero. Only averaged current is plotted; changing the scale does not change measurements or exports.</div>
+  </section>
+
+  <section class="panel stats">
+    <div class="stat"><div class="stat-label">Latest interval average</div><div id="latestStat" class="stat-value">—</div><div class="stat-foot">Mean over selected plot interval</div></div>
+    <div class="stat"><div class="stat-label">Overall mean current</div><div id="meanStat" class="stat-value">—</div><div class="stat-foot">All samples since Start</div></div>
+    <div class="stat"><div class="stat-label">Instantaneous peak</div><div id="peakStat" class="stat-value">—</div><div class="stat-foot">Highest single acquired sample</div></div>
+    <div class="stat"><div class="stat-label">Charge</div><div id="chargeStat" class="stat-value">—</div><div class="stat-foot">Integrated, µAh / mAh</div></div>
+    <div class="stat"><div class="stat-label">Elapsed</div><div id="timeStat" class="stat-value">00:00:00</div><div class="stat-foot" id="samplesStat">0 averaged points retained · 10 Hz</div><div class="stat-foot" id="rawSamplesStat">0 raw samples processed</div></div>
+  </section>
+  <div class="small" id="integrityNote">Data integrity: awaiting samples.</div>
+  <div id="messages" role="status" aria-live="polite">Measurements remain in this browser. PPK2 acquisition is fixed at 100 kS/s; plotted and exported data is averaged to the selected rate.</div>
+  <footer>Plots and CSV exports contain averaged current only. The separate instantaneous peak readout is diagnostic and is not saved in the interval history. Runs from HTTPS or localhost in a Web Serial-enabled desktop browser. External supply in Ampere mode must be 800–5000 mV. The sample-rate selector controls plot and CSV aggregation, not the 100 kS/s hardware stream. Do not leave the computer sleeping during long captures. <a href="https://docs.nordicsemi.com/r/bundle/ug_ppk2/page/ug/ppk/ppk_user_guide_intro.html" target="_blank" rel="noopener">PPK2 hardware limits</a>.</footer>
+</main>
+
+<script id="worker-source" type="text/plain">
+'use strict';
+// Decode the PPK2 4-byte stream and calibrate using its own metadata.
+// Command and conversion reference: IRNAS/ppk2-api-python (MIT); this is an independent JS port.
+const RAW_RATE=100000;
+let mods=null, refV=3.7;
+let carry = new Uint8Array(4), carryN=0;
+let count=0, sum=0, latest=NaN, max=-Infinity;
+let roll=null, roll4=null, prevRange=null, consecutive=0, after=0;
+let bSum=0,bN=0,bIndex=0;
+let previousCounter=null, sequenceErrors=0, invalidRanges=0;
+let queued=[], queuedIndex=0, lastStats=0;
+function reset() {
+  carryN=0; count=0; sum=0; latest=NaN; max=-Infinity;
+  roll=null;roll4=null;prevRange=null;consecutive=0;after=0;
+  bSum=0;bN=0;bIndex=0;queued=[]; queuedIndex=0; lastStats=0;
+  previousCounter=null;sequenceErrors=0;invalidRanges=0;
+}
+function cal(raw) {
+  const range=(raw>>>14)&7;
+  // Values 5–7 have no calibration coefficients. Do not misinterpret them as range 4.
+  if(range>4){invalidRanges++;return NaN;}
+  const adc=(raw&0x3fff)*4;
+  const without=(adc-mods.O[range])*(1.8/163840)/mods.R[range];
+  let out=mods.UG[range]*(without*(mods.GS[range]*without+mods.GI[range])+(mods.S[range]*refV+mods.I[range]));
+  const old=roll, old4=roll4;
+  roll=(roll===null)?out:(0.18*out+0.82*roll);
+  roll4=(roll4===null)?out:(0.06*out+0.94*roll4);
+  if(prevRange===null)prevRange=range;
+  if(prevRange!==range || after>0) {
+    if(prevRange!==range){consecutive=0;after=3;} else consecutive++;
+    if(range===4){
+      if(consecutive<2){if(old!==null)roll=old;if(old4!==null)roll4=old4;}
+      out=roll4;
+    } else out=roll;
+    after--;
+  }
+  prevRange=range;
+  return out*1000000;
+}
+function emitStats(force=false) {
+  const now=Date.now();if(!force && now-lastStats<150)return;
+  lastStats=now;
+  postMessage({type:'stats',count,sum,latest,max,sequenceErrors,invalidRanges});
+}
+function flushBins() {
+  if(!queued.length)return;
+  const batch=new Float32Array(queued);
+  postMessage({type:'bins',first:queuedIndex,count:batch.length,values:batch},[batch.buffer]);
+  queued=[];
+}
+function sample(raw) {
+  // The PPK2 embeds a 6-bit rolling sample counter in bits 18–23.
+  // A discontinuity signals that the USB stream may be incomplete or misaligned.
+  const counter=(raw>>>18)&63;
+  if(previousCounter!==null && counter!==((previousCounter+1)&63))sequenceErrors++;
+  previousCounter=counter;
+  const v=cal(raw);
+  if(!Number.isFinite(v))return;
+  sum+=v; count++; latest=v;
+  if(v>max)max=v;
+  bSum+=v;bN++;
+  if(bN===100){
+    if(queued.length===0)queuedIndex=bIndex;
+    queued.push(bSum/100);
+    bSum=0;bN=0;bIndex++;
+  }
+}
+function decode(bytes) {
+  let p=0;
+  if(carryN){
+    while(carryN<4 && p<bytes.length)carry[carryN++]=bytes[p++];
+    if(carryN===4){sample((carry[0]|(carry[1]<<8)|(carry[2]<<16)|(carry[3]<<24))>>>0);carryN=0;}
+  }
+  const dv=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+  for(;p+4<=bytes.length;p+=4)sample(dv.getUint32(p,true));
+  while(p<bytes.length)carry[carryN++]=bytes[p++];
+  if(queued.length>=300 || (queued.length>0 && Date.now()-lastStats>35))flushBins();
+  emitStats();
+}
+onmessage=e=>{
+  const m=e.data;
+  if(m.type==='reset'){reset();mods=m.modifiers;refV=m.referenceMv/1000;}
+  if(m.type==='bytes'){if(mods)decode(new Uint8Array(m.buffer));}
+  if(m.type==='finish'){
+    if(bN){if(!queued.length)queuedIndex=bIndex;queued.push(bSum/bN);bN=0;bIndex++;}
+    flushBins();emitStats(true);
+    postMessage({type:'finished'});
+  }
+};
+</script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const SAMPLE_RATE=100000;
+const periods=[['3s',3],['10s',10],['30s',30],['1m',60],['5m',300],['15m',900],['1h',3600],['6h',21600],['12h',43200],['1d',86400]];
+let mode=null,appliedVoltage=null,powerOn=false,connected=false,demo=false,running=false,finishing=false,calibration=null;
+let port=null,reader=null,writer=null,readPromise=null,shutdown=false,serialPhase='idle',metadataPending=null,metaBuffer='';
+let viewSpan=3,viewEnd=3,latestTime=0, live=true,graphDirty=true,plotCols=null,recordingStart=null,sampleCount=0,lastSum=0,lastLatest=NaN,lastPeak=-Infinity;
+let demoTimer=null,demoTick=0,demoSum=0,demoMax=-Infinity,demoLatest=NaN;
+let sourceApplied = false, recordResolution=100, recorder=null, recordDropped=0;
+let yScaleMode='auto', yManual={lo:0,hi:100};
+const el={
+  connect:$('connectBtn'),demo:$('demoBtn'),status:$('connectionStatus'),dot:$('statusDot'),source:$('sourceBtn'),ampere:$('ampereBtn'),
+  sourceControl:$('sourceControl'),ampereControl:$('ampereControl'),sourceMv:$('sourceMv'),applyMv:$('applyMvBtn'),referenceMv:$('referenceMv'),
+  power:$('outputBtn'),start:$('startBtn'),periods:$('periodButtons'),live:$('liveToggle'),recordInterval:$('recordInterval'),
+  rateDescription:$('rateDescription'),heading:$('chartHeading'),plot:$('plot'),info:$('plotInfo'),placeholder:$('placeholder'),tip:$('graphTip'),axis:$('axisMode'),export:$('exportBtn'),
+  yScale:$('yScaleMode'),yManualControls:$('yManualControls'),yMin:$('yMin'),yMax:$('yMax'),yUnit:$('yUnit'),yApply:$('yApply'),yIn:$('yZoomIn'),yOut:$('yZoomOut'),yReset:$('yReset'),
+  latest:$('latestStat'),mean:$('meanStat'),peak:$('peakStat'),charge:$('chargeStat'),time:$('timeStat'),samples:$('samplesStat'),rawSamples:$('rawSamplesStat'),message:$('messages'),modeNote:$('modeNote'),integrity:$('integrityNote'),chartModeDescription:$('chartModeDescription')
+};
+function say(msg,kind=''){el.message.textContent=msg;el.message.className=kind;}
+function bytes(...v){return new Uint8Array(v)}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+function validMv(value){const n=Number(value);return Number.isInteger(n)&&n>=800&&n<=5000?n:null;}
+function fmtI(u){if(!Number.isFinite(u))return '—';if(u===0)return '0 µA';const a=Math.abs(u);if(a<1)return `${(u*1000).toFixed(1)} nA`;if(a<1000)return `${u.toFixed(a<10?2:1)} µA`;if(a<1000000)return `${(u/1000).toFixed(a<10000?3:2)} mA`;return `${(u/1000000).toFixed(2)} A`;}
+function fmtCharge(uAh){if(!Number.isFinite(uAh))return '—';return uAh<1000?`${uAh.toFixed(2)} µAh`:`${(uAh/1000).toFixed(3)} mAh`;}
+function fmtRate(ms){
+  if(ms===60000)return '1/min';
+  const hz=1000/ms;
+  return hz>=1000?`${(hz/1000).toFixed(hz%1000?1:0)} kHz`:`${hz.toFixed(hz>=1?0:1)} Hz`;
+}
+function updateRateLabel(){
+  if(!el.rateDescription)return;
+  const wanted=Number(el.recordInterval.value);
+  el.rateDescription.textContent=(!running && sampleCount>0 && wanted!==recordResolution)
+    ? `${fmtRate(wanted)} next run · ${fmtRate(recordResolution)} recorded`
+    : `${fmtRate(wanted)} plotted & exported`;
+}
+function fmtClock(s){s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;return [h,m,sec].map(x=>String(x).padStart(2,'0')).join(':');}
+function secLabel(s){const sign=s<0?'-':'';s=Math.max(0,Math.abs(s));if(s<10)return sign+s.toFixed(2)+'s';if(s<60)return sign+s.toFixed(1)+'s';return sign+fmtClock(s);}
+function parseMetadata(text){
+  const names=['R','GS','GI','O','S','I','UG'];const arrays={};for(const n of names)arrays[n]=new Array(5).fill(null);
+  let found=0;
+  for(const line of text.split(/\r?\n/)){
+    const m=line.trim().match(/^([A-Z]+)([0-4])\s*:\s*([-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)/);
+    if(!m)continue;
+    if(arrays[m[1]]){const v=Number(m[3]);if(Number.isFinite(v)){if(arrays[m[1]][+m[2]]===null)found++;arrays[m[1]][+m[2]]=v;}}
+  }
+  if(found<35)throw new Error(`PPK2 metadata incomplete (${found}/35 calibration values). Check the selected serial port.`);
+  if(arrays.R.some(x=>x===0))throw new Error('Invalid PPK2 calibration resistance value.');
+  return arrays;
+}
+class Ring{
+  constructor(dt,capacity){this.dt=dt;this.capacity=capacity;this.count=0;this.head=0;this.idx=new Float64Array(capacity);this.mean=new Float32Array(capacity);}
+  push(idx,mean){const p=this.head;this.idx[p]=idx;this.mean[p]=mean;this.head=(p+1)%this.capacity;if(this.count<this.capacity)this.count++;else if(this===recorder)recordDropped++;}
+  pos(n){return (this.head-this.count+n+this.capacity)%this.capacity;}
+  oldTime(){return this.count?this.idx[this.pos(0)]*this.dt:Infinity;}
+  newTime(){return this.count?(this.idx[this.pos(this.count-1)]+1)*this.dt:-Infinity;}
+  lowerIndex(sec){let l=0,h=this.count;while(l<h){const m=(l+h)>>>1;if(this.idx[this.pos(m)]*this.dt<sec)l=m+1;else h=m;}return l;}
+}
+// Hierarchical mean-only history. Each higher tier averages its lower-tier bins.
+// The selected output rate is a lower bound for plotted resolution, not the PPK2 ADC rate.
+const tiers=[new Ring(.001,120000),new Ring(.01,360000),new Ring(.1,432000),new Ring(1,172800),new Ring(10,60480),new Ring(60,10080)];
+const tierRatios=[10,10,10,10,6];
+let aggregates=Array(tiers.length-1).fill(null);
+function resetHistory(){
+  for(let i=0;i<tiers.length;i++){tiers[i].head=0;tiers[i].count=0;}
+  aggregates=Array(tiers.length-1).fill(null);
+  recordResolution=Number(el.recordInterval.value);
+  // Limit export buffer allocations, especially for multi-day captures at low sample rates.
+  const capacity=Math.min(1728000,Math.ceil(7*86400/(recordResolution/1000)));
+  recorder=new Ring(recordResolution/1000,capacity);
+  updateRateLabel();
+  recordDropped=0;recordingStart=Date.now();latestTime=0;viewEnd=viewSpan;sampleCount=0;lastSum=0;lastLatest=NaN;lastPeak=-Infinity;
+  el.latest.textContent='—';el.integrity.textContent='Data integrity: awaiting samples.';el.integrity.style.color='';
+  setStats(0,0,NaN,-Infinity);
+  el.export.disabled=true;el.placeholder.style.display='none';graphDirty=true;
+}
+function addTier(level,index,mean){
+  tiers[level].push(index,mean);
+  if(Math.round(tiers[level].dt*1000)===recordResolution)recorder.push(index,mean);
+  if(level>=tiers.length-1)return;
+  const idx=Math.floor(index/tierRatios[level]);
+  let agg=aggregates[level];
+  if(agg && agg.index!==idx){flushAggregate(level);agg=null;}
+  if(!agg){agg={index:idx,n:0,sum:0};aggregates[level]=agg;}
+  agg.n++;agg.sum+=mean;
+  if(agg.n===tierRatios[level])flushAggregate(level);
+}
+function flushAggregate(level){const a=aggregates[level];if(!a||!a.n)return;aggregates[level]=null;addTier(level+1,a.index,a.sum/a.n);}
+function endAggregate(){for(let i=0;i<aggregates.length;i++)flushAggregate(i);if(recorder?.count)el.export.disabled=false;graphDirty=true;}
+function onBins(data){
+  const values=data.values;
+  for(let k=0;k<data.count;k++){
+    addTier(0,data.first+k,values[k]);
+  }
+  latestTime=Math.max(latestTime,(data.first+data.count)*.001);
+  if(live)viewEnd=Math.max(viewSpan,latestTime);
+  if(recorder?.count){
+    el.export.disabled=false;
+    const last=recorder.pos(recorder.count-1);
+    el.latest.textContent=fmtI(recorder.mean[last]);
+  }
+  updateSampleStatus();
+  graphDirty=true;
+}
+function updateSampleStatus(){
+  const retained=recorder?.count||0;
+  el.samples.textContent=`${retained.toLocaleString()} averaged points retained · ${fmtRate(recordResolution)}`;
+  el.rawSamples.textContent=`${sampleCount.toLocaleString()} raw samples processed${recordDropped?` · ${recordDropped.toLocaleString()} old points overwritten`:``}`;
+}
+function setStats(n,s,latest,peak){
+  sampleCount=n;lastSum=s;lastLatest=latest;lastPeak=peak;
+  const elapsed=n/SAMPLE_RATE;
+  el.mean.textContent=n?fmtI(s/n):'—';el.peak.textContent=Number.isFinite(peak)?fmtI(peak):'—';
+  el.charge.textContent=n?fmtCharge(s/SAMPLE_RATE/3600):'—';el.time.textContent=fmtClock(elapsed);
+  updateSampleStatus();
+}
+const workerBlob = new Blob([$('worker-source').textContent],{type:'text/javascript'});
+const workerURL=URL.createObjectURL(workerBlob);
+const worker=new Worker(workerURL);
+worker.onmessage=e=>{
+  const m=e.data;
+  if(m.type==='bins')onBins(m);
+  if(m.type==='stats'){
+    setStats(m.count,m.sum,m.latest,m.max);
+    el.integrity.textContent=(m.sequenceErrors||m.invalidRanges)
+      ? `DATA WARNING: ${m.sequenceErrors} sample-counter discontinuities, ${m.invalidRanges} invalid range codes. Current and charge may be unreliable.`
+      : `Data integrity: ${m.count.toLocaleString()} consecutive, valid-range samples (PPK2 rolling counter).`;
+    el.integrity.style.color=(m.sequenceErrors||m.invalidRanges)?'#ff9494':'';
+  }
+  if(m.type==='finished'){endAggregate();finishing=false;updateUI();}
+};
+worker.onerror=e=>say(`Processing error: ${e.message}`,'error');
+function updateUI(){
+  el.connect.textContent=connected&&!demo?'Disconnect':'Connect PPK2';el.connect.disabled=demo;
+  el.demo.textContent=demo?'Exit demo':'Try demo';el.demo.disabled=connected&&!demo;
+  el.status.innerHTML=`<span class="statusdot ${!connected?'':demo?'demo':'active'}"></span> ${!connected?'Disconnected':demo?'Demo mode':running?'Measuring':'Connected'}`;
+  el.source.disabled=!connected||running||finishing;el.ampere.disabled=!connected||running||finishing;
+  el.source.classList.toggle('selected',mode==='source');el.ampere.classList.toggle('selected',mode==='ampere');
+  el.sourceControl.style.display=mode==='source'?'flex':'none';el.ampereControl.style.display=mode==='ampere'?'flex':'none';
+  el.sourceMv.disabled=running;el.applyMv.disabled=!connected||mode!=='source'||running;
+  el.referenceMv.disabled=running;
+  el.power.disabled=!connected||!mode||(mode==='source'&&!sourceApplied&&!powerOn);
+  el.power.textContent=powerOn?'ON':'OFF';el.power.setAttribute('aria-pressed',String(powerOn));
+  el.start.disabled=!connected||!mode||finishing||(mode==='source'&&!sourceApplied);
+  el.start.textContent=running?'Stop':'Start fresh';el.start.classList.toggle('stop',running);el.start.classList.toggle('primary',!running);
+  el.recordInterval.disabled=running;
+  updateRateLabel();
+  if(!connected)el.modeNote.textContent='Select a device, then choose its meter mode. Start and Stop do not change DUT power.';
+  else if(mode==='source')el.modeNote.textContent=sourceApplied?`Source set to ${appliedVoltage} mV. Power output is controlled separately.`:powerOn&&appliedVoltage!==null?`Input changed but not applied. DUT is still powered at ${appliedVoltage} mV until Set is clicked.`:'Set a source voltage (800–5000 mV) before enabling DUT power.';
+  else if(mode==='ampere')el.modeNote.textContent='External battery supplies VIN. Reference mV is used only for current calibration, not to control battery voltage.';
+  else el.modeNote.textContent='Choose Source or Ampere. Changing the meter mode switches DUT output OFF.';
+}
+async function write(b){if(!writer)throw new Error('Not connected to serial port.');await writer.write(b);}
+async function readLoop(){
+  try{
+    while(!shutdown){
+      const r=await reader.read();if(r.done)break;
+      if(!r.value||!r.value.byteLength)continue;
+      if(serialPhase==='metadata'){
+        metaBuffer+=new TextDecoder().decode(r.value);
+        if(metaBuffer.length>64000){metadataPending?.reject(new Error('Unexpected serial response during calibration read.'));metadataPending=null;serialPhase='idle';continue;}
+        if(/\bEND\b/.test(metaBuffer)){
+          const text=metaBuffer;serialPhase='idle';metadataPending?.resolve(text);metadataPending=null;
+        }
+      }else if(serialPhase==='streaming'&&running){
+        const owned=new Uint8Array(r.value);worker.postMessage({type:'bytes',buffer:owned.buffer},[owned.buffer]);
+      }
+    }
+  }catch(e){if(!shutdown){say('Serial read error: '+e.message,'error');}}
+  finally{
+    if(!shutdown){
+      connected=false;running=false;mode=null;sourceApplied=false;powerOn=false;
+      metadataPending?.reject(new Error('Serial stream ended.'));metadataPending=null;updateUI();
+      say('PPK2 connection closed. Actual DUT output state may be unknown.','error');
+    }
+  }
+}
+async function connectDevice(){
+  if(!('serial' in navigator)){say('Web Serial unavailable. Use Firefox 151+, Chrome or Edge on desktop over HTTPS/localhost.','error');return;}
+  try{
+    port=await navigator.serial.requestPort();
+    await port.open({baudRate:9600,bufferSize:65536});
+    reader=port.readable.getReader();writer=port.writable.getWriter();shutdown=false;serialPhase='idle';
+    readPromise=readLoop();
+    await write(bytes(0x07)); // Halt an old acquisition only. Does not command DUT power OFF.
+    await delay(120);
+    metaBuffer='';serialPhase='metadata';
+    const metadata=new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>{if(metadataPending){metadataPending=null;serialPhase='idle';reject(new Error('PPK2 metadata timed out. Select the PPK2 data serial port.'));}},3000);
+      metadataPending={resolve:v=>{clearTimeout(timer);resolve(v)},reject:e=>{clearTimeout(timer);reject(e)}};
+    });
+    await write(bytes(0x19));
+    calibration=parseMetadata(await metadata);
+    connected=true;demo=false;mode=null;powerOn=false;sourceApplied=false;appliedVoltage=null;
+    updateUI();say('PPK2 calibration loaded. Select a meter mode and configure DUT output.','good');
+  }catch(e){
+    if(e.name!=='NotFoundError')say('Connection failed: '+e.message,'error');
+    await disconnectDevice(false);
+  }
+}
+async function disconnectDevice(showMessage=true){
+  try{if(running){running=false;serialPhase='idle';await write(bytes(0x07));worker.postMessage({type:'finish'});}}catch{}
+  shutdown=true;serialPhase='idle';
+  try{await reader?.cancel();}catch{}
+  try{await readPromise;}catch{}
+  try{reader?.releaseLock();}catch{}
+  try{writer?.releaseLock();}catch{}
+  try{await port?.close();}catch{}
+  port=null;reader=null;writer=null;readPromise=null;connected=false;mode=null;powerOn=false;sourceApplied=false;calibration=null;
+  updateUI();
+  if(showMessage)say('Disconnected. DUT power state is not inferred after disconnect.');
+}
+function defaultDemoCal(){return {R:[1031.64,101.65,10.15,0.94,0.043],GS:[1,1,1,1,1],GI:[1,1,1,1,1],O:[0,0,0,0,0],S:[0,0,0,0,0],I:[0,0,0,0,0],UG:[1,1,1,1,1]};}
+async function toggleDemo(){
+  if(demo){if(running)await stopAcquisition();if(demoTimer)clearInterval(demoTimer);demoTimer=null;demo=false;connected=false;mode=null;powerOn=false;sourceApplied=false;calibration=null;say('Demo closed.');}
+  else{demo=true;connected=true;mode=null;powerOn=false;sourceApplied=false;calibration=defaultDemoCal();say('Demo active. Select a meter mode, then Start fresh.','good');}
+  updateUI();
+}
+async function setMode(next){
+  if(!connected||running||next===mode)return;
+  if(powerOn&&!confirm('Changing meter mode will switch the DUT output OFF. Continue?'))return;
+  try{
+    if(!demo)await write(bytes(0x0c,0));
+    powerOn=false;
+    if(!demo)await write(bytes(0x11,next==='source'?2:1));
+    mode=next;sourceApplied=false;appliedVoltage=null;
+    updateUI();say(next==='source'?'Source mode selected. Set voltage before powering the DUT.':'Ampere mode selected. Supply VIN externally.','good');
+  }catch(e){say('Could not change mode: '+e.message,'error');}
+}
+async function setVoltage(){
+  if(mode!=='source'||!connected||running)return;
+  const mv=validMv(el.sourceMv.value);
+  if(mv===null){say('Source voltage must be an integer between 800 and 5000 mV.','error');return;}
+  if(powerOn&&!confirm(`Change active DUT output voltage to ${mv} mV?`))return;
+  const code=mv-800+32;
+  const b1=3+Math.floor(code/256),b2=code%256;
+  try{
+    if(!demo)await write(bytes(0x0d,b1,b2));
+    sourceApplied=true;appliedVoltage=mv;updateUI();say(`Source regulator set to ${mv} mV.`,'good');
+  }catch(e){say('Could not set voltage: '+e.message,'error');}
+}
+async function toggleOutput(){
+  if(!connected||!mode||(mode==='source'&&!sourceApplied&&!powerOn))return;
+  const desired=!powerOn;
+  try{
+    if(!demo)await write(bytes(0x0c,desired?1:0));
+    powerOn=desired;updateUI();say(`DUT output commanded ${desired?'ON':'OFF'}.`,'good');
+  }catch(e){say('Power command failed: '+e.message,'error');}
+}
+function startDemo(){
+  demoTick=0;demoSum=0;demoMax=-Infinity;demoLatest=NaN;
+  demoTimer=setInterval(()=>{
+    if(!running)return;
+    const bins=new Float32Array(20);
+    for(let i=0;i<20;i++){
+      const t=(demoTick+i)*.001;
+      const ripple=(t*50%1)*24;
+      const spike=(Math.floor(t*1.37)%23===7 && (t*1.37%1)<.001)?11000:0;
+      const v=powerOn?23+ripple+1.8*Math.sin(t*8)+spike:0;
+      bins[i]=v;
+      demoSum+=v*100;demoLatest=v;demoMax=Math.max(demoMax,v);
+    }
+    onBins({first:demoTick,count:20,values:bins});demoTick+=20;
+    setStats(demoTick*100,demoSum,demoLatest,demoMax);
+  },20);
+}
+async function startAcquisition(){
+  if(!connected||!mode)return;
+  const ref=mode==='source'?appliedVoltage:validMv(el.referenceMv.value);
+  if(ref===null){say('Enter an external voltage reference between 800 and 5000 mV.','error');return;}
+  try{
+    resetHistory();
+    worker.postMessage({type:'reset',modifiers:calibration,referenceMv:ref});
+    running=true;finishing=false;
+    if(demo)startDemo();
+    else {serialPhase='streaming';await write(bytes(0x06));}
+    updateUI();say('New acquisition started. DUT power output unchanged.','good');
+  }catch(e){running=false;serialPhase='idle';updateUI();say('Could not start acquisition: '+e.message,'error');}
+}
+async function stopAcquisition(){
+  if(!running)return;
+  try{
+    running=false;serialPhase='idle';
+    if(demo){clearInterval(demoTimer);demoTimer=null;endAggregate();}
+    else{finishing=true;updateUI();await write(bytes(0x07));worker.postMessage({type:'finish'});}
+    updateUI();say('Acquisition stopped. DUT power output unchanged.','good');
+  }catch(e){say('Could not stop acquisition: '+e.message,'error');updateUI();}
+}
+function chooseTier(start,span,width){
+  // Never plot finer than the selected effective sampling rate.
+  const minDt=recordResolution/1000;
+  let available=tiers.filter(r=>r.count&&r.dt>=minDt-1e-9&&r.oldTime()<=start+r.dt*1.5);
+  if(!available.length)available=tiers.filter(r=>r.count&&r.dt>=minDt-1e-9);
+  if(!available.length)return null;
+  const target=Math.max(minDt,span/Math.max(1,width));
+  const good=available.filter(r=>r.dt<=target*1.5);
+  return (good.length?good:available).reduce((a,b)=>a.dt>b.dt?a:b);
+}
+function graph(){
+  const canvas=el.plot;const rect=canvas.getBoundingClientRect();const w=rect.width,h=rect.height;
+  if(w<50||h<50)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  const L=75,R=20,T=20,B=35,W=w-L-R,H=h-T-B;
+  ctx.fillStyle='#0f1822';ctx.fillRect(L,T,W,H);
+  const start=viewEnd-viewSpan;
+  const colN=Math.max(1,Math.floor(W));
+  const sums=new Float64Array(colN),counts=new Uint32Array(colN);
+  const ring=chooseTier(Math.max(0,start),viewSpan,colN);
+  if(ring){
+    for(let i=ring.lowerIndex(start-ring.dt);i<ring.count;i++){
+      const p=ring.pos(i),t=(ring.idx[p]+.5)*ring.dt;
+      if(t>viewEnd)break;
+      if(t<start)continue;
+      const c=Math.max(0,Math.min(colN-1,Math.floor((t-start)/viewSpan*colN)));
+      sums[c]+=ring.mean[p];counts[c]++;
+    }
+  }
+  // Y bounds use interval averages, never the stored instantaneous peaks.
+  // The drawing floor is zero. Raw calibrated readings are not modified.
+  let observedLo=Infinity,observedHi=-Infinity,smallestPositive=Infinity;
+  for(let i=0;i<colN;i++)if(counts[i]){
+    const avg=Math.max(0,sums[i]/counts[i]);
+    observedLo=Math.min(observedLo,avg);observedHi=Math.max(observedHi,avg);
+    if(avg>0)smallestPositive=Math.min(smallestPositive,avg);
+  }
+  const hasData=Number.isFinite(observedLo)&&Number.isFinite(observedHi);
+  const log=el.axis.value==='log';
+  let yLo,yHi;
+  if(yScaleMode==='manual'){
+    yLo=log?Math.max(.000001,yManual.lo):Math.max(0,yManual.lo);
+    yHi=log?Math.max(yLo*1.000001,yManual.hi):Math.max(yLo+.000001,yManual.hi);
+  }else if(log){
+    const base=hasData&&Number.isFinite(smallestPositive)?smallestPositive:.01;
+    const top=hasData?Math.max(observedHi,base):1;
+    yLo=Math.max(.000001,base/1.35);yHi=Math.max(yLo*2,top*1.35);
+  }else if(!hasData){yLo=0;yHi=100;
+  }else{
+    const range=observedHi-observedLo;
+    const pad=Math.max(.005,observedHi*.06,range*.12);
+    yLo=yScaleMode==='zero'?0:Math.max(0,observedLo-pad);
+    yHi=Math.max(yLo+.000001,observedHi+pad);
+  }
+  const yTransform=log?(v=>Math.log10(Math.max(yLo,v))):(v=>Math.max(0,v));
+  const minY=yTransform(yLo),maxY=yTransform(yHi);
+  const toY=v=>T+H-(yTransform(v)-minY)/(maxY-minY)*H;
+  // All incoming and aggregated measurements are in µA. Only the displayed
+  // tick *units* change; do not scale the underlying waveform differently.
+  const maxAbs=Math.max(Math.abs(yLo),Math.abs(yHi));
+  const axisUnits=maxAbs>=1e6?{unit:'A',scale:1e-6}
+    :maxAbs>=1000?{unit:'mA',scale:1e-3}
+    :maxAbs>=1?{unit:'µA',scale:1}
+    :{unit:'nA',scale:1000};
+  const tickStep=(yHi-yLo)/5*axisUnits.scale;
+  const precision=tickStep>=10?0:tickStep>=1?1:tickStep>=.1?2:tickStep>=.01?3:tickStep>=.001?4:6;
+  el.heading.textContent=`Average current over time (${axisUnits.unit})`;
+  const intervalLabel=ring?.dt < 1 ? `${Math.round(ring.dt*1000)} ms` : ring ? `${ring.dt} s` : 'selected';
+  el.chartModeDescription.textContent=`Mean current for each ${intervalLabel} interval`;
+  ctx.textAlign='right';ctx.font='11px ui-monospace,monospace';ctx.fillStyle='#a3b3c1';
+  for(let i=0;i<=5;i++){
+    const y=T+(H/5)*i;
+    ctx.strokeStyle='#293847';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(L,y+.5);ctx.lineTo(w-R,y+.5);ctx.stroke();
+    const v=log?Math.pow(10,maxY-(maxY-minY)*i/5):yHi-(yHi-yLo)*i/5;
+    // One shared unit per axis makes µA/mA values unambiguous.
+    ctx.fillText((v*axisUnits.scale).toFixed(precision),L-9,y+4);
+  }
+  ctx.textAlign='center';
+  for(let i=0;i<=6;i++){
+    const x=L+(W/6)*i;
+    ctx.strokeStyle='#202e3c';ctx.beginPath();ctx.moveTo(x+.5,T);ctx.lineTo(x+.5,T+H);ctx.stroke();
+    ctx.fillStyle='#8ca4b6';ctx.fillText(secLabel(start+(viewSpan/6)*i),x,h-13);
+  }
+  if(hasData){
+    ctx.save();ctx.beginPath();ctx.rect(L,T,W,H);ctx.clip();
+    // Draw the averaged current alone. Never connect the instantaneous
+    // maxima or draw min/max stems, regardless of zoom or recording rate.
+    ctx.lineWidth=1.7;ctx.strokeStyle='#7ad1ff';ctx.beginPath();let prev=-1;
+    // Bins may be separated by many display pixels at slow sample rates.
+    // Join consecutive time bins, but break the line across missing data.
+    const maxGap=Math.max(2,Math.ceil((ring?.dt||.001)/viewSpan*colN*1.6));
+    for(let c=0;c<colN;c++){
+      if(!counts[c])continue;
+      const x=L+c+.5,y=toY(sums[c]/counts[c]);
+      if(prev<0||c-prev>maxGap)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      prev=c;
+    }
+    ctx.stroke();ctx.restore();
+  }
+  ctx.strokeStyle='#3a4d5e';ctx.strokeRect(L+.5,T+.5,W,H);
+  plotCols={sums,counts,start,span:viewSpan,L,T,W,H,yLo,yHi,log,binSeconds:ring?.dt||0};
+  const modeStr=ring?`${ring.dt<1?Math.round(ring.dt*1000)+' ms':ring.dt+' s'} bins`:'awaiting first bin';
+  el.info.textContent=`${viewSpan<60?viewSpan.toFixed(viewSpan<1?2:0)+' s':secLabel(viewSpan)} window · ${fmtRate(recordResolution)} recorded · ${modeStr} displayed · drag plot to pan time · wheel zooms at cursor (pauses Live View)`;
+  if(!running && latestTime<=0)el.placeholder.style.display='grid';else el.placeholder.style.display='none';
+}
+function scheduleGraph(){if(graphDirty){graph();graphDirty=false;}requestAnimationFrame(scheduleGraph);}
+function setPeriod(s){viewSpan=s;if(live)viewEnd=Math.max(latestTime,viewSpan);else viewEnd=Math.max(viewSpan,viewEnd);for(const b of el.periods.children)b.classList.toggle('selected',Number(b.dataset.seconds)===s);graphDirty=true;}
+periods.forEach(([label,seconds])=>{const b=document.createElement('button');b.textContent=label;b.dataset.seconds=seconds;b.type='button';b.addEventListener('click',()=>setPeriod(seconds));el.periods.append(b);});
+el.live.onchange=()=>{live=el.live.checked;if(live)viewEnd=Math.max(latestTime,viewSpan);graphDirty=true;};
+// Vertical scaling is view-only; it never modifies current, charge, or CSV data.
+function rangeText(uA){
+  if(uA===0)return '0';
+  const abs=Math.abs(uA);
+  const places=abs<.01?7:abs<1?5:abs<10?4:abs<100?3:abs<1000?2:abs<1e6?1:0;
+  return Number(uA.toFixed(places)).toString();
+}
+function updateYControls(){
+  const log=el.axis.value==='log';
+  if(log&&yScaleMode==='zero')yScaleMode='auto';
+  el.yScale.querySelector('option[value="zero"]').disabled=log;
+  el.yScale.value=yScaleMode;
+  el.yManualControls.hidden=yScaleMode!=='manual';
+  if(yScaleMode==='manual'){
+    const unit=Number(el.yUnit.value);
+    el.yMin.value=rangeText(yManual.lo/unit);
+    el.yMax.value=rangeText(yManual.hi/unit);
+  }
+}
+function setYManual(lo,hi){
+  if(!Number.isFinite(lo)||!Number.isFinite(hi))return;
+  if(el.axis.value==='log')lo=Math.max(.000001,lo);
+  else lo=Math.max(0,lo);
+  hi=Math.max(hi,el.axis.value==='log'?lo*1.000001:lo+.000001);
+  yManual={lo,hi};yScaleMode='manual';updateYControls();graphDirty=true;
+}
+function zoomY(factor,anchor=.5){
+  const r=plotCols;if(!r)return;
+  const a=Math.max(0,Math.min(1,anchor));
+  if(r.log){
+    const start=Math.log10(r.yLo),end=Math.log10(r.yHi);
+    const span=Math.max(.00001,Math.min(12,(end-start)*factor));
+    const center=start+(end-start)*a;
+    let low=center-span*a;
+    low=Math.max(-6,low);
+    setYManual(10**low,10**(low+span));
+  }else{
+    const span=Math.max(.000001,Math.min(1e9,(r.yHi-r.yLo)*factor));
+    const center=r.yLo+(r.yHi-r.yLo)*a;
+    const low=Math.max(0,center-span*a);
+    setYManual(low,low+span);
+  }
+}
+function resetY(){yScaleMode='auto';updateYControls();graphDirty=true;}
+el.yScale.addEventListener('change',()=>{
+  if(el.yScale.value==='manual'&&yScaleMode!=='manual'&&plotCols){
+    yManual={lo:plotCols.yLo,hi:plotCols.yHi};
+  }
+  yScaleMode=el.yScale.value;
+  updateYControls();graphDirty=true;
+});
+el.yIn.addEventListener('click',()=>zoomY(.7));
+el.yOut.addEventListener('click',()=>zoomY(1/.7));
+el.yReset.addEventListener('click',resetY);
+el.yUnit.addEventListener('change',updateYControls);
+function applyYManual(){
+  const lo=Number(el.yMin.value)*Number(el.yUnit.value);
+  const hi=Number(el.yMax.value)*Number(el.yUnit.value);
+  if(el.yMin.value.trim()===''||el.yMax.value.trim()===''||!Number.isFinite(lo)||!Number.isFinite(hi)||lo<0||hi<=lo||(el.axis.value==='log'&&lo<=0)){
+    say(el.axis.value==='log'?'Logarithmic Y range requires 0 < Min < Max.':'Y range requires 0 ≤ Min < Max.','error');return;
+  }
+  setYManual(lo,hi);
+}
+el.yApply.addEventListener('click',applyYManual);
+for(const field of [el.yMin,el.yMax])field.addEventListener('keydown',e=>{if(e.key==='Enter')applyYManual();});
+let panKind=null,panStartX=0,panStartY=0,panEnd=0,panYRange=null;
+el.plot.addEventListener('pointerdown',e=>{
+  const r=plotCols,rect=el.plot.getBoundingClientRect();if(!r)return;
+  const x=e.clientX-rect.left,y=e.clientY-rect.top;
+  if(y<r.T||y>r.T+r.H)return;
+  if(x>=0&&x<r.L){panKind='y';panStartY=e.clientY;panYRange={lo:r.yLo,hi:r.yHi,log:r.log,H:r.H};}
+  else if(x>=r.L&&x<=r.L+r.W){panKind='x';panStartX=e.clientX;panEnd=viewEnd;}
+  else return;
+  el.plot.setPointerCapture(e.pointerId);
+});
+el.plot.addEventListener('pointermove',e=>{
+  if(panKind==='x'){
+    if(live){live=false;el.live.checked=false;}
+    const dx=e.clientX-panStartX;
+    const W=Math.max(50,el.plot.getBoundingClientRect().width-95);
+    viewEnd=Math.max(.05*viewSpan,Math.min(latestTime+.95*viewSpan,panEnd-dx*viewSpan/W));graphDirty=true;
+  }else if(panKind==='y'&&Math.abs(e.clientY-panStartY)>1){
+    const r=panYRange,dy=e.clientY-panStartY;
+    if(r.log){const multiplier=Math.pow(r.hi/r.lo,dy/r.H);let low=Math.max(.000001,r.lo*multiplier);setYManual(low,low*(r.hi/r.lo));}
+    else{const span=r.hi-r.lo;const low=Math.max(0,r.lo+dy/r.H*span);setYManual(low,low+span);}
+  }
+  const cols=plotCols,rect=el.plot.getBoundingClientRect();if(!cols||!latestTime){el.tip.style.display='none';return;}
+  const x=e.clientX-rect.left, y=e.clientY-rect.top;
+  el.plot.style.cursor=x<cols.L&&y>=cols.T&&y<=cols.T+cols.H?'ns-resize':'crosshair';
+  if(x<cols.L||x>cols.L+cols.W||y<cols.T||y>cols.T+cols.H){el.tip.style.display='none';return;}
+  let c=Math.floor(x-cols.L);
+  // Hover the closest averaged interval rather than requiring an exact pixel hit.
+  if(!cols.counts[c]){
+    const halfBinPixels=Math.max(2,Math.min(120,Math.ceil(cols.binSeconds/cols.span*cols.W/2)));
+    let closest=-1;
+    for(let radius=1;radius<=halfBinPixels;radius++){
+      const left=c-radius,right=c+radius;
+      if(left>=0&&cols.counts[left]){closest=left;break;}
+      if(right<cols.counts.length&&cols.counts[right]){closest=right;break;}
+    }
+    if(closest<0){el.tip.style.display='none';return;}
+    c=closest;
+  }
+  const t=cols.start+(c+.5)/cols.W*cols.span;
+  const avg=cols.sums[c]/cols.counts[c];
+  el.tip.style.display='block';
+  el.tip.textContent=`Average current: ${fmtI(avg)}\nTime: ${secLabel(t)}`;
+  el.tip.style.left=Math.max(15,Math.min(x+18,rect.width-285))+'px';el.tip.style.top=Math.max(12,y-48)+'px';
+});
+function endPan(){panKind=null;panYRange=null;}
+el.plot.addEventListener('pointerup',endPan);el.plot.addEventListener('pointercancel',endPan);
+el.plot.addEventListener('pointerleave',()=>{el.tip.style.display='none';el.plot.style.cursor='crosshair';});
+el.plot.addEventListener('dblclick',e=>{
+  const r=plotCols,rect=el.plot.getBoundingClientRect();if(r&&e.clientX-rect.left<r.L)resetY();
+});
+// Zoom the time window about the cursor's TIME, not the newest sample.
+// A manual wheel zoom also detaches Live View so subsequent samples cannot
+// shift the window away from the cursor. Re-enable Live View to follow again.
+function zoomTimeAt(factor,localX){
+  const r=plotCols;
+  if(!r)return;
+  const newSpan=Math.max(.3,Math.min(86400*2,r.span*factor));
+  if(Math.abs(newSpan-r.span)<1e-10)return;
+  const fraction=Math.max(0,Math.min(1,(localX-r.L)/r.W));
+  const anchorTime=r.start+fraction*r.span;
+  live=false;el.live.checked=false;
+  viewSpan=newSpan;
+  // Keep the original timestamp under the same pixel after scaling.
+  // Empty time before/after the capture is allowed at the boundaries,
+  // rather than moving the cursor's selected time to the edge.
+  viewEnd=anchorTime+(1-fraction)*newSpan;
+  for(const b of el.periods.children)b.classList.remove('selected');
+  graphDirty=true;
+}
+el.plot.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=plotCols,rect=el.plot.getBoundingClientRect();
+  const x=e.clientX-rect.left,y=e.clientY-rect.top;
+  const yActive=r&&y>=r.T&&y<=r.T+r.H&&(x<r.L||e.shiftKey);
+  if(yActive){zoomY(e.deltaY>0?1.25:.8,(r.T+r.H-y)/r.H);return;}
+  zoomTimeAt(e.deltaY>0?1.25:.8,x);
+},{passive:false});
+function exportCSV(){
+  if(!recorder||!recorder.count)return;
+  const intro=[`# PPK2 browser profiler`, `# Started: ${new Date(recordingStart).toISOString()}`,
+  `# Mode: ${mode||'unknown'}`,`# Interval: ${recordResolution} ms`,`# Each point is the mean of all raw samples in its interval (not a peak).`,`# Discarded oldest bins: ${recordDropped}`,`time_s,mean_uA\n`].join('\n');
+  const chunks=[intro];let part=[];
+  for(let i=0;i<recorder.count;i++){
+    const p=recorder.pos(i),t=(recorder.idx[p]+.5)*recorder.dt;
+    part.push(`${t.toFixed(3)},${recorder.mean[p].toFixed(4)}\n`);
+    if(part.length>=10000){chunks.push(part.join(''));part=[];}
+  }
+  if(part.length)chunks.push(part.join(''));
+  const file=new Blob(chunks,{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(file);
+  const a=document.createElement('a');a.href=url;a.download=`ppk2-${new Date(recordingStart).toISOString().replace(/[.:]/g,'-')}-${recordResolution}ms.csv`;
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),20000);
+  say(`Exported ${recorder.count.toLocaleString()} bins at ${recordResolution} ms resolution${recordDropped?', older bins had been discarded':''}.`,'good');
+}
+el.connect.addEventListener('click',()=>connected?disconnectDevice():connectDevice());
+el.demo.addEventListener('click',toggleDemo);
+el.source.addEventListener('click',()=>setMode('source'));el.ampere.addEventListener('click',()=>setMode('ampere'));
+el.applyMv.addEventListener('click',setVoltage);el.sourceMv.addEventListener('keydown',e=>{if(e.key==='Enter')setVoltage();});
+el.sourceMv.addEventListener('input',()=>{if(mode==='source'&&sourceApplied&&Number(el.sourceMv.value)!==appliedVoltage){sourceApplied=false;updateUI();say('Source voltage input changed, but output remains at the last applied voltage until Set is clicked.','');}});
+el.power.addEventListener('click',toggleOutput);el.start.addEventListener('click',()=>running?stopAcquisition():startAcquisition());
+el.axis.addEventListener('change',()=>{
+  if(el.axis.value==='log'&&yScaleMode==='manual'&&yManual.lo<=0)yManual.lo=Math.max(.000001,Math.min(yManual.hi/1000,.1));
+  updateYControls();graphDirty=true;
+});
+el.export.addEventListener('click',exportCSV);
+el.recordInterval.addEventListener('change',()=>{updateRateLabel();graphDirty=true;});
+window.addEventListener('resize',()=>{graphDirty=true;});
+window.addEventListener('beforeunload',()=>{if(running){ /* Browser close may interrupt capture. Never silently change output. */ }});
+navigator.serial?.addEventListener?.('disconnect',()=>{if(connected&&!demo)say('PPK2 disconnected. Check USB connection and DUT power.','error');});
+updateYControls();setPeriod(3);updateUI();scheduleGraph();
+})();
+</script>
+</body>
+</html>
