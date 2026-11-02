@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PPK2 Current Profiler v17</title>
+<title>PPK2 Current Profiler v18</title>
 <style>
 /* Dark instrument theme */
 :root {color-scheme:dark; --bg:#0c1219; --panel:#151e28; --panel-alt:#1b2937; --field:#101922; --plot:#0f1822; --line:#2c3c49; --text:#e5eef5; --muted:#93a7b7; --blue:#69bfff; --bluewash:#20384e; --red:#ff9494; --green:#76d8b1; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,"SFMono-Regular",monospace; }
@@ -770,7 +770,11 @@ function graph(){
   plotCols={points,start,span:viewSpan,L,T,W,H,yLo,yHi,log,binSeconds:ring?.dt||0};
   const modeStr=ring?`${fmtRate(Math.round(ring.dt*1000))} plot`:'awaiting first averaged point';
   const zoomDescription=live?'wheel zooms around newest sample (Live View stays on)':'wheel zooms at cursor';
-  el.info.textContent=`${viewSpan<60?viewSpan.toFixed(viewSpan<1?2:0)+' s':secLabel(viewSpan)} window · ${fmtRate(recordResolution)} recorded · ${modeStr} · drag plot to pan time · ${zoomDescription}`;
+  const windowLabel=viewSpan<60?`${viewSpan.toFixed(viewSpan<10?2:1)} s`:
+    viewSpan<3600?`${Math.floor(viewSpan/60)}m ${(viewSpan%60).toFixed(1)}s`:
+    viewSpan<86400?`${Math.floor(viewSpan/3600)}h ${Math.floor(viewSpan%3600/60)}m`:
+    `${(viewSpan/86400).toFixed(2)}d`;
+  el.info.textContent=`${windowLabel} window · ${fmtRate(recordResolution)} recorded · ${modeStr} · drag plot to pan time · ${zoomDescription}`;
   if(!running && latestTime<=0)el.placeholder.style.display='grid';else el.placeholder.style.display='none';
 }
 function scheduleGraph(){if(graphDirty){graph();graphDirty=false;}requestAnimationFrame(scheduleGraph);}
@@ -891,24 +895,39 @@ el.plot.addEventListener('pointerleave',()=>{el.tip.style.display='none';el.plot
 el.plot.addEventListener('dblclick',e=>{
   const r=plotCols,rect=el.plot.getBoundingClientRect();if(r&&e.clientX-rect.left<r.L)resetY();
 });
-// Live View: wheel zooms the time window while keeping the newest sample
-// on the right edge. Historical view: zoom around the cursor's timestamp.
+// Time-window presets only set a starting span. The wheel always scales the
+// current span continuously; it must never snap to a preset or data tier.
+// Feed the actual wheel delta through an exponential scale so fine trackpad
+// movement makes fine zoom adjustments and ordinary mouse notches are smaller.
+const MIN_TIME_SPAN=.3,MAX_TIME_SPAN=86400*2;
+function wheelZoomFactor(e){
+  // WheelEvent.deltaY units: 0=pixels, 1=lines, 2=pages.
+  const unit=e.deltaMode===1?16:e.deltaMode===2?el.plot.clientHeight:1;
+  const pixels=Math.max(-240,Math.min(240,e.deltaY*unit));
+  return Math.exp(pixels*.0008);
+}
+// Live View: zoom around the newest sample at the right edge.
+// Historical view: preserve the timestamp under the cursor, even when
+// multiple wheel events arrive between successive animation frames.
 function zoomTimeAt(factor,localX){
   const r=plotCols;
-  if(!r)return;
-  const newSpan=Math.max(.3,Math.min(86400*2,r.span*factor));
-  if(Math.abs(newSpan-r.span)<1e-10)return;
+  if(!r||!Number.isFinite(factor)||factor<=0)return;
+  // Use current view state, not r.span/r.start from the previous render;
+  // reading old plot geometry discards wheel steps during rapid scrolling.
+  const previousSpan=viewSpan;
+  const newSpan=Math.max(MIN_TIME_SPAN,Math.min(MAX_TIME_SPAN,previousSpan*factor));
+  if(Math.abs(newSpan-previousSpan)<1e-10)return;
   if(live){
     viewSpan=newSpan;
     viewEnd=latestTime>0?latestTime:newSpan;
   }else{
     const fraction=Math.max(0,Math.min(1,(localX-r.L)/r.W));
-    const anchorTime=r.start+fraction*r.span;
+    const anchorTime=viewEnd-previousSpan+fraction*previousSpan;
     viewSpan=newSpan;
-    // Keep the original timestamp under the same pixel after scaling.
     viewEnd=anchorTime+(1-fraction)*newSpan;
   }
-  resetLiveAutoRange();
+  // Do not reset sticky Y auto-fit on every wheel tick. It will expand if
+  // newly visible samples need more range, without bouncing on every scroll.
   for(const b of el.periods.children)b.classList.remove('selected');
   graphDirty=true;
 }
@@ -918,7 +937,7 @@ el.plot.addEventListener('wheel',e=>{
   const x=e.clientX-rect.left,y=e.clientY-rect.top;
   const yActive=r&&y>=r.T&&y<=r.T+r.H&&(x<r.L||e.shiftKey);
   if(yActive){zoomY(e.deltaY>0?1.25:.8,(r.T+r.H-y)/r.H);return;}
-  zoomTimeAt(e.deltaY>0?1.25:.8,x);
+  zoomTimeAt(wheelZoomFactor(e),x);
 },{passive:false});
 function exportCSV(){
   if(!recorder||!recorder.count)return;
