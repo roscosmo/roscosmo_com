@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PPK2 Current Profiler v18</title>
+<title>PPK2 Current Profiler v19 | LiPo lab</title>
 <style>
 /* Dark instrument theme */
 :root {color-scheme:dark; --bg:#0c1219; --panel:#151e28; --panel-alt:#1b2937; --field:#101922; --plot:#0f1822; --line:#2c3c49; --text:#e5eef5; --muted:#93a7b7; --blue:#69bfff; --bluewash:#20384e; --red:#ff9494; --green:#76d8b1; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,"SFMono-Regular",monospace; }
@@ -84,28 +84,30 @@ footer a{color:var(--blue)}
 @media(max-width:1150px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat:nth-child(3n){border-right:0}.stat:nth-child(n+4){border-top:1px solid var(--line)}}
 @media(max-width:880px){.chart-toolbar{align-items:flex-start}.chart-actions{margin-left:0}.chart-panel{min-height:410px}}
 @media(max-width:540px){main{padding:10px;gap:10px}header{padding:12px}.toolbar{padding:12px;gap:13px}.control{flex:1 1 125px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:12px}.stat:nth-child(3){border-right:1px solid var(--line)}.stat:nth-child(3n){border-right:1px solid var(--line)}.stat:nth-child(2n){border-right:0}.stat:nth-child(n+3){border-top:1px solid var(--line)}.stat:last-child{grid-column:span 2}.chart-toolbar{padding:12px}.chart-actions{gap:9px}.chart-panel{min-height:440px}}
+.plot-pair{display:flex;flex:1;min-width:0;gap:12px;align-items:stretch}.plot-pair .chart-panel{min-width:0}.cell-panel{width:clamp(253px,24vw,350px);padding:16px;align-self:stretch}.cell-head,.cell-values{display:flex;align-items:center;justify-content:space-between;gap:8px}.cell-panel h2{font-size:18px;margin:12px 0 1px}.cell-badge{font:600 10px var(--font);color:#a5e7cc;background:#19332c;padding:3px 7px;border-radius:5px;white-space:nowrap}.cell-sub,.cell-detail,.cell-panel details p,.bench-box p{font-size:12px;color:var(--muted)}.cell-sub{margin:4px 0 10px}.cell-detail{color:var(--text);margin:8px 0}.cell-values{margin:18px 0 5px;justify-content:flex-start;gap:22px}.cell-values strong{display:block;font:600 20px var(--mono);color:var(--green)}#cellSvg{width:100%;height:auto;display:block;margin:12px 0 8px}.cell-tick{fill:#a0b3c1;font:10px var(--mono)}.cell-panel details,.bench-box summary{font-size:12px}.cell-panel details{margin-top:12px;border-top:1px solid var(--line);padding-top:9px}.cell-panel a{color:var(--blue)}summary{cursor:pointer}.bench-box{padding:12px 16px}.bench-box summary{font-weight:650}.bench-box .cell-badge{margin-left:8px}.bench-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.bench-controls label{font-size:12px}#benchStatus{color:var(--text)}[hidden]{display:none!important}@media(max-width:840px){.plot-pair{flex-direction:column}.cell-panel{width:100%}#cellSvg{max-width:350px}.chart-panel{min-height:430px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div class="device-icon">µA</div><div><h1>PPK2 Current Profiler</h1><div class="subtitle">Browser-based power monitor</div></div></div>
-  <div class="connect"><span id="connectionStatus"><span class="statusdot" id="statusDot"></span> Disconnected</span><button id="demoBtn" title="Preview controls and graph without a PPK2">Try demo</button><button id="connectBtn" class="primary">Connect PPK2</button></div>
+  <div class="brand"><div class="device-icon">µA</div><div><h1>PPK2 Current Profiler</h1><div class="subtitle">v19 · LiPo lab · maximum source request 4.100 V</div></div></div>
+  <div class="connect"><span id="connectionStatus"><span class="statusdot" id="statusDot"></span> Disconnected</span><button id="demoBtn" title="Preview controls and graph without a PPK2">Try demo</button><button id="connectBtn" class="primary" title="Connect and request DUT output OFF">Connect PPK2</button></div>
 </header>
 <main>
   <section class="panel">
     <div class="toolbar">
       <div class="control"><label>Meter mode</label><div class="group"><button id="sourceBtn" disabled>Source</button><button id="ampereBtn" disabled>Ampere</button></div></div>
-      <div class="control" id="sourceControl" style="display:none"><label for="sourceMv">Source voltage</label><div class="group"><input id="sourceMv" type="number" min="800" max="5000" step="10" value="3300"><span class="unit">mV</span><button id="applyMvBtn">Set</button></div></div>
+      <div class="control" id="sourceControl" style="display:none"><label for="sourceMv">Source voltage</label><div class="group"><input id="sourceMv" type="number" min="800" max="4100" step="10" value="3300"><span class="unit">mV</span><button id="applyMvBtn">Set</button></div></div>
       <div class="control" id="ampereControl" style="display:none"><label for="referenceMv">External reference</label><div class="group"><input id="referenceMv" type="number" min="800" max="5000" step="50" value="3700"><span class="unit">mV</span></div></div>
       <div class="control"><label>Power output</label><div class="group"><button id="outputBtn" aria-pressed="false" disabled>OFF</button></div></div>
       <div class="control"><label>Acquisition</label><div class="group"><button id="startBtn" class="primary" disabled>Start fresh</button></div></div>
       <div class="control"><label for="recordInterval">Recording / CSV rate</label><div class="group"><select id="recordInterval" title="Effective sample rate after averaging the 100 kS/s PPK2 input"><option value="1">1,000 Hz · 1 ms</option><option value="10">100 Hz · 10 ms</option><option value="100" selected>10 Hz · 100 ms</option><option value="1000">1 Hz · 1 s</option><option value="10000">0.1 Hz · 10 s</option><option value="60000">1/min · 60 s</option></select></div><div class="rate-hint" id="rateDescription">10 Hz recorded &amp; exported</div></div>
       <div class="control"><label for="batteryCapacity">Battery capacity</label><div class="group"><input id="batteryCapacity" type="number" min="0.1" max="100000" step="any" value="450" title="Nominal capacity of a fully charged battery" aria-describedby="batteryCapacityHint"><span class="unit">mAh</span></div><div class="secondary-note" id="batteryCapacityHint">Runtime estimated from mean current</div></div>
+      <div class="control"><label>LiPo simulation</label><label class="checkbox-wrap" style="text-transform:none;letter-spacing:0;color:var(--text);font-size:12px"><input type="checkbox" id="cellShow"> Show discharge preview</label></div>
     </div>
-    <div class="mode-note" id="modeNote">Select a device, then choose its meter mode. Start and Stop do not change DUT power.</div>
+    <div class="mode-note" id="modeNote">Connecting this lab build requests DUT output OFF. Start and Stop do not switch power.</div>
   </section>
 
-  <section class="panel chart-panel">
+  <div class="plot-pair"><section class="panel chart-panel">
     <div class="chart-toolbar">
       <div class="y-toolbar" aria-label="Y-axis scaling controls">
         <div class="y-main">
@@ -145,6 +147,20 @@ footer a{color:var(--blue)}
     <div class="chart-caption" id="chartModeDescription">Each point is a fixed-time average. Plot rate can be changed during recording without changing the CSV rate.</div>
   </section>
 
+  <aside class="panel cell-panel" id="cellPanel" hidden aria-labelledby="cellTitle">
+    <div class="cell-head"><span class="eyebrow">Battery model · 1S</span><span class="cell-badge">Preview only</span></div>
+    <h2 id="cellTitle">Discharge curve</h2><p class="cell-sub">Reference cell at rest, not measured VOUT.</p>
+    <div class="cell-values"><div><span class="eyebrow">Model voltage</span><strong id="cellVolt">–</strong></div><div><span class="eyebrow">Remaining</span><strong id="cellSoc">–</strong></div></div>
+    <svg id="cellSvg" viewBox="0 0 300 178" role="img" aria-label="Model voltage in volts versus percent of capacity used. The marker shows charge consumed since Start.">
+      <g stroke="#2c3c49" fill="none" stroke-width="1"><path d="M39 16H283M39 66H283M39 116H283M39 141H283M39 16V141M161 16V141M283 16V141"/></g>
+      <g class="cell-tick" text-anchor="end"><text x="32" y="20">4.2</text><text x="32" y="70">3.8</text><text x="32" y="120">3.4</text><text x="32" y="145">3.2</text></g>
+      <g class="cell-tick" text-anchor="middle"><text x="39" y="158">0</text><text x="161" y="158">50</text><text x="283" y="158">100</text><text x="161" y="175">Capacity used (%)</text></g>
+      <path id="cellCurve" fill="none" stroke="#74d7b1" stroke-width="2.5" stroke-linejoin="round"/><circle id="cellDot" r="4.6" fill="#b8f6dd" stroke="#10251f" stroke-width="1.5"/>
+    </svg>
+    <p id="cellDetail" class="cell-detail"></p><p id="cellHealth" class="cell-sub" role="status"></p>
+    <details><summary>Model and limits</summary><p>Interpolated <a href="https://www.analog.com/en/resources/design-notes/characterizing-a-lithiumion-li-cell-for-use-with-an-opencircuitvoltage-ocv-based-fuel-gauge.html" target="_blank" rel="noopener">ADI AN4189, Table 1</a>. Capacity is assumed full at Start. No load sag, recovery, temperature, charging or ageing model. Ampere mode uses the entered voltage reference, not this curve.</p><p>No automatic hardware drive from the curve in this build. All source commands, including manual ones, are limited to 4.100 V. This is not a physical overvoltage protection circuit.</p></details>
+  </aside>
+  </div>
   <section class="panel stats">
     <div class="stat"><div class="stat-label">Latest interval average</div><div id="latestStat" class="stat-value">—</div><div class="stat-foot">Mean over selected recording interval</div></div>
     <div class="stat"><div class="stat-label">Overall mean current</div><div id="meanStat" class="stat-value">—</div><div class="stat-foot">All samples since Start</div></div>
@@ -162,6 +178,12 @@ footer a{color:var(--blue)}
   </section>
   <div class="small" id="integrityNote">Data integrity: awaiting samples.</div>
   <div id="messages" role="status" aria-live="polite">PPK2 samples are processed locally. The plot follows the recording rate by default; use Plot rate for a different recent display resolution.</div>
+  <details class="panel bench-box" id="benchBox" hidden><summary>Dummy-load voltage-step test <span class="cell-badge">Bench only</span></summary>
+    <p>Source mode only. Disconnect Peepshow, the cell, DUT USB/charger and all other feeds. Connect a resistor across PPK2 VOUT and GND and monitor that voltage with an oscilloscope. Leave VIN unused. For a dry run, use Try demo.</p>
+    <p>With output OFF, set <b>3800 mV</b>. Enable output, start a fresh recording and wait for samples. Each run makes ten 10 mV downward changes to 3700 mV, then holds for one more interval. No output toggles or acquisition restarts during steps.</p>
+    <div class="bench-controls"><label>Time between steps <select id="benchPeriod"><option value="60">60 s</option><option value="30">30 s</option><option value="10">10 s</option></select></label><label class="checkbox-wrap"><input type="checkbox" id="benchIsolated">Dummy load only; scope connected (or demo)</label><button id="benchGo">Arm and start test</button><button id="benchStop" disabled>Cancel steps</button><button id="benchExport" disabled>Export step log</button></div>
+    <p id="benchStatus" role="status">Not armed. No agreed hardware update rate.</p><p class="small">Cancel or Stop cancels future steps; output stays at the last requested voltage. Use Power output OFF to de-energise. A USB failure leaves the physical output unknown: disconnect the load. These settings are test candidates, not approved limits.</p>
+  </details>
   <footer>Battery used is the measured charge since Start expressed as a percentage of entered nominal capacity; it is not a battery state-of-charge reading. Projected full-charge life assumes the same average current throughout discharge and that measured current equals battery current. It does not account for regulator losses, battery ageing, self-discharge or voltage cutoff. Plots and CSV exports contain averaged current only. Runs from HTTPS or localhost in a Web Serial-enabled desktop browser. External supply in Ampere mode must be 800–5000 mV. The recording-rate selector controls CSV and long-term storage, not the 100 kS/s hardware stream. Plot rate follows recording by default and can be changed while recording; short-term 1 ms detail is retained for only two minutes. Longer windows may require a coarser history tier, which is indicated below the plot. Do not leave the computer sleeping during long captures. <a href="https://docs.nordicsemi.com/r/bundle/ug_ppk2/page/ug/ppk/ppk_user_guide_intro.html" target="_blank" rel="noopener">PPK2 hardware limits</a>.</footer>
 </main>
 
@@ -247,6 +269,7 @@ function decode(bytes) {
 onmessage=e=>{
   const m=e.data;
   if(m.type==='reset'){reset();mods=m.modifiers;refV=m.referenceMv/1000;}
+  if(m.type==='reference' && Number.isInteger(m.mv) && m.mv>=3700 && m.mv<=3800){refV=m.mv/1000;postMessage({type:'reference',id:m.id,n:count,mv:m.mv});}
   if(m.type==='bytes'){if(mods)decode(new Uint8Array(m.buffer));}
   if(m.type==='finish'){
     if(bN){if(!queued.length)queuedIndex=bIndex;queued.push(bSum/bN);bN=0;bIndex++;}
@@ -317,6 +340,103 @@ const el={
   batteryCapacity:$('batteryCapacity'),batteryUsed:$('batteryUsedStat'),batteryUsedDetail:$('batteryUsedDetail'),batteryLife:$('batteryLifeStat'),
   latest:$('latestStat'),mean:$('meanStat'),charge:$('chargeStat'),time:$('timeStat'),samples:$('samplesStat'),rawSamples:$('rawSamplesStat'),message:$('messages'),modeNote:$('modeNote'),integrity:$('integrityNote'),chartModeDescription:$('chartModeDescription')
 };
+// AN4189 table 1. Entries in millivolts at 0,5,...,100% remaining.
+const profile=Object.freeze([3305.545,3674.776,3686.654,3709.8,3741.018,3762.185,3775.129,3783.504,3793.25,3805.737,3820.965,3841.219,3884.009,3917.968,3945.074,3974.769,4008.118,4045.427,4085.934,4129.486,4177.454]);
+const sourceCeiling=4100, testInitial=3800, testFinal=3700, stepMv=10;
+function ocv(remaining){if(!Number.isFinite(remaining)||remaining<0||remaining>1)throw Error('Invalid remaining capacity');const a=remaining*20,i=Math.min(19,Math.floor(a));return profile[i]+(a-i)*(profile[i+1]-profile[i]);}
+const clamp01=x=>Math.min(1,Math.max(0,x));
+// No I/O, timers, renderer, or hardware handles in the discharge model. Units:
+// raw sum is in µA-samples; 100000 samples/s, 3600 s/h, 1000 µA/mA.
+function modelNew(cap){return {cap:Number.isFinite(cap)&&cap>=.1&&cap<=100000?cap:null,n:0,used:0,soc:1,mv:ocv(1),planned:sourceCeiling,lastStep:0,fault:'',empty:false};}
+function modelFeed(m,n,sum){
+  if(m.fault||!m.cap)return;
+  if(!Number.isSafeInteger(n)||n<m.n||!Number.isFinite(sum)){m.fault='Invalid acquisition totals';return;}
+  m.n=n;m.used=Math.max(m.used,Math.max(0,sum/(SAMPLE_RATE*3600*1000)));
+  m.soc=clamp01(1-m.used/m.cap);m.mv=ocv(m.soc);m.empty=m.soc===0;
+  // Virtual sequence only. No backlog or jump after a delayed model update.
+  if(m.empty){m.planned=null;return;}
+  const target=Math.min(sourceCeiling,Math.floor(m.mv/stepMv)*stepMv);
+  if(n-m.lastStep>=60*SAMPLE_RATE && target<=m.planned-stepMv){m.planned-=stepMv;m.lastStep=n;}
+}
+let cell=modelNew(null), seenProgress=-Infinity, lastSeenN=0, loss=0, bad=0, ioBusy=false, regBusy=false, ioUncertain=false, linkGeneration=0;
+let bench=null, audit=[], lastBench='', lastPaint=-Infinity;
+function resetCellRun(){lastBench='';cell=modelNew(validBatteryMah());seenProgress=-Infinity;lastSeenN=0;loss=bad=0;lastPaint=-Infinity;}
+function logStep(event,mv=null,n=sampleCount,run=bench){if(!run)return;
+  audit.push([run.id,event,Date.now(),Math.round(performance.now()-run.start),n,Number.isInteger(mv)?mv:'',loss,bad]);
+  if(audit.length>300)audit.shift();$('benchExport').disabled=false;
+}
+function benchCancel(why){const b=bench;if(!b)return;bench=null;clearInterval(b.timer);logStep(why,null,sampleCount,b);$('benchIsolated').checked=false;lastBench=why+'. No more steps. Output not switched off by this test.';$('benchStatus').textContent=lastBench;benchButtons();}
+function badData(reason){if(!cell.fault)cell.fault=reason;benchCancel(reason);paintCell(true);}
+function benchIssue(now=performance.now()){
+  if(!connected||mode!=='source'||!sourceApplied||!powerOn||!running||finishing)return 'Requires Source, output ON and active acquisition';
+  if(ioUncertain||ioBusy)return 'Hardware state is not ready';
+  if(document.hidden)return 'Tab is not visible';
+  if(cell.fault||loss||bad)return 'Acquisition integrity fault; start a fresh run';
+  if(now-seenProgress>2000||sampleCount<SAMPLE_RATE)return 'No fresh current samples';
+  return '';
+}
+function benchButtons(){const b=bench;
+  $('benchPeriod').disabled=!!b;$('benchIsolated').disabled=!!b;$('benchStop').disabled=!b;
+  $('benchGo').disabled=!!b||regBusy||!$('benchIsolated').checked||!!benchIssue()||appliedVoltage!==testInitial;
+  if(!b&&!lastBench)$('benchStatus').textContent=benchIssue()|| (appliedVoltage!==testInitial?'Set 3800 mV with output OFF before recording.':'Ready at 3800 mV. Confirm the isolated setup to arm.');
+}
+function cellSetup(){
+  $('cellCurve').setAttribute('d',profile.slice().reverse().map((v,i)=>(i?'L':'M')+(39+244*i/20).toFixed(2)+' '+(16+(4200-v)*.125).toFixed(2)).join(' '));
+  $('cellShow').addEventListener('change',()=>{const show=$('cellShow').checked;$('cellPanel').hidden=!show;$('benchBox').hidden=!show;if(!show)benchCancel('Battery panel closed');paintCell(true);graphDirty=true;});
+  $('benchIsolated').addEventListener('change',benchButtons);$('benchGo').addEventListener('click',armBench);$('benchStop').addEventListener('click',()=>benchCancel('Cancelled by operator'));$('benchExport').addEventListener('click',exportAudit);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)benchCancel('Tab hidden');});
+  window.addEventListener('pagehide',()=>benchCancel('Page closed'));
+  new ResizeObserver(()=>{graphDirty=true;}).observe(el.plot);
+  benchButtons();
+}
+function paintCell(force=false){if(!$('cellShow').checked)return;
+  const p=performance.now();if(!force&&p-lastPaint<250)return;lastPaint=p;
+  const has=!!cell.n&&!!cell.cap;const soc=has?cell.soc:1,v=has?cell.mv:ocv(1);
+  $('cellDot').setAttribute('cx',String(39+244*(1-soc)));$('cellDot').setAttribute('cy',String(16+(4200-v)*.125));$('cellDot').setAttribute('visibility',has?'visible':'hidden');
+  $('cellVolt').textContent=has?(v/1000).toFixed(3)+' V':'–';$('cellSoc').textContent=has?(soc*100).toFixed(3)+'%':'–';
+  $('cellDetail').textContent=has?`${cell.used.toFixed(5)} mAh used / ${cell.cap} mAh at Start. Virtual output: ${cell.empty?'OFF (empty)':(cell.planned/1000).toFixed(3)+' V'}.`:'Start a fresh capture with a valid battery capacity to track discharge.';
+  $('cellHealth').textContent=cell.fault?'Model frozen: '+cell.fault: 'Virtual output only: 4.100 V ceiling, downward 10 mV steps, at most one per 60 s of samples. Not sent to hardware.';
+  if(!bench)benchButtons();
+}
+function onCellStats(n,s){if(n>lastSeenN){seenProgress=performance.now();lastSeenN=n;}modelFeed(cell,n,s);paintCell();}
+function exportAudit(){const data=['run,event,unix_ms,wall_ms_since_arm,raw_sample_index,requested_mV,counter_errors,invalid_ranges',...audit.map(row=>row.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(','))].join('\n')+'\n';const u=URL.createObjectURL(new Blob([data],{type:'text/csv'}));const a=document.createElement('a');a.href=u;a.download='ppk2-step-log.csv';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000);}
+function armBench(){const why=benchIssue();const dwell=Number($('benchPeriod').value);
+  if(bench||regBusy||why||!$('cellShow').checked||!$('benchIsolated').checked||appliedVoltage!==testInitial||![10,30,60].includes(dwell))return;
+  if(!confirm(`Start ${demo?'DEMO':'PHYSICAL DUMMY-LOAD'} test? 3800 → 3700 mV, 10 mV every ${dwell} s. No cell, Peepshow or external power on VOUT. Output remains enabled after the test.`))return;
+  // Confirmation can block rendering and acquisition callbacks. Start timing only after it closes.
+  const t=performance.now();const b=bench={id:new Date().toISOString(),dwell:dwell*1000,start:t,last:t,lastWall:Date.now(),step:0,pending:false,timer:null};
+  audit=[];lastBench='';logStep(demo?'demo armed':'bench armed',testInitial);benchButtons();$('benchStatus').textContent='Armed. Waiting for the first downward step.';b.timer=setInterval(()=>benchTick(b),200);
+}
+async function benchTick(b){if(bench!==b)return;const t=performance.now();const elapsed=t-b.last,w=Date.now()-b.lastWall;const why=benchIssue(t);
+  if(b.waitRef&&t-b.waitRef>2000){benchCancel('Decoder reference not confirmed');return;}
+  if(why||w<0||w>b.dwell+2500||elapsed>b.dwell+2500){benchCancel(why||'Timing gap: no catch-up');return;}
+  if(b.pending)return;
+  if(elapsed<b.dwell){$('benchStatus').textContent=`${demo?'Demo':'Bench'}: ${b.step}/10 steps · last request ${appliedVoltage} mV · next ${b.step===10?'finish':'step'} in ${Math.ceil((b.dwell-elapsed)/1000)} s.`;return;}
+  if(b.step===10){benchCancel('Test complete at 3700 mV');return;}
+  const mv=testInitial-stepMv*(b.step+1);b.pending=true;
+  try{await requestVoltage(mv,b);if(bench!==b)return;b.step++;b.last=performance.now();b.lastWall=Date.now();}
+  catch(e){benchCancel('Step failed: '+e.message);}
+  finally{b.pending=false;}
+}
+// The sole regulator writer, used by manual Source and the bounded bench sequence.
+// UI maximums are not relied on: write() validates the encoded bytes again.
+async function requestVoltage(mv,b=null){
+  if(!Number.isInteger(mv)||mv<800||mv>sourceCeiling||!connected||mode!=='source'||ioUncertain||regBusy)throw Error('Source request rejected');
+  if(b){if(bench!==b||benchIssue()||!b.pending||mv!==testInitial-(b.step+1)*stepMv||appliedVoltage-mv!==stepMv||mv<testFinal||mv>=testInitial||performance.now()-b.last<b.dwell)throw Error('Bench interlock rejected step');}
+  else if(running||finishing||powerOn||bench)throw Error('Manual voltage requires output OFF and acquisition stopped');
+  const gen=linkGeneration;regBusy=true;let timer;
+  try{
+    if(b)logStep('write submitted',mv);
+    if(!demo)await Promise.race([write(bytes(0x0d,mv>>>8,mv&255),{mv,b}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Serial write timeout')),1500);})]);
+    if(!connected||gen!==linkGeneration)throw Error('Connection changed');
+    sourceApplied=true;appliedVoltage=mv;el.sourceMv.value=String(mv);
+    if(b){logStep('host write complete',mv,sampleCount,b);if(!demo){b.waitRef=performance.now();worker.postMessage({type:'reference',mv,id:b.id});}}
+    updateUI();
+  }catch(e){if(gen===linkGeneration){ioUncertain=true;sourceApplied=false;updateUI();say('Voltage state unknown. Disconnect load physically. Reconnect before using Source.','error');}throw e;}
+  finally{clearTimeout(timer);regBusy=false;updateUI();}
+}
+async function controlAction(fn){if(ioBusy)return;ioBusy=true;updateUI();try{await fn();}finally{ioBusy=false;updateUI();benchButtons();}}
+
 function say(msg,kind=''){el.message.textContent=msg;el.message.className=kind;}
 function bytes(...v){return new Uint8Array(v)}
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
@@ -418,7 +538,7 @@ function resetHistory(){
   updateRateLabel();
   recordDropped=0;recordingStart=Date.now();latestTime=0;viewEnd=viewSpan;sampleCount=0;lastSum=0;resetLiveAutoRange();
   el.latest.textContent='—';el.integrity.textContent='Data integrity: awaiting samples.';el.integrity.style.color='';
-  setStats(0,0);
+  resetCellRun();setStats(0,0);
   el.export.disabled=true;el.placeholder.style.display='none';graphDirty=true;
 }
 function addTier(level,index,mean){
@@ -459,7 +579,7 @@ function setStats(n,s){
   const elapsed=n/SAMPLE_RATE;
   el.mean.textContent=n?fmtI(s/n):'—';
   el.charge.textContent=n?fmtCharge(s/SAMPLE_RATE/3600):'—';el.time.textContent=fmtClock(elapsed);
-  updateBatteryStats(n,s);
+  updateBatteryStats(n,s);onCellStats(n,s);
   updateSampleStatus();
 }
 const workerBlob = new Blob([$('worker-source').textContent],{type:'text/javascript'});
@@ -468,7 +588,9 @@ const worker=new Worker(workerURL);
 worker.onmessage=e=>{
   const m=e.data;
   if(m.type==='bins')onBins(m);
+  if(m.type==='reference' && bench?.id===m.id){bench.waitRef=0;logStep('decoder reference boundary (not physical readback)',m.mv,m.n);}
   if(m.type==='stats'){
+    loss=m.sequenceErrors;bad=m.invalidRanges;if(loss||bad)badData('Sample integrity warning');
     setStats(m.count,m.sum);
     el.integrity.textContent=(m.sequenceErrors||m.invalidRanges)
       ? `DATA WARNING: ${m.sequenceErrors} sample-counter discontinuities, ${m.invalidRanges} invalid range codes. Current and charge may be unreliable.`
@@ -477,7 +599,7 @@ worker.onmessage=e=>{
   }
   if(m.type==='finished'){endAggregate();finishing=false;updateUI();}
 };
-worker.onerror=e=>say(`Processing error: ${e.message}`,'error');
+worker.onerror=e=>{badData('Decoder error');say(`Processing error: ${e.message}`,'error');};
 function updateUI(){
   el.connect.textContent=connected&&!demo?'Disconnect':'Connect PPK2';el.connect.disabled=demo;
   el.demo.textContent=demo?'Exit demo':'Try demo';el.demo.disabled=connected&&!demo;
@@ -493,12 +615,26 @@ function updateUI(){
   el.start.textContent=running?'Stop':'Start fresh';el.start.classList.toggle('stop',running);el.start.classList.toggle('primary',!running);
   el.recordInterval.disabled=running;
   updateRateLabel();
-  if(!connected)el.modeNote.textContent='Select a device, then choose its meter mode. Start and Stop do not change DUT power.';
-  else if(mode==='source')el.modeNote.textContent=sourceApplied?`Source set to ${appliedVoltage} mV. Power output is controlled separately.`:powerOn&&appliedVoltage!==null?`Input changed but not applied. DUT is still powered at ${appliedVoltage} mV until Set is clicked.`:'Set a source voltage (800–5000 mV) before enabling DUT power.';
+  if(!connected)el.modeNote.textContent='Connecting this lab build requests DUT output OFF. Start and Stop do not switch power.';
+  else if(mode==='source')el.modeNote.textContent=sourceApplied?`Source set to ${appliedVoltage} mV. Power output is controlled separately.`:powerOn&&appliedVoltage!==null?`Input changed but not applied. DUT is still powered at ${appliedVoltage} mV until Set is clicked.`:'With output OFF, set a source voltage (800 to 4100 mV) before enabling power.';
   else if(mode==='ampere')el.modeNote.textContent='External battery supplies VIN. Reference mV is used only for current calibration, not to control battery voltage.';
   else el.modeNote.textContent='Choose Source or Ampere. Changing the meter mode switches DUT output OFF.';
+  if(mode==='source'){el.applyMv.disabled=el.applyMv.disabled||powerOn||finishing;el.sourceMv.disabled=running||powerOn||finishing;}
+  if(ioUncertain){el.power.textContent='Request OFF';el.power.disabled=!connected;el.start.disabled=!running;el.source.disabled=el.ampere.disabled=el.applyMv.disabled=true;el.modeNote.textContent='Output state unknown. Disconnect the load and reconnect before another source command.';}
+  if(regBusy){el.source.disabled=el.ampere.disabled=el.applyMv.disabled=true;if(!running)el.start.disabled=true;}
+  if(ioBusy){for(const e of [el.source,el.ampere,el.applyMv,el.power,el.start,el.connect,el.demo])e.disabled=true;}
+  benchButtons();
 }
-async function write(b){if(!writer)throw new Error('Not connected to serial port.');await writer.write(b);}
+async function write(b,permit=null){
+  if(!writer)throw Error('No serial writer');
+  if(ioUncertain && (b[0]===0x0d || b[0]===0x11 || (b[0]===0x0c && b[1]===1)))throw Error('Output state unknown');
+  if(b[0]===0x0d){const m=(b[1]<<8)|b[2];
+    if(b.length!==3 || !permit || !regBusy || m!==permit.mv || m<800 || m>sourceCeiling || mode!=='source' || !connected)throw Error('Unsafe regulator packet');
+    if(permit.b){const j=permit.b;if(j!==bench||benchIssue()||!j.pending||performance.now()-j.last<j.dwell||m!==appliedVoltage-10||m!==3800-10*(j.step+1)||m<3700||m>=3800)throw Error('Step interlock');}
+    else if(powerOn||running||finishing||bench)throw Error('Manual regulator interlock');
+  }
+  await writer.write(b);
+}
 async function readLoop(){
   try{
     while(!shutdown){
@@ -517,7 +653,7 @@ async function readLoop(){
   }catch(e){if(!shutdown){say('Serial read error: '+e.message,'error');}}
   finally{
     if(!shutdown){
-      connected=false;running=false;mode=null;sourceApplied=false;powerOn=false;
+      linkGeneration++;benchCancel('Serial connection lost: output unknown');ioUncertain=true;connected=false;running=false;mode=null;sourceApplied=false;powerOn=false;
       metadataPending?.reject(new Error('Serial stream ended.'));metadataPending=null;updateUI();
       say('PPK2 connection closed. Actual DUT output state may be unknown.','error');
     }
@@ -529,7 +665,8 @@ async function connectDevice(){
     port=await navigator.serial.requestPort();
     await port.open({baudRate:9600,bufferSize:65536});
     reader=port.readable.getReader();writer=port.writable.getWriter();shutdown=false;serialPhase='idle';
-    readPromise=readLoop();
+    linkGeneration++;ioUncertain=false;readPromise=readLoop();
+    await write(bytes(0x0c,0)); // Lab build: request output OFF before doing anything else.
     await write(bytes(0x07)); // Halt an old acquisition only. Does not command DUT power OFF.
     await delay(120);
     metaBuffer='';serialPhase='metadata';
@@ -547,6 +684,7 @@ async function connectDevice(){
   }
 }
 async function disconnectDevice(showMessage=true){
+  benchCancel('Disconnected');linkGeneration++;
   try{if(running){running=false;serialPhase='idle';await write(bytes(0x07));worker.postMessage({type:'finish'});}}catch{}
   shutdown=true;serialPhase='idle';
   try{await reader?.cancel();}catch{}
@@ -560,12 +698,13 @@ async function disconnectDevice(showMessage=true){
 }
 function defaultDemoCal(){return {R:[1031.64,101.65,10.15,0.94,0.043],GS:[1,1,1,1,1],GI:[1,1,1,1,1],O:[0,0,0,0,0],S:[0,0,0,0,0],I:[0,0,0,0,0],UG:[1,1,1,1,1]};}
 async function toggleDemo(){
+  benchCancel('Demo changed');linkGeneration++;ioUncertain=false;
   if(demo){if(running)await stopAcquisition();if(demoTimer)clearInterval(demoTimer);demoTimer=null;demo=false;connected=false;mode=null;powerOn=false;sourceApplied=false;calibration=null;say('Demo closed.');}
   else{demo=true;connected=true;mode=null;powerOn=false;sourceApplied=false;calibration=defaultDemoCal();say('Demo active. Select a meter mode, then Start fresh.','good');}
   updateUI();
 }
 async function setMode(next){
-  if(!connected||running||next===mode)return;
+  if(!connected||running||finishing||regBusy||bench||ioUncertain||next===mode)return;
   if(powerOn&&!confirm('Changing meter mode will switch the DUT output OFF. Continue?'))return;
   try{
     if(!demo)await write(bytes(0x0c,0));
@@ -573,27 +712,21 @@ async function setMode(next){
     if(!demo)await write(bytes(0x11,next==='source'?2:1));
     mode=next;sourceApplied=false;appliedVoltage=null;
     updateUI();say(next==='source'?'Source mode selected. Set voltage before powering the DUT.':'Ampere mode selected. Supply VIN externally.','good');
-  }catch(e){say('Could not change mode: '+e.message,'error');}
+  }catch(e){ioUncertain=true;updateUI();say('Mode change failed; disconnect load: '+e.message,'error');}
 }
 async function setVoltage(){
-  if(mode!=='source'||!connected||running)return;
+  if(!connected||mode!=='source'||running||powerOn||finishing)return;
   const mv=validMv(el.sourceMv.value);
-  if(mv===null){say('Source voltage must be an integer between 800 and 5000 mV.','error');return;}
-  if(powerOn&&!confirm(`Change active DUT output voltage to ${mv} mV?`))return;
-  const code=mv-800+32;
-  const b1=3+Math.floor(code/256),b2=code%256;
-  try{
-    if(!demo)await write(bytes(0x0d,b1,b2));
-    sourceApplied=true;appliedVoltage=mv;updateUI();say(`Source regulator set to ${mv} mV.`,'good');
-  }catch(e){say('Could not set voltage: '+e.message,'error');}
+  if(mv===null || mv>sourceCeiling){say('Source request rejected. Use 800 to 4100 integer mV with output OFF.','error');return;}
+  try{await requestVoltage(mv);say(`Requested ${mv} mV. This is not a voltage reading.`,'good');}catch(e){say(e.message,'error');}
 }
 async function toggleOutput(){
-  if(!connected||!mode||(mode==='source'&&!sourceApplied&&!powerOn))return;
-  const desired=!powerOn;
+  if(!connected||(!ioUncertain&&(!mode||(mode==='source'&&!sourceApplied&&!powerOn))))return;
+  benchCancel('Power control used');const desired=ioUncertain?false:!powerOn;
   try{
     if(!demo)await write(bytes(0x0c,desired?1:0));
     powerOn=desired;updateUI();say(`DUT output commanded ${desired?'ON':'OFF'}.`,'good');
-  }catch(e){say('Power command failed: '+e.message,'error');}
+  }catch(e){ioUncertain=true;updateUI();say('Power command failed; load state unknown: '+e.message,'error');}
 }
 function startDemo(){
   demoTick=0;demoSum=0;
@@ -613,7 +746,7 @@ function startDemo(){
   },20);
 }
 async function startAcquisition(){
-  if(!connected||!mode)return;
+  if(!connected||!mode||regBusy||finishing||ioUncertain||running)return;
   const ref=mode==='source'?appliedVoltage:validMv(el.referenceMv.value);
   if(ref===null){say('Enter an external voltage reference between 800 and 5000 mV.','error');return;}
   try{
@@ -626,6 +759,7 @@ async function startAcquisition(){
   }catch(e){running=false;serialPhase='idle';updateUI();say('Could not start acquisition: '+e.message,'error');}
 }
 async function stopAcquisition(){
+  benchCancel('Acquisition stopped');
   if(!running)return;
   try{
     running=false;serialPhase='idle';
@@ -955,12 +1089,12 @@ function exportCSV(){
   document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),20000);
   say(`Exported ${recorder.count.toLocaleString()} bins at ${recordResolution} ms resolution${recordDropped?', older bins had been discarded':''}.`,'good');
 }
-el.connect.addEventListener('click',()=>connected?disconnectDevice():connectDevice());
-el.demo.addEventListener('click',toggleDemo);
-el.source.addEventListener('click',()=>setMode('source'));el.ampere.addEventListener('click',()=>setMode('ampere'));
-el.applyMv.addEventListener('click',setVoltage);el.sourceMv.addEventListener('keydown',e=>{if(e.key==='Enter')setVoltage();});
+el.connect.addEventListener('click',()=>controlAction(()=>connected?disconnectDevice():connectDevice()));
+el.demo.addEventListener('click',()=>controlAction(toggleDemo));
+el.source.addEventListener('click',()=>controlAction(()=>setMode('source')));el.ampere.addEventListener('click',()=>controlAction(()=>setMode('ampere')));
+el.applyMv.addEventListener('click',()=>controlAction(setVoltage));el.sourceMv.addEventListener('keydown',e=>{if(e.key==='Enter')controlAction(setVoltage);});
 el.sourceMv.addEventListener('input',()=>{if(mode==='source'&&sourceApplied&&Number(el.sourceMv.value)!==appliedVoltage){sourceApplied=false;updateUI();say('Source voltage input changed, but output remains at the last applied voltage until Set is clicked.','');}});
-el.power.addEventListener('click',toggleOutput);el.start.addEventListener('click',()=>running?stopAcquisition():startAcquisition());
+el.power.addEventListener('click',()=>controlAction(toggleOutput));el.start.addEventListener('click',()=>controlAction(()=>running?stopAcquisition():startAcquisition()));
 el.axis.addEventListener('change',()=>{
   if(el.axis.value==='log'&&yScaleMode==='manual'&&yManual.lo<=0)yManual.lo=Math.max(.000001,Math.min(yManual.hi/1000,.1));
   resetLiveAutoRange();updateYControls();graphDirty=true;
@@ -982,8 +1116,8 @@ el.batteryCapacity.addEventListener('input',()=>{
 updateBatteryStats();
 window.addEventListener('resize',()=>{graphDirty=true;});
 window.addEventListener('beforeunload',()=>{if(running){ /* Browser close may interrupt capture. Never silently change output. */ }});
-navigator.serial?.addEventListener?.('disconnect',()=>{if(connected&&!demo)say('PPK2 disconnected. Check USB connection and DUT power.','error');});
-updateYControls();setPeriod(3);updateUI();scheduleGraph();
+navigator.serial?.addEventListener?.('disconnect',()=>{if(connected&&!demo){benchCancel('USB detached: output unknown');ioUncertain=true;updateUI();say('PPK2 disconnected. Check physical DUT power.','error');}});
+cellSetup();updateYControls();setPeriod(3);updateUI();scheduleGraph();
 })();
 </script>
 </body>
