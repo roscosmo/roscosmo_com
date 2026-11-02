@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PPK2 Current Profiler v16</title>
+<title>PPK2 Current Profiler v17</title>
 <style>
 /* Dark instrument theme */
 :root {color-scheme:dark; --bg:#0c1219; --panel:#151e28; --panel-alt:#1b2937; --field:#101922; --plot:#0f1822; --line:#2c3c49; --text:#e5eef5; --muted:#93a7b7; --blue:#69bfff; --bluewash:#20384e; --red:#ff9494; --green:#76d8b1; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,"SFMono-Regular",monospace; }
@@ -99,7 +99,7 @@ footer a{color:var(--blue)}
       <div class="control" id="ampereControl" style="display:none"><label for="referenceMv">External reference</label><div class="group"><input id="referenceMv" type="number" min="800" max="5000" step="50" value="3700"><span class="unit">mV</span></div></div>
       <div class="control"><label>Power output</label><div class="group"><button id="outputBtn" aria-pressed="false" disabled>OFF</button></div></div>
       <div class="control"><label>Acquisition</label><div class="group"><button id="startBtn" class="primary" disabled>Start fresh</button></div></div>
-      <div class="control"><label for="recordInterval">Recording / CSV sample rate</label><div class="group"><select id="recordInterval" title="Effective sample rate after averaging the 100 kS/s PPK2 input"><option value="1">1,000 Hz · 1 ms</option><option value="10">100 Hz · 10 ms</option><option value="100" selected>10 Hz · 100 ms</option><option value="1000">1 Hz · 1 s</option><option value="10000">0.1 Hz · 10 s</option><option value="60000">1/min · 60 s</option></select></div><div class="rate-hint" id="rateDescription">10 Hz recorded &amp; exported</div></div>
+      <div class="control"><label for="recordInterval">Recording / CSV rate</label><div class="group"><select id="recordInterval" title="Effective sample rate after averaging the 100 kS/s PPK2 input"><option value="1">1,000 Hz · 1 ms</option><option value="10">100 Hz · 10 ms</option><option value="100" selected>10 Hz · 100 ms</option><option value="1000">1 Hz · 1 s</option><option value="10000">0.1 Hz · 10 s</option><option value="60000">1/min · 60 s</option></select></div><div class="rate-hint" id="rateDescription">10 Hz recorded &amp; exported</div></div>
       <div class="control"><label for="batteryCapacity">Battery capacity</label><div class="group"><input id="batteryCapacity" type="number" min="0.1" max="100000" step="any" value="450" title="Nominal capacity of a fully charged battery" aria-describedby="batteryCapacityHint"><span class="unit">mAh</span></div><div class="secondary-note" id="batteryCapacityHint">Runtime estimated from mean current</div></div>
     </div>
     <div class="mode-note" id="modeNote">Select a device, then choose its meter mode. Start and Stop do not change DUT power.</div>
@@ -126,15 +126,23 @@ footer a{color:var(--blue)}
         </div>
       </div>
       <div class="chart-actions">
-        <label class="small" for="displayDetail">Plot detail</label>
-        <select id="displayDetail" title="High detail plots recent fixed-time averages at finer resolution without increasing recording storage"><option value="recent">High detail (recent)</option><option value="record">Recording resolution</option></select>
+        <label class="small" for="displayDetail">Plot rate</label>
+        <select id="displayDetail" title="Select the actual averaging interval shown in the graph. Follow recording is the default; higher-rate recent samples are available separately without enlarging the CSV.">
+          <option value="follow" selected>Follow recording</option>
+          <option value="1">1,000 Hz · 1 ms</option>
+          <option value="10">100 Hz · 10 ms</option>
+          <option value="100">10 Hz · 100 ms</option>
+          <option value="1000">1 Hz · 1 s</option>
+          <option value="10000">0.1 Hz · 10 s</option>
+          <option value="60000">1/min · 60 s</option>
+        </select>
         <div class="pillgroup" id="periodButtons" aria-label="Graph window"></div>
         <label class="checkbox-wrap"><input type="checkbox" id="liveToggle" checked>Live view</label>
       </div>
     </div>
     <h2 id="chartHeading" class="sr-only">Average current over time (µA)</h2>
     <div class="chart-surface"><canvas id="plot" aria-label="Average current versus time, displayed at the stated interval resolution"></canvas><div id="placeholder">Connect a PPK2 or try the demo to start a trace.</div><div id="graphTip"></div></div>
-    <div class="chart-caption" id="chartModeDescription">Each point is the mean current over its stated interval. Recent detail and CSV recording can have different resolutions.</div>
+    <div class="chart-caption" id="chartModeDescription">Each point is a fixed-time average. Plot rate can be changed during recording without changing the CSV rate.</div>
   </section>
 
   <section class="panel stats">
@@ -153,8 +161,8 @@ footer a{color:var(--blue)}
     <div class="chart-bottom-actions"><button id="exportBtn" disabled>Export CSV</button></div>
   </section>
   <div class="small" id="integrityNote">Data integrity: awaiting samples.</div>
-  <div id="messages" role="status" aria-live="polite">PPK2 samples are processed locally. Recent detail uses separate short-term averaged buffers; CSV retains the selected recording rate.</div>
-  <footer>Battery used is the measured charge since Start expressed as a percentage of entered nominal capacity; it is not a battery state-of-charge reading. Projected full-charge life assumes the same average current throughout discharge and that measured current equals battery current. It does not account for regulator losses, battery ageing, self-discharge or voltage cutoff. Plots and CSV exports contain averaged current only. Runs from HTTPS or localhost in a Web Serial-enabled desktop browser. External supply in Ampere mode must be 800–5000 mV. The recording-rate selector controls CSV and long-term storage, not the 100 kS/s hardware stream; the plot detail selector independently controls the short-term display. Do not leave the computer sleeping during long captures. <a href="https://docs.nordicsemi.com/r/bundle/ug_ppk2/page/ug/ppk/ppk_user_guide_intro.html" target="_blank" rel="noopener">PPK2 hardware limits</a>.</footer>
+  <div id="messages" role="status" aria-live="polite">PPK2 samples are processed locally. The plot follows the recording rate by default; use Plot rate for a different recent display resolution.</div>
+  <footer>Battery used is the measured charge since Start expressed as a percentage of entered nominal capacity; it is not a battery state-of-charge reading. Projected full-charge life assumes the same average current throughout discharge and that measured current equals battery current. It does not account for regulator losses, battery ageing, self-discharge or voltage cutoff. Plots and CSV exports contain averaged current only. Runs from HTTPS or localhost in a Web Serial-enabled desktop browser. External supply in Ampere mode must be 800–5000 mV. The recording-rate selector controls CSV and long-term storage, not the 100 kS/s hardware stream. Plot rate follows recording by default and can be changed while recording; short-term 1 ms detail is retained for only two minutes. Longer windows may require a coarser history tier, which is indicated below the plot. Do not leave the computer sleeping during long captures. <a href="https://docs.nordicsemi.com/r/bundle/ug_ppk2/page/ug/ppk/ppk_user_guide_intro.html" target="_blank" rel="noopener">PPK2 hardware limits</a>.</footer>
 </main>
 
 <script id="worker-source" type="text/plain">
@@ -626,24 +634,34 @@ async function stopAcquisition(){
     updateUI();say('Acquisition stopped. DUT power output unchanged.','good');
   }catch(e){say('Could not stop acquisition: '+e.message,'error');updateUI();}
 }
+// Each fixed-time tier contains immutable, averaged measurements. The requested
+// rate determines the displayed tier, rather than the visible pixel spacing.
+// Only coarsen when the chosen history has expired or the window is too large
+// to draw at that rate. A coarser rate is reported explicitly in the UI.
+const MAX_DRAW_POINTS=25000;
+function requestedPlotInterval(){
+  const value=el.displayDetail.value;
+  return (value==='follow'?recordResolution:Number(value))/1000;
+}
 function chooseTier(start,span,width){
-  // Recording rate controls CSV/multi-day storage. In High detail, recent
-  // samples can be plotted using separate fixed-time 1 ms / 10 ms buffers.
-  // Crucially, tier selection is based on the requested time span rather
-  // than regrouping into moving screen-pixel columns at each animation frame.
-  const minDt=el.displayDetail.value==='record'?recordResolution/1000:0.001;
-  const valid=tiers.filter(r=>r.count&&r.dt>=minDt-1e-9);
-  if(!valid.length)return null;
-  const first=Math.max(0,start);
-  const last=Math.min(viewEnd,latestTime);
-  const covers=valid.filter(r=>r.oldTime()<=first+r.dt && r.newTime()>=last-r.dt);
-  // Older portions of history may no longer have 1 ms data. In that case,
-  // move to the nearest retained fixed-time tier, not to screen-pixel averages.
-  const available=covers.length?covers:valid.filter(r=>r.oldTime()<=last && r.newTime()>=first);
-  if(!available.length)return null;
-  const target=Math.max(minDt,span/Math.max(1,width));
-  const good=available.filter(r=>r.dt<=target*1.5 && span/r.dt<=width*8);
-  return (good.length?good:available).reduce((a,b)=>a.dt>b.dt?a:b);
+  const requested=requestedPlotInterval();
+  const first=Math.max(0,start),last=Math.min(viewEnd,latestTime);
+  if(last<=first)return null;
+  // Never silently substitute a *finer* rate than the user's selection.
+  const available=tiers.filter(r=>r.count&&r.dt>=requested-1e-9&&r.oldTime()<=last&&r.newTime()>=first);
+  if(!available.length)return null; // e.g. no completed 60-second bin yet
+  const covers=r=>r.oldTime()<=first+r.dt*1.1&&r.newTime()>=last-r.dt*1.1;
+  const drawable=r=>Math.min(last,r.newTime())-Math.max(first,r.oldTime())<=MAX_DRAW_POINTS*r.dt;
+  // Prefer the exact rate whenever it covers the displayed window.
+  const full=available.filter(r=>covers(r)&&drawable(r));
+  if(full.length)return full[0];
+  // Keep the complete trace visible before prioritising sample density.
+  const complete=available.filter(covers);
+  if(complete.length)return complete[complete.length-1];
+  // In an unusually long capture, take the oldest available coarser history.
+  const usable=available.filter(drawable);
+  const fallback=usable.length?usable:available;
+  return fallback.reduce((a,b)=>a.oldTime()<=b.oldTime()?a:b);
 }
 function graph(){
   const canvas=el.plot;const rect=canvas.getBoundingClientRect();const w=rect.width,h=rect.height;
@@ -716,10 +734,12 @@ function graph(){
   const precision=tickStep>=10?0:tickStep>=1?1:tickStep>=.1?2:tickStep>=.01?3:tickStep>=.001?4:6;
   el.heading.textContent=`Average current over time (${axisUnits.unit})`;
   const intervalLabel=ring?.dt < 1 ? `${Math.round(ring.dt*1000)} ms` : ring ? `${ring.dt} s` : 'selected';
-  const highDetail=ring && ring.dt<recordResolution/1000-1e-9;
+  const requestedDt=requestedPlotInterval();
+  const fallback=ring&&ring.dt>requestedDt+1e-9;
+  const wantedLabel=requestedDt<1?`${Math.round(requestedDt*1000)} ms`:`${requestedDt} s`;
   el.chartModeDescription.textContent=ring
-    ? `Plotted values: ${intervalLabel} interval averages${highDetail?' (recent high-detail history)':''}. CSV: ${recordResolution} ms interval averages. Values are not instantaneous maxima.`
-    : 'Waiting for averaged measurements';
+    ? `Plot: ${intervalLabel} averages${fallback?` (coarser than requested ${wantedLabel}; history or display limit)`:''}. CSV: ${recordResolution} ms averages. Hover a point for its averaging interval.`
+    : `Waiting for a complete ${wantedLabel} interval; CSV recording: ${recordResolution} ms averages.`;
   ctx.textAlign='right';ctx.font='11px ui-monospace,monospace';ctx.fillStyle='#a3b3c1';
   for(let i=0;i<=5;i++){
     const y=T+(H/5)*i;
@@ -748,9 +768,9 @@ function graph(){
   }
   ctx.strokeStyle='#3a4d5e';ctx.strokeRect(L+.5,T+.5,W,H);
   plotCols={points,start,span:viewSpan,L,T,W,H,yLo,yHi,log,binSeconds:ring?.dt||0};
-  const modeStr=ring?`${ring.dt<1?Math.round(ring.dt*1000)+' ms':ring.dt+' s'} bins`:'awaiting first bin';
+  const modeStr=ring?`${fmtRate(Math.round(ring.dt*1000))} plot`:'awaiting first averaged point';
   const zoomDescription=live?'wheel zooms around newest sample (Live View stays on)':'wheel zooms at cursor';
-  el.info.textContent=`${viewSpan<60?viewSpan.toFixed(viewSpan<1?2:0)+' s':secLabel(viewSpan)} window · ${fmtRate(recordResolution)} recorded · ${modeStr} displayed · drag plot to pan time · ${zoomDescription}`;
+  el.info.textContent=`${viewSpan<60?viewSpan.toFixed(viewSpan<1?2:0)+' s':secLabel(viewSpan)} window · ${fmtRate(recordResolution)} recorded · ${modeStr} · drag plot to pan time · ${zoomDescription}`;
   if(!running && latestTime<=0)el.placeholder.style.display='grid';else el.placeholder.style.display='none';
 }
 function scheduleGraph(){if(graphDirty){graph();graphDirty=false;}requestAnimationFrame(scheduleGraph);}
