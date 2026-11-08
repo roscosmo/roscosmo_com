@@ -102,3 +102,33 @@ html.assembly-locked{overflow:hidden;overscroll-behavior-y:none}
 body.assembly-locked{position:fixed;top:calc(-1 * var(--assembly-scroll-y));left:0;right:0;width:100%;overflow:hidden;overscroll-behavior-y:none}
 .assembly-skip{position:fixed;z-index:30;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);padding:8px 14px;font-size:12px;white-space:nowrap;background:#101911;border-color:#405247;color:#b9c9be}
 .assembly-skip[hidden]{display:none}
+
+/* One soft shadow around the composited object, never an opaque device panel. */
+.device-box{filter:drop-shadow(0 12px 16px #000b) drop-shadow(0 2px 2px #0009)}
+
+/* Touch/small-screen visitors choose when to explore, outside normal scrolling. */
+.assembly-invitation{display:none;pointer-events:auto}
+.manual-assembly .explode-chapter{height:auto;min-height:0;width:90%;max-width:1900px;margin:0 auto;padding:32px 0 48px;display:grid;grid-template-columns:46% 54%;text-align:left}
+.manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{position:static;grid-column:2;padding-left:clamp(24px,3vw,60px)}
+.manual-assembly .assembly-invitation{display:block}
+.manual-assembly .assembly-invitation p{margin:8px 0 12px;font-size:16px}
+.manual-assembly .assembly-invitation button{min-height:48px;margin-top:4px}
+@media(max-width:899px) and (min-height:501px){
+ .manual-assembly .explode-chapter{display:block;width:88%;padding:28px 0 32px}
+ .manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{padding:0}
+}
+.assembly-dialog[hidden]{display:none}
+.assembly-dialog{position:fixed;inset:0;z-index:20;background:#080b09;outline:none}
+.assembly-dialog-heading{position:absolute;top:max(28px,env(safe-area-inset-top));left:24px;right:24px;text-align:center}
+.assembly-dialog-heading h2{font-size:clamp(30px,5vw,42px);line-height:1.08;margin:10px 0;letter-spacing:-.045em}
+.assembly-close{position:absolute;z-index:2;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);min-height:48px;max-width:calc(100% - 32px);padding:12px 20px;white-space:nowrap;border-color:#6e8573;background:#142019;font-weight:650}
+.assembly-close span{margin-left:14px;font-size:18px}
+body.exploring-inside .viewer{z-index:21}
+body.exploring-inside .assembly-close{position:fixed;z-index:22}
+body.exploring-inside .return-top,body.exploring-inside .assembly-skip{display:none}
+@media(max-height:500px){.assembly-dialog-heading{top:14px}.assembly-dialog-heading h2{font-size:27px}.assembly-close{bottom:12px;min-height:44px;padding:10px 16px}}
+
+/* A soft top fade for reading text, below the transparent device silhouette. */
+@media(max-width:899px) and (min-height:501px){
+ .product-page::after{content:"";position:fixed;inset:0 0 auto;height:clamp(170px,34svh,290px);z-index:3;pointer-events:none;background:linear-gradient(to bottom,#080b09 0%,#080b09e6 26%,#080b0980 64%,#080b0900 100%);opacity:var(--reading-fade,0)}
+}
