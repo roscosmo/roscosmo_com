@@ -131,7 +131,7 @@
     // the opening and return transitions. Upright control poses remain r=0.
     const a=p.s*Math.cos(p.r||0),b=p.s*Math.sin(p.r||0);
     render.style.transform=`matrix(${a},${b},${-b},${a},${p.x-anchor.x*a+anchor.y*b},${p.y-anchor.x*b-anchor.y*a})`;
-    render.style.visibility='visible';
+    render.style.visibility='inherit';
   }
   function writeScroll(y){
     lastWritten=y;

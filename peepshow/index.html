@@ -264,6 +264,6 @@
   const bottom = caption.offsetTop - 24;
   const scale = Math.max(.01, Math.min(width * .76 / 893, (bottom - top) / 1025));
   render.style.transform = `matrix(${scale},0,0,${scale},${width / 2 - 1001.5 * scale},${(top + bottom) / 2 - 541.5 * scale})`;
-  render.style.visibility = 'visible';
+  render.style.visibility = 'inherit';
 })();
 </script><script src="controls.js"></script><script src="presentation.js"></script><script src="./emulator/runtime.js" type="module"></script></body></html>
