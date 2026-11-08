@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="dark" name="color-scheme"/><title>Peepshow | Roscosmo R&amp;D</title><meta name="description" content="Meet Peepshow, a pocket-sized game machine by Roscosmo R&amp;D. Explore the hardware, try the controls and play browser demos."/><link href="data:," rel="icon"/><link href="site.css" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/site-header.css">
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="dark" name="color-scheme"/><title>Peepshow | Roscosmo R&amp;D</title><meta name="description" content="Meet Peepshow, a pocket-sized game machine by Roscosmo R&amp;D. Explore the hardware, try the controls and play browser demos."/><link href="data:," rel="icon"/><link href="site.css?v=initial-pose-1" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/site-header.css">
 <script src="../assets/js/site-header.js" defer></script>
+<noscript><style>
+/* A centered, scroll-away product image when scripting is unavailable. */
+.viewer{position:absolute}
+.render{visibility:visible;--fallback-scale:.25;--fallback-y:max(372px,60svh);transform:translate(calc(50vw - 1001.5px * var(--fallback-scale)),calc(var(--fallback-y) - 541.5px * var(--fallback-scale))) scale(var(--fallback-scale))}
+@media(max-height:700px) and (min-height:501px){.render{--fallback-scale:.18}}
+@media(min-width:900px){.render{--fallback-scale:.4;--fallback-y:56svh}}
+@media(max-height:500px){.render{--fallback-scale:.14;--fallback-y:57svh}}
+</style></noscript>
 </head><body class="product-page">
 <header class="site-head">
 <a class="brand-link" href="../site.html" aria-label="Roscosmo R&D, back to index">
@@ -244,4 +252,18 @@
 <label class="check"><input id="guide" type="checkbox"/> Show PSD interaction guides</label>
 <div class="note">The approved render coordinates, physical controls, demonstration sliders and runtime are retained. These are prototype test controls, not final product copy.</div>
 </aside></details></div></section>
-</div></main><footer class="product-footer" id="productFooter"><div class="footer-name">PEEPSHOW</div><p>A project by <a href="../site.html">Roscosmo R&amp;D</a>.</p><p><a href="../projects.html">← All projects</a></p></footer><div class="assembly-dialog" id="assemblyDialog" role="dialog" aria-modal="true" aria-labelledby="assemblyTitle" aria-describedby="assemblyStatus" tabindex="-1" hidden><div class="assembly-dialog-heading"><div class="eyebrow">UNDER THE SHELL</div><h2 id="assemblyTitle">Inside Peepshow.</h2></div><p class="sr-only" id="assemblyStatus" role="status"></p><button class="assembly-close" id="assemblyClose" type="button"><span id="assemblyCloseLabel">Reassemble &amp; close</span> <span aria-hidden="true">×</span></button></div><button class="assembly-skip" id="assemblySkip" type="button" hidden>Skip animation</button><button class="return-top" id="returnTop" type="button" aria-label="Return to top" title="Return to top" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><script src="controls.js"></script><script src="presentation.js"></script><script src="./emulator/runtime.js" type="module"></script></body></html>
+</div></main><footer class="product-footer" id="productFooter"><div class="footer-name">PEEPSHOW</div><p>A project by <a href="../site.html">Roscosmo R&amp;D</a>.</p><p><a href="../projects.html">← All projects</a></p></footer><div class="assembly-dialog" id="assemblyDialog" role="dialog" aria-modal="true" aria-labelledby="assemblyTitle" aria-describedby="assemblyStatus" tabindex="-1" hidden><div class="assembly-dialog-heading"><div class="eyebrow">UNDER THE SHELL</div><h2 id="assemblyTitle">Inside Peepshow.</h2></div><p class="sr-only" id="assemblyStatus" role="status"></p><button class="assembly-close" id="assemblyClose" type="button"><span id="assemblyCloseLabel">Reassemble &amp; close</span> <span aria-hidden="true">×</span></button></div><button class="assembly-skip" id="assemblySkip" type="button" hidden>Skip animation</button><button class="return-top" id="returnTop" type="button" aria-label="Return to top" title="Return to top" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><script>
+// Position the first image before waiting for controls, animation, or emulator
+// scripts. Keep this hero calculation in sync with presentation.js layout().
+(() => {
+  const render = document.getElementById('render');
+  const logo = document.querySelector('.hero-logo');
+  const caption = document.querySelector('.hero-caption');
+  const width = document.documentElement.clientWidth;
+  const top = logo.offsetTop + logo.offsetHeight + 18;
+  const bottom = caption.offsetTop - 24;
+  const scale = Math.max(.01, Math.min(width * .76 / 893, (bottom - top) / 1025));
+  render.style.transform = `matrix(${scale},0,0,${scale},${width / 2 - 1001.5 * scale},${(top + bottom) / 2 - 541.5 * scale})`;
+  render.style.visibility = 'visible';
+})();
+</script><script src="controls.js"></script><script src="presentation.js"></script><script src="./emulator/runtime.js" type="module"></script></body></html>

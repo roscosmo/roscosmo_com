@@ -7,7 +7,7 @@
 .viewer{position:fixed;inset:0;bottom:auto;height:100vh;height:100svh;z-index:2;pointer-events:none;overflow:visible;contain:layout style}
 .viewer::before{content:"";position:absolute;inset:0;opacity:var(--glow,0);transition:opacity 300ms ease;pointer-events:none;background:radial-gradient(ellipse at center,rgba(50,50,50,.42) 0%,rgba(28,28,28,.26) 42%,transparent 82%)}
 .stage,.device-box{position:absolute;inset:0;pointer-events:none;overflow:visible}
-.render{will-change:transform;position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;transform:matrix(.4,0,0,.4,0,0);pointer-events:none;user-select:none;-webkit-user-select:none}
+.render{will-change:transform;position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;visibility:hidden;pointer-events:none;user-select:none;-webkit-user-select:none}
 .render>img{position:absolute;left:0;top:0;width:1920px;height:1080px;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
 #baseDevice{z-index:0}#sequence{position:absolute;inset:0;width:1920px;height:1080px;z-index:1;display:none;pointer-events:none}
 #patch,.render>.button-patch{z-index:2;pointer-events:none}.render>.button-patch{display:none}
