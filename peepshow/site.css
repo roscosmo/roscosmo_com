@@ -101,3 +101,10 @@
 @media(max-height:500px) and (min-width:600px){
  .brand-slot .peepos .section-wordmark{width:calc(104px * 1729 / 447)}
 }
+
+/* Shared Info-style header stays outside the product's scroll geometry. */
+.product-page > .site-head{position:absolute;inset:0 0 auto}
+/* Only narrow portrait screens need extra clearance above the product title. */
+@media(max-width:720px) and (min-height:501px){
+ .product-page .hero-logo{top:max(128px,14svh)}
+}
