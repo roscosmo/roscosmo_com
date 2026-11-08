@@ -26,22 +26,26 @@
     const o=offsets(b,p.r);
     return {left:p.x+o.left*p.s,top:p.y+o.top*p.s,right:p.x+o.right*p.s,bottom:p.y+o.bottom*p.s};
   }
+  // Freeze only the assembly on phones. Native momentum must not compete with
+  // animation scroll writes; the rest of the page keeps its native touch scroll.
+  let assemblyLock=null;
+  const pageY=()=>assemblyLock?assemblyLock.y:window.scrollY;
   let m=null,dirty=true,pose=null,ready=false,lastFrameName='',frame=1,phase='idle',phaseStart=0;
   let armed=true,visited=false,exitRequest=0,entryBypass=false,phaseFrom=null,exitFromY=0,exitToY=0;
-  let lastTime=performance.now(),lastY=scrollY,lastSoftware=false,lastInteractive=null;
-  let smoothY=scrollY,targetY=scrollY,lastWritten=scrollY,scrolling=false,navigation=false,tau=115;
-  let touchY=null,loadingSince=0;
+  let lastTime=performance.now(),lastY=pageY(),lastSoftware=false,lastInteractive=null;
+  let smoothY=pageY(),targetY=pageY(),lastWritten=pageY(),scrolling=false,navigation=false,tau=115;
+  let touchY=null,touchX=null,touchCanExit=false,loadingSince=0;
   // Only the hero and first machine pose snap. Reading and assembly retain v8 motion.
   let heroSnap=null,heroWheelUntil=0,heroSettleAt=0,heroNativeDirection=1,mouseHeld=false;
   let inputsDemoArmed=true,returnTopVisible=false;
-  const returnTop=$('returnTop');
+  const returnTop=$('returnTop'),assemblySkip=$('assemblySkip');
   const motion=$('smoothMotion');
   // The requested full-motion prototype is the default. This switch also makes
   // reduced motion available without silently skipping the product demonstration.
   $('motionPreference').textContent='Turn off for native scrolling and a still assembly view.';
   const moving=()=>['loading','arriving','opening','holding','closing','exiting'].includes(phase);
   function note(text){if($('explodeNote').textContent!==text)$('explodeNote').textContent=text;}
-  function log(kind){events.push({kind,time:Math.round(performance.now()),frame,scroll:Math.round(scrollY)});if(events.length>120)events.shift();}
+  function log(kind){events.push({kind,time:Math.round(performance.now()),frame,scroll:Math.round(pageY())});if(events.length>120)events.shift();}
   function rectPose(b,rect,r=0){
     const x=(rect.left+rect.right)/2,y=(rect.top+rect.bottom)/2;
     const o=offsets(b,r),dx=Math.max(-o.left,o.right),dy=Math.max(-o.top,o.bottom);
@@ -54,7 +58,7 @@
     // and orientation changes. Desktop keeps its existing viewport geometry.
     const w=document.documentElement.clientWidth,stableH=viewer.clientHeight;
     const mobile=w<900&&stableH>500,h=mobile?stableH:innerHeight;
-    const top=id=>$(id).getBoundingClientRect().top+scrollY;
+    const top=id=>$(id).getBoundingClientRect().top+pageY();
     const heroHeight=$('productHero').offsetHeight;
     const a=document.querySelector('.hero-logo'),b=document.querySelector('.hero-caption');
     const hero=rectPose(front,{left:w*.12,right:w*.88,top:a.offsetTop+a.offsetHeight+18,bottom:b.offsetTop-24});
@@ -63,29 +67,43 @@
     const side=mobile?rectPose(front,{left:w*.14,right:w*.86,top:18,bottom:Math.min(h*.40,370)}):
       rectPose(front,{left:left+colW*.06,right:left+colW*.94,top:h*.17,bottom:h*.83});
     const heading=document.querySelector('.assembly-heading');
-    const ex=rectPose(exploded,{left:Math.max(18,w*.045),right:w-Math.max(18,w*.045),top:heading.offsetTop+heading.offsetHeight+16,bottom:h-(mobile?150:126)},mobile?Math.PI/2:0);
+    // Reading keeps the stable small viewport. Only the assembly uses the actual
+    // visible height, including space revealed when a phone's browser bars hide.
+    const visibleH=mobile?Math.max(h,window.visualViewport?.height||innerHeight):h;
+    const exRect={left:Math.max(18,w*.045),right:w-Math.max(18,w*.045),top:heading.offsetTop+heading.offsetHeight+16,bottom:visibleH-(mobile?76:126)};
+    const ex=rectPose(exploded,exRect,mobile?Math.PI/2:0);
+    if(mobile){
+      // Centre the visible artwork, not its off-centre source rotation anchor.
+      const o=offsets(exploded,ex.r);
+      ex.s=Math.min((exRect.right-exRect.left)/(o.right-o.left),(exRect.bottom-exRect.top)/(o.bottom-o.top));
+      ex.x=(exRect.left+exRect.right-(o.left+o.right)*ex.s)/2;
+      ex.y=(exRect.top+exRect.bottom-(o.top+o.bottom)*ex.s)/2;
+    }
     // Set the single mobile reading reservation, not one spacer per section.
     const reading=mobile?Math.ceil(bounds(side).bottom+25):0;
     for(const id of ['machineContent','info']){
       const el=$(id),value=reading+'px';
       if(el.style.getPropertyValue('--mobile-reading-space')!==value)el.style.setProperty('--mobile-reading-space',value);
     }
-    m={w,h,mobile,hero,side,ex,heroHeight,machineTop:top('machineContent'),exTop:top('explosion'),infoTop:top('info'),footer:top('productFooter'),reading,
+    m={w,h,visibleH,mobile,hero,side,ex,heroHeight,machineTop:top('machineContent'),exTop:top('explosion'),infoTop:top('info'),footer:top('productFooter'),reading,
       firstStart:0,firstEnd:top('machineContent')};
     m.panStart=m.exTop-h*.48;
     // Run while the controls heading passes the reading line, not at every
     // section update. The mobile reading line is below the reserved device area.
     const inputsHeading=$('machine-details').querySelector('h2');
     const readingLine=mobile?reading+(h-reading)*.30:h*.50;
-    m.inputsDemoAt=inputsHeading.getBoundingClientRect().bottom+scrollY-readingLine;
+    m.inputsDemoAt=inputsHeading.getBoundingClientRect().bottom+pageY()-readingLine;
     m.inputsDemoEnd=Math.min(top('pocketSize'),m.panStart);
     if(heroSnap){
       const now=performance.now();
       heroSnap.duration=Math.max(180,heroSnap.duration-(now-heroSnap.started));
-      heroSnap.started=now;heroSnap.fromY=scrollY;heroSnap.fromPose={...pose};
+      heroSnap.started=now;heroSnap.fromY=pageY();heroSnap.fromPose={...pose};
     }
     if(moving()&&phase!=='exiting'){smoothY=targetY=m.exTop;writeScroll(m.exTop);}
-    if(phase==='exiting')exitToY=exitRequest<0?Math.max(0,m.panStart-h*.15):m.infoTop;
+    if(phase==='exiting'){
+      const next=exitRequest<0?Math.max(0,m.panStart-h*.15):m.infoTop;
+      if(Math.abs(next-exitToY)>1){exitFromY=pageY();phaseFrom={...pose};phaseStart=performance.now();exitToY=next;}
+    }
   }
   function normalPose(y){
     if(y<=0)return m.hero;
@@ -110,30 +128,51 @@
     render.style.transform=`matrix(${a},${b},${-b},${a},${p.x-anchor.x*a+anchor.y*b},${p.y-anchor.x*b-anchor.y*a})`;
   }
   function writeScroll(y){
-    lastWritten=y;window.scrollTo({left:0,top:y,behavior:'instant'});
+    lastWritten=y;
+    if(assemblyLock){
+      if(assemblyLock.y!==y){assemblyLock.y=y;document.body.style.setProperty('--assembly-scroll-y',y+'px');}
+    }else window.scrollTo({left:0,top:y,behavior:'instant'});
   }
-  const maximum=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
-  function cancelEase(){scrolling=false;smoothY=targetY=scrollY;}
+  const maximum=()=>assemblyLock?assemblyLock.maximum:Math.max(0,document.documentElement.scrollHeight-innerHeight);
+  function lockAssembly(y){
+    if(assemblyLock||!(m.mobile||matchMedia('(pointer:coarse)').matches))return;
+    assemblyLock={y,maximum:maximum()};
+    document.body.style.setProperty('--assembly-scroll-y',y+'px');
+    document.documentElement.classList.add('assembly-locked');
+    document.body.classList.add('assembly-locked');
+    assemblySkip.hidden=false;
+    touchCanExit=false; // The swipe that brought us here cannot also dismiss it.
+  }
+  function unlockAssembly(){
+    if(!assemblyLock)return;
+    const y=assemblyLock.y;assemblyLock=null;
+    document.documentElement.classList.remove('assembly-locked');
+    document.body.classList.remove('assembly-locked');
+    document.body.style.removeProperty('--assembly-scroll-y');
+    assemblySkip.hidden=true;touchCanExit=false;
+    writeScroll(y);lastY=smoothY=targetY=y;
+  }
+  function cancelEase(){scrolling=false;smoothY=targetY=pageY();}
   function beginHeroSnap(destination){
     if(heroSnap||moving())return;
     const toY=destination?m.machineTop:0;
-    if(Math.abs(scrollY-toY)<1)return;
+    if(Math.abs(pageY()-toY)<1)return;
     const now=performance.now();
-    heroSnap={destination,fromY:scrollY,fromPose:{...(pose||normalPose(scrollY))},started:now,duration:780};
+    heroSnap={destination,fromY:pageY(),fromPose:{...(pose||normalPose(pageY()))},started:now,duration:780};
     scrolling=false;navigation=false;entryBypass=false;heroSettleAt=0;
-    smoothY=targetY=scrollY;
+    smoothY=targetY=pageY();
     window.PeepControls?.reset();
     log(destination?'hero-snap-to-machine':'hero-snap-to-top');
   }
   function openingIntent(dy){
     if(!motion.checked||moving())return false;
     if(heroSnap)return true;
-    if(scrollY<m.machineTop-2){
+    if(pageY()<m.machineTop-2){
       if(dy>0)beginHeroSnap(1);
-      else if(scrollY>1)beginHeroSnap(0);
+      else if(pageY()>1)beginHeroSnap(0);
       return true;
     }
-    if(dy<0&&scrollY<=m.machineTop+2){beginHeroSnap(0);return true;}
+    if(dy<0&&pageY()<=m.machineTop+2){beginHeroSnap(0);return true;}
     return false;
   }
   function advanceHeroSnap(now){
@@ -145,7 +184,7 @@
     viewer.style.visibility='visible';
     if(raw===1){
       smoothY=targetY=toY;writeScroll(toY);apply(target);
-      heroSnap=null;scrolling=false;lastY=scrollY;
+      heroSnap=null;scrolling=false;lastY=pageY();
       // Consume the tail of the triggering wheel gesture, not a new scroll.
       heroWheelUntil=now+120;
       log(snap.destination?'hero-side-settled':'hero-top-settled');
@@ -160,7 +199,7 @@
       if(phase==='holding'&&performance.now()-phaseStart>=1000)beginClose(performance.now());
       return;
     }
-    if(!scrolling){smoothY=scrollY;targetY=scrollY;}
+    if(!scrolling){smoothY=pageY();targetY=pageY();}
     if(Math.sign(dy)!==Math.sign(targetY-smoothY))targetY=smoothY;
     targetY=clamp(targetY+dy,0,maximum());
     // Reading above the first section stops at its side pose. The next upward
@@ -171,6 +210,7 @@
   function beginEntry(now){
     if(moving())return;
     armed=false;visited=false;exitRequest=0;frame=1;phaseFrom={...(pose||m.ex)};
+    lockAssembly(m.exTop);
     smoothY=targetY=m.exTop;writeScroll(m.exTop);scrolling=false;
     phase=ready?'arriving':'loading';phaseStart=loadingSince=now;
     window.PeepControls?.reset();log(phase);
@@ -182,7 +222,7 @@
     log('exit-pan');
   }
   function skip(){
-    if(!moving())return;
+    if(!moving()||phase==='exiting')return;
     if(!exitRequest)exitRequest=1;
     // Deliberate Skip is the only control that may omit animation frames.
     beginExit(performance.now());
@@ -191,7 +231,7 @@
     if(phase==='loading'){
       note('Loading assembly images…');
       if(ready){phase='arriving';phaseStart=now;phaseFrom={...pose};log('arriving');}
-      else if(now-loadingSince>10000){note('Assembly images are still loading. The return-to-top shortcut remains available.');}
+      else if(now-loadingSince>10000){note('Assembly images are still loading. Use Skip animation to continue.');}
     }
     if(phase==='arriving'){
       const t=ease((now-phaseStart)/300);
@@ -217,7 +257,7 @@
       const target=exitRequest<0?normalPose(exitToY):m.side;
       apply(mix(phaseFrom,target,t));
       const y=lerp(exitFromY,exitToY,ease((raw-.35)/.65));smoothY=targetY=y;writeScroll(y);
-      if(t===1){phase='done';visited=true;scrolling=false;lastY=scrollY;log('pan-complete');}
+      if(t===1){phase='done';visited=true;scrolling=false;unlockAssembly();lastY=pageY();log('pan-complete');}
       return;
     }
     if(moving()){
@@ -233,8 +273,8 @@
   const frameName=n=>n===1?'0001A':n===50?'0050A':String(n).padStart(4,'0');
   function layers(now){
     const showingAssembly=ready&&['opening','holding','closing'].includes(phase);
-    const software=!moving()&&scrollY>=m.infoTop-m.h*.18;
-    const interactive=!heroSnap&&!moving()&&(scrollY<m.panStart||software);
+    const software=!moving()&&pageY()>=m.infoTop-m.h*.18;
+    const interactive=!heroSnap&&!moving()&&(pageY()<m.panStart||software);
     canvas.style.display=showingAssembly?'block':'none';
     base.style.visibility=showingAssembly?'hidden':'visible';
     viewer.querySelectorAll('#patch,.button-patch').forEach(el=>el.style.visibility=showingAssembly?'hidden':'visible');
@@ -249,15 +289,15 @@
     if(lastSoftware!==software){lastSoftware=software;window.dispatchEvent(new CustomEvent('peep-stage',{detail:{softwareVisible:software}}));}
     const showIdle=!showingAssembly&&!window.PeepControls?.active&&!(software&&lcd.classList.contains('enabled'))&&Math.floor(now/500)%2===1;
     idle.style.display=showIdle?'block':'none';
-    let glow=moving()?1:Math.min(range(scrollY,m.panStart,m.exTop),1-range(scrollY,m.exTop,m.infoTop));
+    let glow=moving()?1:Math.min(range(pageY(),m.panStart,m.exTop),1-range(pageY(),m.exTop,m.infoTop));
     if(phase==='exiting')glow=1-ease((now-phaseStart)/1000);
     viewer.style.setProperty('--glow',glow.toFixed(3));
     if(!moving())note(ready?'':'Loading assembly images…');
   }
   function maybeInputsDemo(){
     // Rearm only after a substantial upward return, avoiding boundary flicker.
-    if(scrollY<m.inputsDemoAt-m.h*.30)inputsDemoArmed=true;
-    if(!inputsDemoArmed||scrollY<=lastY||scrollY<m.inputsDemoAt||scrollY>=m.inputsDemoEnd)return;
+    if(pageY()<m.inputsDemoAt-m.h*.30)inputsDemoArmed=true;
+    if(!inputsDemoArmed||pageY()<=lastY||pageY()<m.inputsDemoAt||pageY()>=m.inputsDemoEnd)return;
     if(heroSnap||moving()||entryBypass||navigation||!motion.checked||document.hidden||!ready)return;
     inputsDemoArmed=false;
     // Manual inputs and an existing demo always take precedence.
@@ -266,7 +306,7 @@
     }
   }
   function updateReturnTop(){
-    const visible=scrollY>m.h*.35||moving();
+    const visible=pageY()>m.h*.35||moving();
     if(visible===returnTopVisible)return;
     returnTopVisible=visible;
     returnTop.classList.toggle('is-visible',visible);
@@ -277,7 +317,7 @@
     if(dirty||!m)layout();
     if(!heroSnap&&!moving()&&!scrolling&&!navigation&&motion.checked&&!mouseHeld&&heroSettleAt&&now>=heroSettleAt){
       heroSettleAt=0;
-      if(scrollY>1&&scrollY<m.machineTop-2)beginHeroSnap(heroNativeDirection>0?1:0);
+      if(pageY()>1&&pageY()<m.machineTop-2)beginHeroSnap(heroNativeDirection>0?1:0);
     }
     const heroWasActive=!!heroSnap;
     if(heroWasActive)advanceHeroSnap(now);
@@ -288,24 +328,20 @@
         // Clamp the scroll to the assembly entrance before a large wheel delta can skip it.
         if(armed&&!entryBypass&&motion.checked&&smoothY>=m.exTop&&lastY<m.exTop){beginEntry(now);}
         else writeScroll(smoothY);
-      }else if(armed&&!entryBypass&&motion.checked&&scrollY>=m.exTop&&lastY<m.exTop){beginEntry(now);}
+      }else if(armed&&!entryBypass&&motion.checked&&pageY()>=m.exTop&&lastY<m.exTop){beginEntry(now);}
     }
     if(!heroWasActive&&moving())scene(now);
     else if(!heroWasActive){
-      let desired=normalPose(scrollY);
+      let desired=normalPose(pageY());
       // Release above the footer, without removing the object or covering text.
-      if(scrollY>=m.infoTop){const edge=bounds(desired).bottom;desired={...desired,y:desired.y+Math.min(0,m.footer-scrollY-edge-28)};}
+      if(pageY()>=m.infoTop){const edge=bounds(desired).bottom;desired={...desired,y:desired.y+Math.min(0,m.footer-pageY()-edge-28)};}
       const p=pose&&motion.checked?mix(pose,desired,1-Math.exp(-dt/55)):desired;
       apply(p);viewer.style.visibility=bounds(p).bottom<=0?'hidden':'visible';
-      if(scrollY<m.panStart-m.h*.2){armed=true;visited=false;phase='idle';}
+      if(pageY()<m.panStart-m.h*.2){armed=true;visited=false;phase='idle';}
     }
     layers(now);maybeInputsDemo();updateReturnTop();
-    for(const id of ['machineContent','info']){
-      const start=id==='machineContent'?m.machineTop:m.infoTop;
-      $(id).style.setProperty('--reading-clip-top',m.mobile?Math.max(0,scrollY+m.reading-start)+'px':'0px');
-    }
     if(entryBypass&&!scrolling){entryBypass=false;navigation=false;}
-    lastY=scrollY;requestAnimationFrame(tick);
+    lastY=pageY();requestAnimationFrame(tick);
   }
   function nested(el,dy){
     for(let n=el instanceof Element?el:null;n&&n!==document.body;n=n.parentElement){
@@ -325,22 +361,32 @@
     tau=e.deltaMode===0&&Math.abs(e.deltaY)<35?75:115;
     requestScroll(dy);
   },{passive:false});
-  // Native touch momentum is retained outside the assembly. A swipe while it is
-  // opening records the next action, not hundreds of queued scroll pixels.
+  // Keep native touch scrolling outside the opening/assembly. A fixed body
+  // cancels the incoming fling once, rather than fighting it every frame.
   addEventListener('touchstart',e=>{
     const control=e.target.closest('button,a,input,textarea,select,summary,.button-hit,.joy-hit');
-    touchY=e.touches.length===1&&!control?e.touches[0].clientY:null;
+    const single=e.touches.length===1&&!control;
+    touchY=single?e.touches[0].clientY:null;touchX=single?e.touches[0].clientX:null;
+    touchCanExit=single&&!!assemblyLock&&phase!=='exiting';
     if(!heroSnap)cancelEase();
   },{passive:true});
   addEventListener('touchmove',e=>{
-    if(e.touches.length!==1||touchY===null)return;
-    const dy=touchY-e.touches[0].clientY;
-    const opening=motion.checked&&(scrollY<m.machineTop-2||(dy<0&&scrollY<=m.machineTop+2));
+    if(e.touches.length!==1)return;
+    if(touchY===null){if(assemblyLock&&e.cancelable&&!nested(e.target,0))e.preventDefault();return;}
+    const dy=touchY-e.touches[0].clientY,dx=touchX-e.touches[0].clientX;
+    if(nested(e.target,dy))return;
+    const opening=motion.checked&&(pageY()<m.machineTop-2||(dy<0&&pageY()<=m.machineTop+2));
     if(!heroSnap&&!moving()&&!opening)return;
     if(e.cancelable)e.preventDefault();
-    if(Math.abs(dy)>12){requestScroll(dy);touchY=e.touches[0].clientY;}
+    if(Math.abs(dy)>18&&Math.abs(dy)>Math.abs(dx)){
+      if(!assemblyLock||touchCanExit)requestScroll(dy);
+      if(assemblyLock)touchCanExit=false; // One intention, never queued momentum.
+      touchY=e.touches[0].clientY;touchX=e.touches[0].clientX;
+    }
   },{passive:false});
-  addEventListener('touchend',()=>{touchY=null;},{passive:true});
+  const endTouch=()=>{touchY=touchX=null;touchCanExit=false;};
+  addEventListener('touchend',endTouch,{passive:true});
+  addEventListener('touchcancel',endTouch,{passive:true});
   addEventListener('pointerdown',e=>{
     if(e.pointerType!=='touch'){mouseHeld=true;if(!heroSnap&&!moving())cancelEase();}
   },{passive:true});
@@ -353,30 +399,31 @@
     if(e.key==='Escape'&&moving()){e.preventDefault();skip();return;}
     if(map[e.key]){e.preventDefault();requestScroll(map[e.key]*(e.key===' '&&e.shiftKey?-1:1));}
     else if(e.key==='Home'||e.key==='End'){
-      e.preventDefault();heroSnap=null;heroSettleAt=0;heroWheelUntil=0;if(moving()){phase='done';frame=1;visited=true;armed=false;}
-      entryBypass=true;smoothY=scrollY;targetY=e.key==='Home'?0:maximum();scrolling=true;
+      e.preventDefault();heroSnap=null;heroSettleAt=0;heroWheelUntil=0;unlockAssembly();if(moving()){phase='done';frame=1;visited=true;armed=false;}
+      entryBypass=true;smoothY=pageY();targetY=e.key==='Home'?0:maximum();scrolling=true;
     }
   });
   addEventListener('scroll',()=>{
     if(heroSnap||moving())return;
     // Native scrollbar/touch releases inside the opening settle to a full pose.
-    const external=Math.abs(scrollY-lastWritten)>1;
+    const external=Math.abs(pageY()-lastWritten)>1;
     if(external&&!navigation){
-      heroNativeDirection=scrollY>=lastWritten?1:-1;
+      heroNativeDirection=pageY()>=lastWritten?1:-1;
       heroSettleAt=performance.now()+140;
     }
     // Ignore events caused by our own writes. A real scrollbar jump takes priority.
-    if(scrolling&&Math.abs(scrollY-lastWritten)>32){cancelEase();}
+    if(scrolling&&Math.abs(pageY()-lastWritten)>32){cancelEase();}
   },{passive:true});
   function goTo(el,bypass=true){
+    unlockAssembly();
     heroSnap=null;heroSettleAt=0;heroWheelUntil=0;
     if(moving()){phase='done';frame=1;armed=false;visited=true;}
-    entryBypass=bypass;navigation=true;cancelEase();targetY=clamp(el.getBoundingClientRect().top+scrollY,0,maximum());scrolling=true;tau=140;
+    entryBypass=bypass;navigation=true;cancelEase();targetY=clamp(el.getBoundingClientRect().top+pageY(),0,maximum());scrolling=true;tau=140;
   }
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
     const el=$(a.getAttribute('href').slice(1));if(!el)return;
     e.preventDefault();
-    if(el===$('machine')&&scrollY<m.machineTop-2&&motion.checked&&!moving())beginHeroSnap(1);
+    if(el===$('machine')&&pageY()<m.machineTop-2&&motion.checked&&!moving())beginHeroSnap(1);
     else goTo(el);
     history.replaceState(null,'',a.getAttribute('href'));
   }));
@@ -387,6 +434,11 @@
     goTo($('productHero'),true);
     history.replaceState(null,'','#productHero');
     log('return-to-top');
+  });
+  assemblySkip.addEventListener('click',skip);
+  // Do not leave a fixed document in the back/forward cache.
+  addEventListener('pagehide',()=>{
+    if(assemblyLock){phase='done';frame=1;armed=false;visited=true;unlockAssembly();}
   });
   motion.addEventListener('change',()=>{
     if(heroSnap){const end=heroSnap.destination?m.machineTop:0;heroSnap=null;writeScroll(end);}
@@ -436,7 +488,7 @@
   window.refreshFrontVisual=()=>{};
   window.PeepPresentation={
     get softwareVisible(){return lastSoftware;},
-    get debug(){return {heroSnap:heroSnap?{destination:heroSnap.destination}:null,phase,frame,ready,missingImages:names.filter(n=>!images.has(n)),gate:moving(),armed,visited,inputsDemoArmed,exitRequest,scrollY,targetY,scrolling,pose,bounds:pose?bounds(pose,frame>1?exploded:front):null,softwareVisible:lastSoftware,landmarks:m,events:[...events]};}
+    get debug(){return {heroSnap:heroSnap?{destination:heroSnap.destination}:null,phase,frame,ready,missingImages:names.filter(n=>!images.has(n)),gate:moving(),scrollLocked:!!assemblyLock,armed,visited,inputsDemoArmed,exitRequest,scrollY:pageY(),targetY,scrolling,pose,bounds:pose?bounds(pose,frame>1?exploded:front):null,softwareVisible:lastSoftware,landmarks:m,events:[...events]};}
   };
-  layout();apply(normalPose(scrollY));requestAnimationFrame(tick);void preload();
+  layout();apply(normalPose(pageY()));requestAnimationFrame(tick);void preload();
 })();

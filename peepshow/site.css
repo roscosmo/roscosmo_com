@@ -54,7 +54,8 @@
 @media(max-width:899px) and (min-height:501px){
  .site-header{padding:18px;gap:10px;flex-wrap:wrap}.brand{font-size:11px}.brand span{display:none}.site-header nav{font-size:11px;gap:12px}.build-label{font-size:9px}
  .product-hero{min-height:620px}.hero-logo{top:max(84px,11svh)}.hero-logo h1{font-size:42px}.hero-logo .eyebrow{font-size:10px}.hero-caption{bottom:24px}.hero-caption p{font-size:clamp(23px,5.7vw,28px)}.scroll-link{font-size:14px;padding:10px 17px}
- .story-pass{clip-path:inset(var(--reading-clip-top,0px) 0 0 0)}
+ /* Text remains visible around the transparent device silhouette. */
+ .viewer{z-index:4}
  .product-panel{display:block;width:88%;padding:26px 0}.product-copy{padding:0;max-width:none}.product-copy h2{font-size:clamp(31px,8vw,46px)}.product-copy p{font-size:16px}.product-copy:after{margin-top:26px}
  #machineContent,#info{padding-top:var(--mobile-reading-space,320px)}#machineContent{padding-bottom:8px}
  .spec-strip,.dimension-strip{gap:10px}.spec-strip strong,.dimension-strip strong{font-size:22px}.spec-strip span,.dimension-strip span{font-size:12px}.feature-chip{font-size:12px}.detail-grid{gap:16px}.detail-card{padding:10px 0}.detail-card strong{font-size:16px}.detail-card span{font-size:14px}
@@ -95,3 +96,9 @@
 @media(max-width:720px) and (min-height:501px){
  .product-page .hero-logo{top:max(128px,14svh)}
 }
+
+/* Isolate a phone's assembly from native fling momentum, then restore scrolling. */
+html.assembly-locked{overflow:hidden;overscroll-behavior-y:none}
+body.assembly-locked{position:fixed;top:calc(-1 * var(--assembly-scroll-y));left:0;right:0;width:100%;overflow:hidden;overscroll-behavior-y:none}
+.assembly-skip{position:fixed;z-index:30;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);padding:8px 14px;font-size:12px;white-space:nowrap;background:#101911;border-color:#405247;color:#b9c9be}
+.assembly-skip[hidden]{display:none}
