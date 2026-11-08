@@ -74,32 +74,19 @@
 .product-action.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 
-/* Product v10: the supplied wordmarks, only in their three title slots. */
+/* Product wordmarks: a prominent hero and balanced software titles. */
 .brand-wordmark{display:block;object-fit:contain;max-width:100%;-webkit-user-drag:none;user-select:none}
 .hero-logo h1{margin:0;line-height:1}
-.hero-logo .hero-wordmark{width:auto;height:clamp(76px,7vw,104px);max-width:80vw;margin:0 auto}
+.hero-logo .hero-wordmark{width:auto;height:clamp(120px,11vw,166px);max-width:80vw;margin:0 auto}
 .brand-slot .logo-lockup{line-height:0;padding:0;margin:12px 0 0}
-.brand-slot .section-wordmark{width:auto;height:clamp(56px,4.8vw,78px);max-width:100%;object-position:left center}
+.brand-slot .section-wordmark{width:clamp(360px,31vw,480px);height:auto;max-width:100%;object-position:left center}
 @media(max-width:899px) and (min-height:501px){
- .hero-logo .hero-wordmark{height:84px;max-width:78vw}
- .brand-slot .section-wordmark{height:58px;max-width:100%}
+ .hero-logo .hero-wordmark{height:120px;max-width:78vw}
+ .brand-slot .section-wordmark{width:clamp(320px,80vw,380px);max-width:100%}
 }
 @media(max-height:500px) and (min-width:600px){
- .hero-logo .hero-wordmark{height:48px}
- .brand-slot .section-wordmark{height:52px}
-}
-
-/* Product v11: enlarge only the PeepOS section wordmark. */
-.brand-slot .peepos .section-wordmark{
- width:calc(clamp(112px,9.6vw,156px) * 1729 / 447);
- height:auto;
- max-width:100%;
-}
-@media(max-width:899px) and (min-height:501px){
- .brand-slot .peepos .section-wordmark{width:calc(116px * 1729 / 447)}
-}
-@media(max-height:500px) and (min-width:600px){
- .brand-slot .peepos .section-wordmark{width:calc(104px * 1729 / 447)}
+ .hero-logo .hero-wordmark{height:72px}
+ .brand-slot .section-wordmark{width:340px}
 }
 
 /* Shared Info-style header stays outside the product's scroll geometry. */
