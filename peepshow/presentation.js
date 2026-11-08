@@ -12,9 +12,20 @@
   const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
   const ease=t=>{t=clamp(t);return t*t*(3-2*t);};
   const lerp=(a,b,t)=>a+(b-a)*t;
-  const mix=(a,b,t)=>({x:lerp(a.x,b.x,t),y:lerp(a.y,b.y,t),s:lerp(a.s,b.s,t)});
+  const mix=(a,b,t)=>({x:lerp(a.x,b.x,t),y:lerp(a.y,b.y,t),s:lerp(a.s,b.s,t),r:lerp(a.r||0,b.r||0,t)});
   const range=(y,a,b)=>ease((y-a)/Math.max(1,b-a));
-  const bounds=(p,b=front)=>({left:p.x+(b.left-anchor.x)*p.s,top:p.y+(b.top-anchor.y)*p.s,right:p.x+(b.right-anchor.x)*p.s,bottom:p.y+(b.bottom-anchor.y)*p.s});
+  function offsets(b,r=0){
+    const c=Math.cos(r),s=Math.sin(r);
+    const points=[[b.left,b.top],[b.right,b.top],[b.right,b.bottom],[b.left,b.bottom]].map(([x,y])=>({
+      x:(x-anchor.x)*c-(y-anchor.y)*s,y:(x-anchor.x)*s+(y-anchor.y)*c
+    }));
+    return {left:Math.min(...points.map(p=>p.x)),right:Math.max(...points.map(p=>p.x)),
+      top:Math.min(...points.map(p=>p.y)),bottom:Math.max(...points.map(p=>p.y))};
+  }
+  function bounds(p,b=front){
+    const o=offsets(b,p.r);
+    return {left:p.x+o.left*p.s,top:p.y+o.top*p.s,right:p.x+o.right*p.s,bottom:p.y+o.bottom*p.s};
+  }
   let m=null,dirty=true,pose=null,ready=false,lastFrameName='',frame=1,phase='idle',phaseStart=0;
   let armed=true,visited=false,exitRequest=0,entryBypass=false,phaseFrom=null,exitFromY=0,exitToY=0;
   let lastTime=performance.now(),lastY=scrollY,lastSoftware=false,lastInteractive=null;
@@ -31,14 +42,18 @@
   const moving=()=>['loading','arriving','opening','holding','closing','exiting'].includes(phase);
   function note(text){if($('explodeNote').textContent!==text)$('explodeNote').textContent=text;}
   function log(kind){events.push({kind,time:Math.round(performance.now()),frame,scroll:Math.round(scrollY)});if(events.length>120)events.shift();}
-  function rectPose(b,rect){
+  function rectPose(b,rect,r=0){
     const x=(rect.left+rect.right)/2,y=(rect.top+rect.bottom)/2;
-    const dx=Math.max(anchor.x-b.left,b.right-anchor.x),dy=Math.max(anchor.y-b.top,b.bottom-anchor.y);
-    return {x,y,s:Math.max(.01,Math.min((rect.right-rect.left)/(2*dx),(rect.bottom-rect.top)/(2*dy)))};
+    const o=offsets(b,r),dx=Math.max(-o.left,o.right),dy=Math.max(-o.top,o.bottom);
+    return {x,y,r,s:Math.max(.01,Math.min((rect.right-rect.left)/(2*dx),(rect.bottom-rect.top)/(2*dy)))};
   }
   function layout(){
     dirty=false;
-    const w=document.documentElement.clientWidth,h=innerHeight,mobile=w<900&&h>500;
+    // The fixed stage uses the small viewport, which does not grow/shrink as
+    // mobile browser bars hide while reading. It still follows real resizes
+    // and orientation changes. Desktop keeps its existing viewport geometry.
+    const w=document.documentElement.clientWidth,stableH=viewer.clientHeight;
+    const mobile=w<900&&stableH>500,h=mobile?stableH:innerHeight;
     const top=id=>$(id).getBoundingClientRect().top+scrollY;
     const heroHeight=$('productHero').offsetHeight;
     const a=document.querySelector('.hero-logo'),b=document.querySelector('.hero-caption');
@@ -48,7 +63,7 @@
     const side=mobile?rectPose(front,{left:w*.14,right:w*.86,top:18,bottom:Math.min(h*.40,370)}):
       rectPose(front,{left:left+colW*.06,right:left+colW*.94,top:h*.17,bottom:h*.83});
     const heading=document.querySelector('.assembly-heading');
-    const ex=rectPose(exploded,{left:Math.max(18,w*.045),right:w-Math.max(18,w*.045),top:heading.offsetTop+heading.offsetHeight+16,bottom:h-(mobile?150:126)});
+    const ex=rectPose(exploded,{left:Math.max(18,w*.045),right:w-Math.max(18,w*.045),top:heading.offsetTop+heading.offsetHeight+16,bottom:h-(mobile?150:126)},mobile?Math.PI/2:0);
     // Set the single mobile reading reservation, not one spacer per section.
     const reading=mobile?Math.ceil(bounds(side).bottom+25):0;
     for(const id of ['machineContent','info']){
@@ -81,8 +96,18 @@
     return m.side;
   }
   function apply(p){
+    // A diagonal front view can be wider than either endpoint on tall phones.
+    // Keep it inside the display while turning into/out of the assembly pose.
+    if(m.mobile){
+      const o=offsets(front,p.r),margin=16;
+      const fit=Math.min((p.x-margin)/-o.left,(m.w-margin-p.x)/o.right);
+      p={...p,s:Math.min(p.s,Math.max(.01,fit))};
+    }
     pose=p;
-    render.style.transform=`matrix(${p.s},0,0,${p.s},${p.x-anchor.x*p.s},${p.y-anchor.y*p.s})`;
+    // Rotate every layer together around the source artwork anchor, including
+    // the opening and return transitions. Upright control poses remain r=0.
+    const a=p.s*Math.cos(p.r||0),b=p.s*Math.sin(p.r||0);
+    render.style.transform=`matrix(${a},${b},${-b},${a},${p.x-anchor.x*a+anchor.y*b},${p.y-anchor.x*b-anchor.y*a})`;
   }
   function writeScroll(y){
     lastWritten=y;window.scrollTo({left:0,top:y,behavior:'instant'});

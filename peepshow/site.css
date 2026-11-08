@@ -4,14 +4,14 @@
 .site-header{position:absolute;top:0;left:0;width:100%;z-index:10;display:flex;align-items:center;gap:24px;justify-content:space-between;padding:22px 5vw;background:none}
 .brand{font-size:13px;letter-spacing:.12em;font-weight:750;white-space:nowrap}.brand span{font-weight:400;color:#82998b}.site-header nav{display:flex;gap:clamp(14px,1.8vw,32px);font-size:clamp(12px,.82vw,17px);color:#b8c7bc}.build-label{font-size:11px;color:#82998b;white-space:nowrap}
 /* One global stage. No centring transform is inherited by the scaled artwork. */
-.viewer{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:visible;contain:layout style}
+.viewer{position:fixed;inset:0;bottom:auto;height:100vh;height:100svh;z-index:2;pointer-events:none;overflow:visible;contain:layout style}
 .viewer::before{content:"";position:absolute;inset:0;opacity:var(--glow,0);transition:opacity 300ms ease;pointer-events:none;background:radial-gradient(ellipse at center,rgba(50,50,50,.42) 0%,rgba(28,28,28,.26) 42%,transparent 82%)}
 .stage,.device-box{position:absolute;inset:0;pointer-events:none;overflow:visible}
 .render{will-change:transform;position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;transform:matrix(.4,0,0,.4,0,0);pointer-events:none;user-select:none;-webkit-user-select:none}
 .render>img{position:absolute;left:0;top:0;width:1920px;height:1080px;display:block;max-width:none;pointer-events:none;-webkit-user-drag:none}
 #baseDevice{z-index:0}#sequence{position:absolute;inset:0;width:1920px;height:1080px;z-index:1;display:none;pointer-events:none}
 #patch,.render>.button-patch{z-index:2;pointer-events:none}.render>.button-patch{display:none}
-.button-hit,.joy-hit{position:absolute;z-index:5;pointer-events:none;touch-action:none;cursor:pointer;outline:none}
+.button-hit,.joy-hit{position:absolute;z-index:5;pointer-events:none;touch-action:none;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
 .viewer[data-interactive="true"] .button-hit,.viewer[data-interactive="true"] .joy-hit{pointer-events:auto}
 .button-hit.circle{border-radius:50%}.button-hit.shoulder{border-radius:20px}.joy-hit{left:659px;top:660px;width:317px;height:305px;border-radius:50%;cursor:grab}.joy-hit:active{cursor:grabbing}
 .button-hit:focus-visible,.joy-hit:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
