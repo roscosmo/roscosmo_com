@@ -531,12 +531,11 @@
     if(!window.PeepRuntime){$('siteLoadStatus').textContent='Browser runtime is still starting.';return;}
     if(window.PeepRuntime.running&&$('realExample').value!==name&&!confirm('Replace the current game with '+name.replace('_',' ')+'?'))return;
     $('realExample').value=name;launching=true;
-    const buttons=[...document.querySelectorAll('[data-load-game],#loadDungeon,#loadPet')];buttons.forEach(b=>b.disabled=true);
+    const buttons=[...document.querySelectorAll('[data-load-game]')];buttons.forEach(b=>b.disabled=true);
     try{await window.PeepRuntime.start(name);$('siteLoadStatus').textContent=$('realEmulatorStatus').textContent;}
     catch(err){$('siteLoadStatus').textContent=String(err);}
     finally{launching=false;buttons.forEach(b=>b.disabled=false);}
   }
-  $('loadDungeon').addEventListener('click',()=>launch('dungeon'));$('loadPet').addEventListener('click',()=>launch('virtual_pet'));
   document.querySelectorAll('[data-load-game]').forEach(b=>b.addEventListener('click',()=>launch(b.dataset.loadGame)));
   window.refreshFrontVisual=()=>{};
   window.PeepPresentation={
