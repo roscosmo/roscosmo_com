@@ -1,0 +1,144 @@
+{
+  "runtime": "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/",
+  "examples": {
+    "virtual_pet": {
+      "scene": "pet",
+      "egg_sha256": "b3cf8150219583a072ba1a01af05cad7f81c206d9da09418e11594c19fcce8c7",
+      "egg_bytes": 94664,
+      "frames": [
+        "3724f3f30f877452972e29ee2e5b9887efe1028b4f6ef865b12225050411faf0",
+        "1f3f1d1d42fb6a3c64d1bf001b7415fe7f9710c425f58124e226cbadf2cef7fb",
+        "ac79ed5522783f68a601e56f32210618241b9fb90f100bd149b549484eaf70ad"
+      ],
+      "editing_save_reopen": true,
+      "unfinished_saved": true,
+      "blocked": [
+        "PREVIEW_NOT_READY",
+        "PACKAGE_NOT_READY"
+      ]
+    },
+    "dungeon": {
+      "scene": "room_1",
+      "egg_sha256": "bb594b74c7000db9984af0c0d4508989ac9a068833acf180ce0b910014e2e660",
+      "egg_bytes": 85280,
+      "frames": [
+        "8e251fb6ed8cc62cb58530dfd240175b11bfc2ce401895985852047f4a6520d7",
+        "2d26bfe28d6c620633b701ad63c959a3b8bfcbf5067be5136d72eaacc2626fee",
+        "3bf1462add222d94c1a5b9d3c5e5e4857a0a4abd9bcedc8dfb68a2a3f3dc5792"
+      ],
+      "editing_save_reopen": true,
+      "unfinished_saved": true,
+      "blocked": [
+        "PREVIEW_NOT_READY",
+        "PACKAGE_NOT_READY"
+      ]
+    }
+  },
+  "debugger": {
+    "machine": {
+      "startup": true,
+      "abort": true,
+      "breakpoint": true,
+      "state_step": true,
+      "timer": true,
+      "stale_cursor": "PREVIEW_DEBUG_REVISION_STALE",
+      "frame": "d44e6f5df89071a28ad85ee14d6623a9a81d6187fb543a98f2204b133c6cf32b",
+      "variables": {
+        "count": 8
+      },
+      "decision": {
+        "kind": "decision",
+        "scene_id": "main",
+        "route_id": "turn",
+        "node_id": "check",
+        "condition": {
+          "variable_scope": "package",
+          "variable_ref": "count",
+          "operator": "eq",
+          "value": 7
+        },
+        "decision_operands": [
+          {
+            "kind": "variable",
+            "variable_id": "scoped.0",
+            "binding": {
+              "scope": "package",
+              "variable_id": "count",
+              "value_type": "int32",
+              "minimum": 0,
+              "maximum": 100,
+              "initial": 0
+            },
+            "left": 7,
+            "right": 7,
+            "operator": "eq",
+            "result": true
+          }
+        ],
+        "result": true,
+        "selected_port": "when_true",
+        "call_stack": [],
+        "completion": "completed_pending"
+      },
+      "source_preserved": true
+    },
+    "map": {
+      "startup": true,
+      "abort": true,
+      "breakpoint": true,
+      "state_step": true,
+      "timer": true,
+      "stale_cursor": "PREVIEW_DEBUG_REVISION_STALE",
+      "frame": "d44e6f5df89071a28ad85ee14d6623a9a81d6187fb543a98f2204b133c6cf32b",
+      "variables": {
+        "count": 7
+      },
+      "decision": {
+        "kind": "decision",
+        "scene_id": "main",
+        "route_id": "turn",
+        "node_id": "check",
+        "condition": {
+          "kind": "destination.clear",
+          "destination_ref": "step"
+        },
+        "decision_operands": [],
+        "world_operands": [
+          {
+            "operator": "eq",
+            "right": 0,
+            "evaluated": true,
+            "query": {
+              "kind": "collision",
+              "grid": {
+                "width": 16,
+                "height": 16
+              },
+              "actor": {
+                "x": 16,
+                "y": 16
+              },
+              "destination": {
+                "x": 32,
+                "y": 16,
+                "cell_x": 2,
+                "cell_y": 1
+              },
+              "include_actors": false,
+              "blocked": false,
+              "reason": "clear"
+            },
+            "left": 0,
+            "result": true
+          }
+        ],
+        "result": true,
+        "selected_port": "when_true",
+        "call_stack": [],
+        "completion": "completed_pending"
+      },
+      "source_preserved": true
+    }
+  },
+  "backend_sha256": "a6eeb2c15e7de91b1cd91180fcdf33171fe760b21e74b082daf4231f3d4f6b6d"
+}
