@@ -1,7 +1,8 @@
 (() => {
   const pages = ['projects', 'tools', 'info'];
   const sizes = [[320,568], [375,812], [390,844], [430,932], [600,900],
-    [601,900], [720,900], [721,900], [768,1024], [844,390], [1024,768], [1440,900]];
+    [601,900], [720,900], [721,900], [768,1024], [844,390], [1024,768],
+    [1088,900], [1089,900], [1103,900], [1104,900], [1280,800], [1440,900], [1920,1080]];
   const load = (page, width, height) => new Promise((resolve, reject) => {
     const frame = document.createElement('iframe');
     frame.className = 'fixture';
@@ -45,9 +46,15 @@
               raw.x+raw.width <= view.x+view.width+.01 && raw.y+raw.height <= view.y+view.height+.01,
               `${label}: viewBox contains the artwork`);
             check(near(box.height, parseFloat(win.getComputedStyle(svg).height)), `${label}: CSS size matches visible art`);
+            // The shared stable scrollbar gutter also reduces CSS viewport units.
+            const layoutWidth = doc.body.getBoundingClientRect().width;
+            const targetHeight = Math.min(64 * 3, (layoutWidth - 44) / 5.44);
+            check(near(box.height, targetHeight), `${label}: triple-size height with shared screen-width cap`);
             check(near(box.width/box.height, raw.width/raw.height, .003), `${label}: natural proportions preserved`);
             check(box.left >= 0 && box.right <= doc.documentElement.clientWidth &&
               doc.documentElement.scrollWidth <= win.innerWidth, `${label}: no horizontal clipping or overflow`);
+            check(box.left >= 21.9 && box.right <= layoutWidth - 21.9,
+              `${label}: artwork clears both screen edges`);
             const body = doc.body.getBoundingClientRect();
             check(near((box.left+box.right)/2, (body.left+body.right)/2), `${label}: artwork centered`);
             const header = doc.querySelector('.site-head').getBoundingClientRect();

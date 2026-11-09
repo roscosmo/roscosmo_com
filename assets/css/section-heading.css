@@ -1,5 +1,7 @@
 /* The SVG viewBoxes follow the visible artwork, not the original artboards.
-   Match Projects' lettering height and let each word keep its natural width. */
+   Triple the original 64px lettering height while preserving natural widths.
+   Cap all three equally using Projects' 791.10:145.44 ratio (rounded up to
+   5.44:1) so the widest word keeps at least 22px clear on either screen edge. */
 .section-heading {
   display:flex;
   align-items:center;
@@ -11,6 +13,6 @@
   display:block;
   flex:none;
   width:auto;
-  height:min(64px,10.5vw);
+  height:min(192px,calc((100vw - 44px) / 5.44));
   overflow:visible;
 }
