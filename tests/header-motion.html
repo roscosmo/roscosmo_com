@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8"><title>Header motion regression</title>
+<style>body{background:#222;color:white;font:14px system-ui}iframe{display:block;border:1px solid #555;margin-bottom:12px}pre{white-space:pre-wrap}</style>
+<h1>Header motion regression</h1><pre id="results">Running…</pre><div id="fixtures"></div>
+<script>
+(async()=>{
+ const results=[];let failures=0;
+ // Force only the queried motion preference in each isolated fixture, leaving
+ // the actual shared header script and SVG rendering unchanged.
+ for(const width of [390,1440])for(const reduce of [false,true]){
+  const f=document.createElement('iframe');f.width=width;f.height=220;f.title=`${width}px reduced motion ${reduce}`;
+  const base=new URL('../',location.href).href;
+  const html=await (await fetch('../info.html')).text();
+  f.srcdoc=html.replace('<head>',`<head><base href="${base}"><script>const nativeMatchMedia=window.matchMedia.bind(window);window.matchMedia=q=>q==='(prefers-reduced-motion: reduce)'?{matches:${reduce},media:q}:nativeMatchMedia(q);<\/script>`);
+  document.querySelector('#fixtures').append(f);await new Promise(r=>f.onload=r);
+  const d=f.contentDocument;
+  const sample=()=>[...d.querySelectorAll('#roscosmo .letter .ink-path,#roscosmo #pupil')].map(el=>{const b=el.getBoundingClientRect();return [b.x,b.y,b.width,b.height]});
+  const first=sample();await new Promise(r=>setTimeout(r,1700));const second=sample();
+  const movement=Math.max(...first.flatMap((v,i)=>v.map((n,j)=>Math.abs(n-second[i][j]))));
+  const ok=d.documentElement.classList.contains('js-active')&&movement>.3;
+  if(!ok)failures++;results.push(`${ok?'PASS':'FAIL'} ${width}px reduced motion ${reduce}: rendered geometry moved ${movement.toFixed(2)}px`);
+ }
+ document.querySelector('#results').textContent=`${results.length-failures}/${results.length} passed\n`+results.join('\n');
+})();
+</script>

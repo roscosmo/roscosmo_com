@@ -65,3 +65,11 @@ rendered outline, home-link destination and header viewport clearance. The fixed
 5.59 screen-pixel outline formerly crowded the small logo's central details.
 The replacement scales from the main mark's 5.59px edge at a 500px design width;
 landing and index artwork, letter animation and eye interactions are unchanged.
+
+# Consistent header motion
+
+Open `/tests/header-motion.html`. Four isolated fixtures exercise the actual
+shared script at desktop/mobile widths with both motion preferences. The test
+samples rendered path and pupil bounding rectangles over time, rather than only
+checking transform strings. The header now intentionally matches site.html's
+always-animated logo; other reduced-motion rules remain unchanged.

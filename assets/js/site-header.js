@@ -1,7 +1,8 @@
 // Shared header eye and letter animation, preserved from Info.
 (() => {
   'use strict';
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // Keep this logo's motion consistent with site.html, including when the
+  // browser requests reduced motion. Other page motion preferences are separate.
   // Locked to the final tuning screenshot: quiver 160%, edge 160%,
   // outline 66%, eye 100%, max logo width 500px.
   const QUIVER = 1.60;
