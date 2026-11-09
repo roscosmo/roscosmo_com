@@ -56,3 +56,12 @@ logo. Device interaction coverage remains in `peepshow-input-demo.html`.
 
 The unused animation source and resting SVG remain available for reference, but
 the product page does not load them. The staging artwork remains untouched.
+
+# Header logo scaling regression
+
+Open `/tests/header-logo.html`. It automatically checks all five shared-header
+pages at six viewport sizes (320–1440px): proportional SVG stroke, 1–2px
+rendered outline, home-link destination and header viewport clearance. The fixed
+5.59 screen-pixel outline formerly crowded the small logo's central details.
+The replacement scales from the main mark's 5.59px edge at a 500px design width;
+landing and index artwork, letter animation and eye interactions are unchanged.

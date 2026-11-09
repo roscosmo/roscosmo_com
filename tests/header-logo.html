@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>Header logo scaling regression</title>
+<style>body{background:#222;color:white;font:14px system-ui;margin:16px}iframe{border:1px solid #555;display:block;margin-bottom:20px}pre{white-space:pre-wrap}</style>
+<h1>Header logo scaling regression</h1><pre id="results">Running…</pre><div id="fixtures"></div>
+<script>
+(async()=>{
+ const results=[]; let failures=0;
+ for(const width of [320,390,430,720,721,1440]){
+  for(const path of ['info.html','projects.html','tools.html','dahab.html','peepshow/index.html']){
+   const frame=document.createElement('iframe'); frame.width=width;frame.height=900;frame.title=`${path} at ${width}px`;frame.src='../'+path;document.querySelector('#fixtures').append(frame);
+   await new Promise(resolve=>frame.onload=resolve);
+   const d=frame.contentDocument, w=frame.contentWindow,svg=d.querySelector('.site-head #roscosmo'),ink=svg.querySelector('.ink-path'),s=w.getComputedStyle(ink),rect=svg.getBoundingClientRect();
+   const screenStroke=parseFloat(s.strokeWidth)*rect.width/svg.viewBox.baseVal.width;
+   const ok=s.vectorEffect==='none'&&Math.abs(parseFloat(s.strokeWidth)-13.31)<.001&&screenStroke<2&&screenStroke>1&&d.querySelector('.brand-link').getAttribute('href').endsWith('site.html')&&d.querySelector('.site-head').getBoundingClientRect().right<=width;
+   if(!ok)failures++;
+   results.push(`${ok?'PASS':'FAIL'} ${path} ${width}px: outline ${screenStroke.toFixed(2)}px; SVG ${rect.width}px`);
+  }
+ }
+ document.querySelector('#results').textContent=`${results.length-failures}/${results.length} passed\n`+results.join('\n');
+ document.title=failures?'FAIL Header logo':'PASS Header logo';
+})();
+</script>
