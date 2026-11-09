@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="dark" name="color-scheme"/><title>Peepshow | Roscosmo R&amp;D</title><meta name="description" content="Meet Peepshow, a pocket-sized game machine by Roscosmo R&amp;D. Explore the hardware, try the controls and play browser demos."/><link href="data:," rel="icon"/><link href="site.css?v=little-worlds-1" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/site-header.css?v=20261109-even-logo">
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="dark" name="color-scheme"/><title>Peepshow | Roscosmo R&amp;D</title><meta name="description" content="Meet Peepshow, a pocket-sized game machine by Roscosmo R&amp;D. Explore the hardware, try the controls and play browser demos."/><link href="data:," rel="icon"/><link href="site.css?v=dripping-logo-1" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/site-header.css?v=20261109-even-logo">
 <script src="../assets/js/site-header.js" defer></script>
+<script src="logo-animation.js?v=dripping-logo-1" defer></script>
 <noscript><style>
 /* A centered, scroll-away product image when scripting is unavailable. */
 .viewer{position:absolute}
@@ -144,7 +145,12 @@
 </div>
 </div>
 </section></div><main id="productStory"><section aria-label="Meet Peepshow" class="product-hero" id="productHero">
-<div class="hero-logo"><h1><img class="brand-wordmark hero-wordmark" src="assets/logo-peepshow.png" width="1666" height="757" alt="Peepshow" fetchpriority="high" decoding="async" draggable="false"/></h1></div>
+<div class="hero-logo"><h1 class="sr-only">Peepshow</h1>
+<div class="hero-animation" id="peepshowLogo">
+<div class="hero-animation-art" aria-hidden="true"><img src="assets/logo-peepshow-rest.svg" width="1800" height="1080" alt="" fetchpriority="high" decoding="async" draggable="false"/></div>
+<button class="hero-animation-eye" type="button" aria-label="Blink the Peepshow eye" title="Blink the Peepshow eye" hidden></button>
+<button class="hero-animation-toggle" type="button" aria-label="Pause logo animation" title="Pause logo animation" data-playing="true" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path class="logo-pause-icon" d="M8 5v14M16 5v14"/><path class="logo-play-icon" d="m8 5 11 7-11 7Z"/></svg></button>
+</div></div>
 <div class="hero-caption"><p>A pebble-sized pocket adventure.</p><a class="scroll-link" href="#machine">Meet the machine <span aria-hidden="true">↓</span></a></div>
 </section><div aria-label="Peepshow machine introduction" class="story-pass" id="machineContent">
 <section class="product-panel" id="machine" tabindex="-1"><div class="product-copy">

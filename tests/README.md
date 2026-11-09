@@ -44,3 +44,23 @@ Projects also checks the enlarged 480px clickable tiles, the responsive 360px
 PeepShow and 350px Dahab images, loaded artwork, original aspect ratios,
 centering, captions, clear vertical separation and unchanged destinations.
 The artwork remains taller than the Projects heading at every tested size.
+
+# Animated PeepShow hero regression
+
+Open `/tests/peepshow-logo.html` and click **Run regression tests**. The harness
+uses the production page at ten widths from 320px to 1920px, including portrait
+phones, a landscape phone and tablets. It checks transparency, header/device/
+caption clearance, no horizontal overflow, the accessible hero heading, unchanged
+software wordmarks, autoplay and pause/resume. It also checks eye tracking,
+click/keyboard-target blinking, preserved focus, offscreen suspension, every
+12 fps frame of the full drip/splash cycle, reduced motion and JavaScript-disabled
+fallback. Reduced-motion startup/change tests use a controlled matchMedia fixture.
+Pointer tests are synthetic and do not replace physical phone/browser testing.
+
+The production engine and geometry in `peepshow/logo-animation.js` are copied
+from `to_integrate/peepshow-logo-animation.html` without changing their default
+fall time (0.42), fall distance (1) or release time (1.3). The separate production
+adapter supplies a transparent canvas, stable accessible controls and lifecycle
+handling. `peepshow/assets/logo-peepshow-rest.svg` is the supplied resting artwork
+without its black background. Production does not reference `to_integrate`.
+The staging file is intentionally left in place for the owner to clear.
