@@ -37,7 +37,8 @@
   let touchY=null,touchX=null,touchCanExit=false,loadingSince=0;
   // Only the hero and first machine pose snap. Reading and assembly retain v8 motion.
   let heroSnap=null,heroWheelUntil=0,heroSettleAt=0,heroNativeDirection=1,mouseHeld=false;
-  let inputsDemoArmed=true,returnTopVisible=false;
+  let inputsDemoArmed=true,inputsDemoPending=false,returnTopVisible=false;
+  let activeTouches=0,lastInputActivity=0;
   const returnTop=$('returnTop'),assemblySkip=$('assemblySkip');
   const motion=$('smoothMotion');
   const exploreInside=$('exploreInside'),assemblyDialog=$('assemblyDialog'),assemblyClose=$('assemblyClose');
@@ -338,17 +339,32 @@
     document.body.style.setProperty('--reading-fade',range(pageY(),m.machineTop*.45,m.machineTop).toFixed(3));
     if(!moving())note(ready?'':'Loading assembly images…');
   }
-  function maybeInputsDemo(){
+  function maybeInputsDemo(now){
+    const y=pageY();
+    if(y!==lastY)lastInputActivity=now;
+    // Queue the crossing, rather than consuming it during a swipe or loading.
     // Rearm only after a substantial upward return, avoiding boundary flicker.
-    if(pageY()<m.inputsDemoAt-m.h*.30)inputsDemoArmed=true;
-    if(!inputsDemoArmed||pageY()<=lastY||pageY()<m.inputsDemoAt||pageY()>=m.inputsDemoEnd)return;
-    if(heroSnap||moving()||entryBypass||navigation||!motion.checked||document.hidden||!ready)return;
-    inputsDemoArmed=false;
-    // Manual inputs and an existing demo always take precedence.
-    if(!window.PeepControls?.busy&&viewer.dataset.interactive==='true'){
-      window.PeepControls?.demo();log('inputs-demo');
-    }
+    if(y<m.inputsDemoAt-m.h*.30)inputsDemoArmed=true;
+    if(y<m.inputsDemoAt||y>=m.inputsDemoEnd){inputsDemoPending=false;return;}
+    if(heroSnap||moving()||entryBypass||navigation||!motion.checked){inputsDemoPending=false;return;}
+    if(inputsDemoArmed&&y>lastY)inputsDemoPending=true;
+    if(!inputsDemoPending||document.hidden||!ready)return;
+    // Starting mid-swipe lets a following touch take over at the first Up pose.
+    // Wait for touch release AND the tail of native momentum before playback.
+    if(activeTouches||mouseHeld||scrolling||now-lastInputActivity<180)return;
+    if(window.PeepControls?.busy||window.PeepControls?.active||viewer.dataset.interactive!=='true')return;
+    inputsDemoPending=false;
+    const started=window.PeepControls?.demo(outcome=>{
+      log(outcome==='completed'?'inputs-demo-complete':'inputs-demo-interrupted');
+      // A manual input may interrupt, but must not consume the automatic demo.
+      // Retry only here in the controls section, after the input is released.
+      if(outcome==='input'&&pageY()>=m.inputsDemoAt&&pageY()<m.inputsDemoEnd){
+        inputsDemoPending=true;lastInputActivity=performance.now();
+      }
+    });
+    if(started){inputsDemoArmed=false;log('inputs-demo');}
   }
+  addEventListener('peep-demo-cancel',()=>{inputsDemoPending=false;inputsDemoArmed=false;});
   function updateReturnTop(){
     const visible=pageY()>m.h*.35||moving();
     if(visible===returnTopVisible)return;
@@ -383,7 +399,7 @@
       apply(p);viewer.style.visibility=bounds(p).bottom<=0?'hidden':'visible';
       if(pageY()<m.panStart-m.h*.2){armed=true;visited=false;phase='idle';}
     }
-    layers(now);maybeInputsDemo();updateReturnTop();
+    layers(now);maybeInputsDemo(now);updateReturnTop();
     if(entryBypass&&!scrolling){entryBypass=false;navigation=false;}
     lastY=pageY();requestAnimationFrame(tick);
   }
@@ -408,6 +424,7 @@
   // Keep native touch scrolling outside the opening/assembly. A fixed body
   // cancels the incoming fling once, rather than fighting it every frame.
   addEventListener('touchstart',e=>{
+    activeTouches=e.touches.length;lastInputActivity=performance.now();
     const control=e.target.closest('button,a,input,textarea,select,summary,.button-hit,.joy-hit');
     const single=e.touches.length===1&&!control;
     touchY=single?e.touches[0].clientY:null;touchX=single?e.touches[0].clientX:null;
@@ -428,16 +445,19 @@
       touchY=e.touches[0].clientY;touchX=e.touches[0].clientX;
     }
   },{passive:false});
-  const endTouch=()=>{touchY=touchX=null;touchCanExit=false;};
+  const endTouch=e=>{activeTouches=e.touches.length;lastInputActivity=performance.now();touchY=touchX=null;touchCanExit=false;};
   addEventListener('touchend',endTouch,{passive:true});
   addEventListener('touchcancel',endTouch,{passive:true});
   addEventListener('pointerdown',e=>{
+    lastInputActivity=performance.now();
     if(e.pointerType!=='touch'){mouseHeld=true;if(!heroSnap&&!moving())cancelEase();}
   },{passive:true});
-  addEventListener('pointerup',()=>{mouseHeld=false;},{passive:true});
-  addEventListener('pointercancel',()=>{mouseHeld=false;},{passive:true});
-  addEventListener('blur',()=>{mouseHeld=false;},{passive:true});
+  addEventListener('pointerup',()=>{mouseHeld=false;lastInputActivity=performance.now();},{passive:true});
+  addEventListener('pointercancel',()=>{mouseHeld=false;lastInputActivity=performance.now();},{passive:true});
+  addEventListener('blur',()=>{mouseHeld=false;activeTouches=0;lastInputActivity=performance.now();},{passive:true});
+  addEventListener('keyup',()=>{lastInputActivity=performance.now();},{passive:true});
   addEventListener('keydown',e=>{
+    lastInputActivity=performance.now();
     if(exploration){
       if(e.key==='Escape'){e.preventDefault();closeExploration();}
       else if(e.key==='Tab'){e.preventDefault();assemblyClose.focus({preventScroll:true});}
@@ -540,7 +560,7 @@
   window.refreshFrontVisual=()=>{};
   window.PeepPresentation={
     get softwareVisible(){return lastSoftware;},
-    get debug(){return {heroSnap:heroSnap?{destination:heroSnap.destination}:null,phase,frame,ready,missingImages:names.filter(n=>!images.has(n)),gate:moving(),exploring:!!exploration,scrollLocked:!!assemblyLock,armed,visited,inputsDemoArmed,exitRequest,scrollY:pageY(),targetY,scrolling,pose,bounds:pose?bounds(pose,frame>1?exploded:front):null,softwareVisible:lastSoftware,landmarks:m,events:[...events]};}
+    get debug(){return {heroSnap:heroSnap?{destination:heroSnap.destination}:null,phase,frame,ready,missingImages:names.filter(n=>!images.has(n)),gate:moving(),exploring:!!exploration,scrollLocked:!!assemblyLock,armed,visited,inputsDemoArmed,inputsDemoPending,exitRequest,scrollY:pageY(),targetY,scrolling,pose,bounds:pose?bounds(pose,frame>1?exploded:front):null,softwareVisible:lastSoftware,landmarks:m,events:[...events]};}
   };
   layout();apply(normalPose(pageY()));requestAnimationFrame(tick);void preload();
 })();
