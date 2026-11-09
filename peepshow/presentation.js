@@ -66,8 +66,8 @@
     if(exploration)exploration.returnY=clamp(exploreInside.getBoundingClientRect().top+pageY()-exploration.buttonTop,0,maximum());
     const top=id=>$(id).getBoundingClientRect().top+pageY();
     const heroHeight=$('productHero').offsetHeight;
-    const heroLayout=window.getPeepHeroLayout(w);
-    const hero={x:w/2,y:heroLayout.centerY,s:heroLayout.scale,r:0};
+    const a=document.querySelector('.hero-logo'),b=document.querySelector('.hero-caption');
+    const hero=rectPose(front,{left:w*.12,right:w*.88,top:a.offsetTop+a.offsetHeight+18,bottom:b.offsetTop-24});
     // Same column geometry as the normal-flow text, independent of image margins.
     const contentW=Math.min(w*.90,1900),left=(w-contentW)/2,colW=contentW*.46;
     const side=mobile?rectPose(front,{left:w*.14,right:w*.86,top:18,bottom:Math.min(h*.40,370)}):
