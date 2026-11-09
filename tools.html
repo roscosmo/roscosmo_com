@@ -16,8 +16,7 @@ body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; -webkit-font-s
 a { color:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
 a:focus-visible { outline:2px solid var(--white); outline-offset:7px; border-radius:4px; }
 main { width:min(740px,calc(100% - 72px)); margin:0 auto; padding:clamp(5px,2.8vh,34px) 0 48px; }
-h1 { width:min(355px,58vw); margin:0 auto 48px; line-height:0; }
-h1 svg { display:block; width:100%; height:auto; overflow:visible; }
+.section-heading { margin:0 auto 48px; }
 #tools-title-art .letter { fill:var(--white); fill-rule:evenodd; }
 #tools-title-art path { fill-rule:evenodd; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
@@ -37,7 +36,7 @@ h1 svg { display:block; width:100%; height:auto; overflow:visible; }
 .back-link:hover { color:var(--white); }
 @media(max-width:720px) {
  main { width:calc(100% - 44px); padding-top:24px; padding-bottom:30px; }
- h1 { width:min(310px,70vw); margin-bottom:35px; }
+ .section-heading { margin-bottom:35px; }
  .tool-link { padding:21px 0; gap:18px; }
  .tool-link p { font-size:13px; }
  .tool-section + .tool-section { margin-top:30px; }
@@ -48,6 +47,7 @@ h1 svg { display:block; width:100%; height:auto; overflow:visible; }
 }
 </style>
 <link rel="stylesheet" href="assets/css/site-header.css">
+<link rel="stylesheet" href="assets/css/section-heading.css">
 <script src="assets/js/site-header.js" defer></script>
 </head>
 <body>
@@ -167,7 +167,7 @@ h1 svg { display:block; width:100%; height:auto; overflow:visible; }
 <nav class="site-nav" aria-label="Main navigation"><a href="projects.html">PROJECTS</a><a href="tools.html" aria-current="page">TOOLS</a><a href="info.html">INFO</a></nav>
 </header>
 <main>
-<h1><span class="sr-only">Tools</span><svg id="tools-title-art" aria-hidden="true" focusable="false" viewbox="0 0 692 207" xmlns="http://www.w3.org/2000/svg">
+<h1 class="section-heading"><span class="sr-only">Tools</span><svg id="tools-title-art" aria-hidden="true" focusable="false" viewBox="6.77 6.97 676.75 192.13" xmlns="http://www.w3.org/2000/svg">
 <title>TOOLS</title>
 
 <g class="letter" data-letter="T" id="tools-t-1">

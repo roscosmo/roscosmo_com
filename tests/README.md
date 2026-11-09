@@ -25,3 +25,17 @@ trigger had already consumed the demonstration. The fixed scheduler waits for
 release and settled scrolling, and retries input-interrupted automatic demos.
 Explicit Stop and manual demo replacement do not retry. Playback advances at most
 once per animation frame, preserving step duration and order under delayed paints.
+
+# Section heading regression
+
+Serve the repository root and open `/tests/section-headings.html`, then click
+**Run regression tests**. This dependency-free harness checks Projects, Tools
+and Info at twelve viewport sizes from 320px to 1440px, including either side
+of the mobile layout breakpoints and a landscape phone. It compares the actual
+SVG path bounds, not just the image boxes: equal visible letter heights and top
+positions, natural proportions, tight viewBoxes, centering, no overflow, clear
+header/navigation separation, active navigation and accessible page titles.
+
+The three page titles share `assets/css/section-heading.css`. Keep their
+viewBoxes fitted to the visible path bounds when replacing the artwork, and
+let the shared height determine each word's natural width.

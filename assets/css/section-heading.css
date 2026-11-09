@@ -1,0 +1,16 @@
+/* The SVG viewBoxes follow the visible artwork, not the original artboards.
+   Match Projects' lettering height and let each word keep its natural width. */
+.section-heading {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-block:min(3px,.5vw);
+  line-height:0;
+}
+.section-heading svg {
+  display:block;
+  flex:none;
+  width:auto;
+  height:min(64px,10.5vw);
+  overflow:visible;
+}
