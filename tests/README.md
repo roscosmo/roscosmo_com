@@ -26,24 +26,21 @@ release and settled scrolling, and retries input-interrupted automatic demos.
 Explicit Stop and manual demo replacement do not retry. Playback advances at most
 once per animation frame, preserving step duration and order under delayed paints.
 
-# Section heading regression
+# Section heading and Projects layout regression
 
 Serve the repository root and open `/tests/section-headings.html`, then click
 **Run regression tests**. This dependency-free harness checks Projects, Tools
-and Info at eighteen viewport sizes from 320px to 1920px, including either side
-of the mobile layout breakpoints, the heading's full-size breakpoint, and a
-landscape phone. It compares the actual
-SVG path bounds, not just the image boxes: equal visible letter heights and top
-positions, natural proportions, tight viewBoxes, centering, no overflow, clear
-header/navigation separation, active navigation and accessible page titles.
+and Info at twenty viewport sizes from 320px to 1920px, including the layout
+and heading breakpoints and a landscape phone. It compares actual SVG path
+bounds: expected visible height, natural proportions, tight viewBoxes,
+centering, edge clearance, no overflow, navigation and accessible page titles.
 
-The three page titles share `assets/css/section-heading.css`. Keep their
-viewBoxes fitted to the visible path bounds when replacing the artwork, and
-let the shared height determine each word's natural width.
+Tools and Info retain the shared 192px desktop heading and responsive cap in
+`assets/css/section-heading.css`. Projects has a page-local 96px/14vw heading
+so its title no longer overwhelms the project artwork. The shared file and the
+Tools and Info pages are unchanged by this adjustment.
 
-The headings target 192px visible letter height, three times their original
-64px desktop height. On narrower screens all three use the same height cap,
-`(100vw - 44px) / 5.44`, based on Projects' widest aspect ratio, leaving at
-least 22px on either side. This reaches the full 192px at 1089px layout width
-(1104px browser width with a 15px stable scrollbar gutter).
-The harness also checks that expected size and edge clearance at every width.
+Projects also checks the enlarged 480px clickable tiles, the responsive 360px
+PeepShow and 350px Dahab images, loaded artwork, original aspect ratios,
+centering, captions, clear vertical separation and unchanged destinations.
+The artwork remains taller than the Projects heading at every tested size.
