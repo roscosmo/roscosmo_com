@@ -5,7 +5,8 @@ html{scrollbar-gutter:stable}
 .site-head {width:min(1030px,calc(100% - 72px));margin:0 auto;position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:25px;min-height:162px;padding-top:20px}
 .site-head .brand-link {width:170px;display:block;flex:0 0 auto;touch-action:pan-y}
 .site-head #roscosmo {display:block;width:100%;height:auto;overflow:visible;user-select:none}
-.site-head #roscosmo .ink-path,.site-head #roscosmo .pupil-ink{fill:url(#inkGradient);stroke:url(#edgeGradient);stroke-width:5.59px;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill}
+/* A uniform edge avoids a bright centre band at the compact header size. */
+.site-head #roscosmo .ink-path,.site-head #roscosmo .pupil-ink{fill:url(#inkGradient);stroke:#bfbfc6;stroke-width:5.59px;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill}
 .site-head #roscosmo .pupil-ink{fill:#050505;stroke:none}
 .site-head #roscosmo .glint,.site-head #roscosmo .pupil-glint{fill:url(#shineGradient)}
 .site-head #roscosmo .counter{fill:#000}
