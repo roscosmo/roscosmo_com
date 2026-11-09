@@ -68,6 +68,7 @@
     const heroHeight=$('productHero').offsetHeight;
     const a=document.querySelector('.hero-logo'),b=document.querySelector('.hero-caption');
     const hero=rectPose(front,{left:w*.12,right:w*.88,top:a.offsetTop+a.offsetHeight+18,bottom:b.offsetTop-24});
+    window.alignPeepHeroLogo(bounds(hero).top, hero.s);
     // Same column geometry as the normal-flow text, independent of image margins.
     const contentW=Math.min(w*.90,1900),left=(w-contentW)/2,colW=contentW*.46;
     const side=mobile?rectPose(front,{left:w*.14,right:w*.86,top:18,bottom:Math.min(h*.40,370)}):

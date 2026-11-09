@@ -50,10 +50,23 @@
         assert(!art.querySelector('svg>rect'),'Opaque SVG background');
         assert(logo.left>=0&&logo.right<=width&&doc.documentElement.scrollWidth<=width,'Horizontal overflow');
         const overlaps=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
-        assert([...doc.querySelectorAll('.site-head .brand-link,.site-head .site-nav')].every(el=>!overlaps(el.getBoundingClientRect(),logo))&&logo.bottom+17<=device.top&&device.bottom<caption.top,'Hero overlap');
+        assert([...doc.querySelectorAll('.site-head .brand-link,.site-head .site-nav')].every(el=>!overlaps(el.getBoundingClientRect(),logo))&&device.bottom<caption.top,'Hero overlap');
         assert(doc.querySelectorAll('.hero-logo h1').length===1&&doc.querySelector('.hero-logo h1').textContent==='Peepshow','Accessible heading changed');
         assert([...doc.querySelectorAll('.section-wordmark')].map(i=>i.getAttribute('src')).join('|')==='assets/logo-peepos.png|assets/logo-peepstudio.png','Other section logos changed');
-        report(`${width}×${height}: transparent, centered hero clears header, device and caption; no overflow`);
+        const deviceScale=(device.right-device.left)/893;
+        const landing=logo.top+logo.width*api.scene.floor/api.scene.width;
+        assert(Math.abs(landing-(device.top+35*deviceScale))<1,'Splash baseline misses upper shell');
+        assert(logo.width<=.95*(device.right-device.left)+1,'Outer drips miss device on narrow/short layout');
+        assert([...root.querySelectorAll('button')].every(el=>el.getBoundingClientRect().width>=44),'Motion controls shrank below 44px');
+        const shell=doc.createElement('canvas');shell.width=1920;shell.height=1080;
+        const shellContext=shell.getContext('2d');shellContext.drawImage(doc.querySelector('#baseDevice'),0,0);
+        for(const drip of api.scene.schedule){
+          const x=logo.left+(drip.release.bulbCenter[0]+drip.drift)*logo.width/1800;
+          const sourceX=Math.round(555+(x-device.left)/deviceScale);
+          assert(shellContext.getImageData(sourceX,64,1,1).data[3]>200,`${drip.id} splash misses visible shell`);
+        }
+        assert(toggle.getBoundingClientRect().right<=width,'Pause control overflows');
+        report(`${width}×${height}: splash line meets upper shell; outer drips fit device; header and caption clear; no overflow`);
         const before=api.debug.elapsed; await wait(180); assert(api.debug.elapsed>before,'Autoplay stopped');
         toggle.click(); const paused=api.debug.elapsed,markup=art.innerHTML;
         await wait(180); assert(api.debug.elapsed===paused&&art.innerHTML===markup&&!api.debug.scheduled,'Pause did not stop animation');
@@ -62,6 +75,17 @@
       }
       let {w,doc}=await load(390,844);
       let api=w.PeepLogoAnimation,root=doc.querySelector('#peepshowLogo'),art=root.querySelector('.hero-animation-art');
+      // Resize the same page repeatedly to catch geometry feedback/drift.
+      const resizeFrame=doc.defaultView.frameElement;
+      for(const [width,height] of [[844,390],[1440,900],[320,568],[390,844],[844,390],[390,844]]){
+        resizeFrame.width=width;resizeFrame.height=height;await wait(200);
+        await until(()=>{
+          const box=root.getBoundingClientRect(),device=w.PeepPresentation.debug.bounds;
+          const scale=(device.right-device.left)/893;
+          return Math.abs(box.top+box.width*1035/1800-device.top-35*scale)<1;
+        },'Resize detached the splash line');
+      }
+      report('Repeated portrait/landscape/desktop resizes keep splashes attached without layout drift');
       const toggle=root.querySelector('.hero-animation-toggle'),eye=root.querySelector('.hero-animation-eye');
       toggle.click();
       eye.focus(); eye.click();

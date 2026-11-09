@@ -49,8 +49,8 @@ The artwork remains taller than the Projects heading at every tested size.
 
 Open `/tests/peepshow-logo.html` and click **Run regression tests**. The harness
 uses the production page at ten widths from 320px to 1920px, including portrait
-phones, a landscape phone and tablets. It checks transparency, header/device/
-caption clearance, no horizontal overflow, the accessible hero heading, unchanged
+phones, a landscape phone and tablets. It checks transparency, splash contact with the visible upper shell, outer-drip
+fit, repeated orientation/size changes, header/caption clearance, no horizontal overflow, the accessible hero heading, unchanged
 software wordmarks, autoplay and pause/resume. It also checks eye tracking,
 click/keyboard-target blinking, preserved focus, offscreen suspension, every
 12 fps frame of the full drip/splash cycle, reduced motion and JavaScript-disabled
@@ -64,3 +64,9 @@ adapter supplies a transparent canvas, stable accessible controls and lifecycle
 handling. `peepshow/assets/logo-peepshow-rest.svg` is the supplied resting artwork
 without its black background. Production does not reference `to_integrate`.
 The staging file is intentionally left in place for the owner to clear.
+
+The hero reserves its original logo slot and device pose, then fits and lowers
+the visible animation to the upper shell. The landing baseline is 35 source
+pixels below the device bounds (source y=64), accounting for its rounded top.
+The test samples the actual device image alpha at all four splash centers.
+The pause control sits outside the drip path and remains at least 44px wide.
