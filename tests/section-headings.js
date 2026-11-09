@@ -1,7 +1,7 @@
 (() => {
   const pages = ['projects', 'tools', 'info'];
   const sizes = [[320,568], [375,812], [390,844], [430,932], [600,900],
-    [601,900], [720,900], [721,900], [768,1024], [844,390], [1024,768],
+    [601,900], [700,900], [701,900], [720,900], [721,900], [768,1024], [844,390], [1024,768],
     [1088,900], [1089,900], [1103,900], [1104,900], [1280,800], [1440,900], [1920,1080]];
   const load = (page, width, height) => new Promise((resolve, reject) => {
     const frame = document.createElement('iframe');
@@ -48,8 +48,9 @@
             check(near(box.height, parseFloat(win.getComputedStyle(svg).height)), `${label}: CSS size matches visible art`);
             // The shared stable scrollbar gutter also reduces CSS viewport units.
             const layoutWidth = doc.body.getBoundingClientRect().width;
-            const targetHeight = Math.min(64 * 3, (layoutWidth - 44) / 5.44);
-            check(near(box.height, targetHeight), `${label}: triple-size height with shared screen-width cap`);
+            const isProjects = pages[index] === 'projects';
+            const targetHeight = isProjects ? Math.min(96, layoutWidth * .14) : Math.min(192, (layoutWidth - 44) / 5.44);
+            check(near(box.height, targetHeight), `${label}: expected responsive heading size`);
             check(near(box.width/box.height, raw.width/raw.height, .003), `${label}: natural proportions preserved`);
             check(box.left >= 0 && box.right <= doc.documentElement.clientWidth &&
               doc.documentElement.scrollWidth <= win.innerWidth, `${label}: no horizontal clipping or overflow`);
@@ -70,8 +71,32 @@
             check(doc.querySelectorAll('main h1').length === 1 &&
               ((h1.querySelector('.sr-only')?.textContent || h1.textContent).trim().toLowerCase() === pages[index] ||
                h1.querySelector(`svg[aria-label="${pages[index].toUpperCase()}"]`)), `${label}: accessible page heading`);
+            if (isProjects) {
+              const tiles = [...doc.querySelectorAll('.project-link')];
+              const images = tiles.map(tile => tile.querySelector('img'));
+              check(tiles.length === 2 && tiles.map(a=>a.getAttribute('href')).join('|') === 'peepshow/|dahab.html',
+                `${label}: project destinations preserved`);
+              images.forEach((image, i) => {
+                const tile = tiles[i].getBoundingClientRect(), art = image.getBoundingClientRect();
+                const caption = tiles[i].querySelector('.project-caption').getBoundingClientRect();
+                const expectedWidth = Math.min(i === 0 ? 360 : 350, tile.width - 24);
+                check(image.complete && image.naturalWidth > 0 && near(art.width, expectedWidth),
+                  `${label}: project ${i+1} artwork loads at the larger responsive size`);
+                check(near(art.width / art.height, image.naturalWidth / image.naturalHeight, .003),
+                  `${label}: project ${i+1} artwork keeps natural proportions`);
+                check(art.left >= tile.left && art.right <= tile.right && art.bottom < caption.top && caption.bottom <= tile.bottom,
+                  `${label}: project ${i+1} content fits without overlap`);
+                check(near((art.left+art.right)/2, (body.left+body.right)/2) && tile.width >= Math.min(480, layoutWidth-44)-.2,
+                  `${label}: project ${i+1} tile is centered and enlarged`);
+                check(art.height > box.height, `${label}: project ${i+1} artwork is taller than the page title`);
+              });
+              check(h1.getBoundingClientRect().bottom < tiles[0].getBoundingClientRect().top &&
+                tiles[0].getBoundingClientRect().bottom < tiles[1].getBoundingClientRect().top,
+                `${label}: heading and project tiles have clear separation`);
+            }
           });
-          check(artwork.every(a=>near(a.height,artwork[0].height)), `${width}×${height}: equal visible letter heights`);
+          check(near(artwork[1].height,artwork[2].height), `${width}×${height}: Tools and Info retain equal visible letter heights`);
+          check(artwork[0].height < artwork[1].height, `${width}×${height}: Projects uses its own smaller heading`);
           check(artwork.every(a=>near(a.top,artwork[0].top)), `${width}×${height}: aligned visible title tops`);
           measurements.push(`${width}×${height}: ${artwork.map((a,i)=>`${pages[i]} ${a.height.toFixed(2)}px`).join(', ')}`);
         } finally { frames.forEach(frame=>frame.remove()); }
