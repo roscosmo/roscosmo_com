@@ -12,7 +12,8 @@ html,body { margin:0;min-height:100%;background:#000;color:var(--ink); }
 body{font-family:system-ui,sans-serif}
 main{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vh,40px) 5vw}
 .composition{width:min(820px,90vw,calc((100svh - 260px)*1.06));display:flex;flex-direction:column;align-items:center;}
-.brand{width:min(290px,31vw);min-width:175px;max-width:100%;margin-bottom:clamp(18px,3.6vh,65px);}
+/* The navigation index keeps the landing-page-sized mark centered above its links. */
+.brand{width:min(500px,84vw);max-width:100%;margin-bottom:clamp(18px,3.6vh,65px);}
 #roscosmo{display:block;width:100%;height:auto;overflow:visible}
 /* Exact supplied landing SVG, using its own gradients. */
 #roscosmo .ink-path, #roscosmo .pupil-ink{fill:url(#inkGradient);stroke:url(#edgeGradient);stroke-width:5.59px;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill}
@@ -33,7 +34,7 @@ main{min-height:100svh;display:flex;align-items:center;justify-content:center;pa
 @keyframes float{from{transform:translateY(-1.1px) rotate(-.18deg)}to{transform:translateY(1.5px) rotate(.23deg)}}
 @keyframes react{from{transform:translateY(-1.5px) rotate(-.6deg) scale(1.006)}to{transform:translateY(2px) rotate(.6deg) scale(.994)}}
 @media (max-width:700px){
- .brand{width:min(300px,52vw);margin-bottom:clamp(20px,4vh,48px)}
+ .brand{margin-bottom:clamp(20px,4vh,48px)}
  .composition{width:96vw}
  .links{gap:clamp(12px,2.6vh,24px)}
  .word-projects{width:100%}.word-tools{width:75%}.word-info{width:54%}
@@ -69,7 +70,7 @@ main{min-height:100svh;display:flex;align-items:center;justify-content:center;pa
 #roscosmo #eyeArtwork{cursor:pointer}
 #roscosmo .letter{transform-box:fill-box;transform-origin:center center}
 
-/* Hide tuning UI in the finished index. Open index.html?tune=1 to enable it. */
+/* Hide tuning UI in the finished index. Open site.html?tune=1 to enable it. */
 body:not(.tuning-enabled) .tune-open, body:not(.tuning-enabled) .tune-panel{display:none!important}
 /* Single-screen composition for the approved PROJECTS / TOOLS / INFO labels. */
 .links{gap:clamp(14px,2.2vh,30px)}
@@ -189,7 +190,7 @@ body:not(.tuning-enabled) .tune-open, body:not(.tuning-enabled) .tune-panel{disp
 </g>
 </g>
 </svg></div>
-<nav aria-label="Main navigation" class="links"><a aria-label="Projects" class="word word-projects" href="projects.html" title="Projects"><svg aria-label="PROJECTS" role="img" viewbox="0 0 805 160" xmlns="http://www.w3.org/2000/svg">
+<nav aria-label="Explore Roscosmo" class="links"><a aria-label="Projects" class="word word-projects" href="projects.html" title="Projects"><svg aria-label="PROJECTS" role="img" viewbox="0 0 805 160" xmlns="http://www.w3.org/2000/svg">
 <title>PROJECTS</title>
 <style>.letter{fill:#ececf0;fill-rule:evenodd;transform-box:fill-box;transform-origin:center}.letter path{fill-rule:evenodd}</style>
 <g class="letter" data-letter="P" id="projects-p-1">

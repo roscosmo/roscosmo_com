@@ -1,0 +1,39 @@
+/* Shared company header, based on the Info page. Keep page content separate. */
+:root{--site-head-height:162px}
+/* Keep the header aligned when moving between long and single-screen pages. */
+html{scrollbar-gutter:stable}
+.site-head {width:min(1030px,calc(100% - 72px));margin:0 auto;position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:25px;min-height:162px;padding-top:20px}
+.site-head .brand-link {width:170px;display:block;flex:0 0 auto;touch-action:pan-y}
+.site-head #roscosmo {display:block;width:100%;height:auto;overflow:visible;user-select:none}
+/* A uniform edge avoids a bright centre band at the compact header size. */
+.site-head #roscosmo .ink-path,.site-head #roscosmo .pupil-ink{fill:url(#inkGradient);stroke:#bfbfc6;stroke-width:5.59px;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill}
+.site-head #roscosmo .pupil-ink{fill:#050505;stroke:none}
+.site-head #roscosmo .glint,.site-head #roscosmo .pupil-glint{fill:url(#shineGradient)}
+.site-head #roscosmo .counter{fill:#000}
+.site-head #roscosmo .sclera{fill:#f3f0e8}
+.site-head #roscosmo .blink-lid{fill:#050506;pointer-events:none}
+.site-head #roscosmo #eyeArtwork {cursor:pointer}
+.site-head #roscosmo .letter{transform-box:fill-box;transform-origin:center center}
+.site-nav {display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,3.6vw,48px);flex-wrap:wrap}
+.site-nav a {font:500 clamp(11px,1vw,13px) system-ui,-apple-system,sans-serif;letter-spacing:.13em;color:#a6a6ad;transition:color .2s;white-space:nowrap}
+.site-nav a:hover,.site-nav a[aria-current=page] {color:#efeff2}
+.site-nav a[aria-current=page] {text-decoration:underline;text-underline-offset:7px;text-decoration-thickness:1px}
+
+.site-head a {color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.site-head .site-nav a {color:#a6a6ad}
+.site-head .site-nav a:hover,.site-head .site-nav a[aria-current] {color:#efeff2}
+.site-head .site-nav a[aria-current] {text-decoration:underline;text-underline-offset:7px;text-decoration-thickness:1px}
+.site-head a:focus-visible {outline:2px solid #efeff1;outline-offset:7px;border-radius:4px}
+@media(max-width:720px){
+ :root{--site-head-height:112px}
+ .site-head{width:calc(100% - 44px);min-height:112px;gap:14px;padding-top:4px}
+ .site-head .brand-link{width:120px}
+ .site-nav{gap:15px}.site-nav a{font-size:10px;letter-spacing:.065em}
+}
+@media(max-width:400px){
+ :root{--site-head-height:100px}
+ .site-head{align-items:flex-start;padding-top:24px;min-height:100px}
+ .site-head .brand-link{width:106px;margin-top:-8px}
+ .site-nav{gap:10px}.site-nav a{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.site-head a{transition:none}}

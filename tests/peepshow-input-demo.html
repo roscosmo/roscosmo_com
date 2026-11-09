@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>PeepShow input demo regression</title>
+<style>body{font:15px system-ui;margin:20px}button{padding:12px}pre{white-space:pre-wrap;max-width:420px}iframe{position:fixed;left:460px;top:20px;border:1px solid #888;width:390px;height:844px}</style>
+<h1>PeepShow input demo regression</h1>
+<p>Serve the repository over HTTP, open this page, and run. Uses the real product scripts in a sized iframe. Touch events are synthetic; pointer capture is stubbed only for those synthetic events. This does not replace testing on a physical phone.</p>
+<button id="run">Run regression tests</button><pre id="results">Ready</pre>
+<iframe id="fixture" title="Product under test"></iframe><script src="peepshow-input-demo.js"></script>
+</html>
