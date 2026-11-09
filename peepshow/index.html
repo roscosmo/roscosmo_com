@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="dark" name="color-scheme"/><title>Peepshow | Roscosmo R&amp;D</title><meta name="description" content="Meet Peepshow, a pocket-sized game machine by Roscosmo R&amp;D. Explore the hardware, try the controls and play browser demos."/><link href="data:," rel="icon"/><link href="site.css?v=drip-landing-2" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/site-header.css?v=20261109-even-logo">
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="dark" name="color-scheme"/><title>Peepshow | Roscosmo R&amp;D</title><meta name="description" content="Meet Peepshow, a pocket-sized game machine by Roscosmo R&amp;D. Explore the hardware, try the controls and play browser demos."/><link href="data:," rel="icon"/><link href="site.css?v=drip-edge-3" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/site-header.css?v=20261109-even-logo">
 <script src="../assets/js/site-header.js" defer></script>
 <script src="logo-animation.js?v=dripping-logo-1" defer></script>
 <noscript><style>
@@ -277,29 +277,25 @@
 <div class="note">The approved render coordinates, physical controls, demonstration sliders and runtime are retained. These are prototype test controls, not final product copy.</div>
 </aside></details></div></section>
 </div></main><footer class="product-footer" id="productFooter"><div class="footer-name">PEEPSHOW</div><p>A project by <a href="../site.html">Roscosmo R&amp;D</a>.</p><p><a href="../projects.html">← All projects</a></p></footer><div class="assembly-dialog" id="assemblyDialog" role="dialog" aria-modal="true" aria-labelledby="assemblyTitle" aria-describedby="assemblyStatus" tabindex="-1" hidden><div class="assembly-dialog-heading"><div class="eyebrow">UNDER THE SHELL</div><h2 id="assemblyTitle">Inside Peepshow.</h2></div><p class="sr-only" id="assemblyStatus" role="status"></p><button class="assembly-close" id="assemblyClose" type="button"><span id="assemblyCloseLabel">Reassemble &amp; close</span> <span aria-hidden="true">×</span></button></div><button class="assembly-skip" id="assemblySkip" type="button" hidden>Skip animation</button><button class="return-top" id="returnTop" type="button" aria-label="Return to top" title="Return to top" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button><script>
-// Keep the splash baseline on the rounded upper shell. Reserve the original
-// logo slot and device pose; only fit/position the visible animation. Sharing
-// this with presentation.js prevents a jump when its image loader finishes.
-window.alignPeepHeroLogo = (deviceTop, deviceScale) => {
+// Use the animation's hard landing edge as the device's top edge. Keep the
+// original logo position; the device moves up to it, never into the artwork.
+// Shared with presentation.js so startup and responsive layouts stay identical.
+window.getPeepHeroLayout = width => {
   const slot = document.querySelector('.hero-logo');
   const logo = document.getElementById('peepshowLogo');
-  // The outer drips must stay over the shell, even on short landscape screens.
-  logo.style.setProperty('--hero-fit-width', `${893 * deviceScale * .95}px`);
-  const landingY = deviceTop + 35 * deviceScale;
-  logo.style.setProperty('--hero-landing-offset', `${landingY - slot.offsetTop - logo.offsetWidth * 1035 / 1800}px`);
+  const top = slot.offsetTop + logo.offsetTop + logo.getBoundingClientRect().width * 1035 / 1800;
+  const bottom = document.querySelector('.hero-caption').offsetTop - 24;
+  const originalTop = slot.offsetTop + slot.offsetHeight + 18;
+  const scale = Math.max(.01, Math.min(width * .76 / 893, (bottom - originalTop) / 1025));
+  return {top, scale, centerY: top + 512.5 * scale};
 };
 // Position the first image before waiting for controls, animation, or emulator
 // scripts. Keep this hero calculation in sync with presentation.js layout().
 (() => {
   const render = document.getElementById('render');
-  const logo = document.querySelector('.hero-logo');
-  const caption = document.querySelector('.hero-caption');
   const width = document.documentElement.clientWidth;
-  const top = logo.offsetTop + logo.offsetHeight + 18;
-  const bottom = caption.offsetTop - 24;
-  const scale = Math.max(.01, Math.min(width * .76 / 893, (bottom - top) / 1025));
-  render.style.transform = `matrix(${scale},0,0,${scale},${width / 2 - 1001.5 * scale},${(top + bottom) / 2 - 541.5 * scale})`;
-  window.alignPeepHeroLogo((top + bottom) / 2 - 512.5 * scale, scale);
+  const {top, scale} = window.getPeepHeroLayout(width);
+  render.style.transform = `matrix(${scale},0,0,${scale},${width / 2 - 1001.5 * scale},${top - 29 * scale})`;
   render.style.visibility = 'inherit';
 })();
-</script><script src="controls.js?v=settled-inputs-1"></script><script src="presentation.js?v=drip-landing-2"></script><script src="./emulator/runtime.js" type="module"></script></body></html>
+</script><script src="controls.js?v=settled-inputs-1"></script><script src="presentation.js?v=drip-edge-3"></script><script src="./emulator/runtime.js" type="module"></script></body></html>

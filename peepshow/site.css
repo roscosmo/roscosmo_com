@@ -151,20 +151,18 @@ body.exploring-inside .return-top,body.exploring-inside .assembly-skip{display:n
    The resting lettering keeps the previous hero's approximate visible width;
    the reserved fall area is included in the existing device-layout calculation. */
 .hero-logo h1.sr-only{margin:-1px}
-/* Reserve the original canvas height so device fitting never feeds back into
-   logo sizing. The visible canvas is then anchored to the device's upper shell. */
-.hero-logo{--hero-canvas-width:min(80vw,calc(clamp(120px,11vw,166px) * 2.4));height:calc(var(--hero-canvas-width) * .6)}
-.hero-animation{position:relative;width:min(var(--hero-canvas-width),var(--hero-fit-width,9999px));aspect-ratio:5/3;margin:0 auto;transform:translateY(var(--hero-landing-offset,0px));pointer-events:auto}
+.hero-animation{position:relative;width:min(80vw,calc(clamp(120px,11vw,166px) * 2.4));aspect-ratio:5/3;margin:0 auto;pointer-events:auto}
 .hero-animation-art,.hero-animation-art>svg,.hero-animation-art>img{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none}
-.hero-animation-art{pointer-events:none}
+/* Stop paint at the hard landing line, flush with the device's top edge. */
+.hero-animation-art{pointer-events:none;clip-path:inset(0 0 4.1666667% 0)}
 .hero-animation button[hidden]{display:none}
 .hero-animation-eye{position:absolute;left:76.6354%;top:40.0772%;transform:translate(-50%,-50%);width:14.0506%;height:25.2285%;min-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:transparent}
 .hero-animation-eye:hover{background:transparent}
-.hero-animation-toggle{position:absolute;right:-44px;bottom:12px;display:grid;place-items:center;width:44px;height:44px;padding:12px;border:0;border-radius:50%;background:transparent;color:#a9b6aa}
+.hero-animation-toggle{position:absolute;right:max(-44px,calc((100% - 100vw) / 2 + 8px));bottom:12px;display:grid;place-items:center;width:44px;height:44px;padding:12px;border:0;border-radius:50%;background:transparent;color:#a9b6aa}
 .hero-animation-toggle:hover{color:#fff;background:#ffffff0a}
 .hero-animation-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .hero-animation-toggle .logo-play-icon{display:none}
 .hero-animation-toggle[data-playing="false"] .logo-play-icon{display:block}
 .hero-animation-toggle[data-playing="false"] .logo-pause-icon{display:none}
-@media(max-width:899px) and (min-height:501px){.hero-logo{--hero-canvas-width:min(78vw,288px)}}
-@media(max-height:500px) and (min-width:600px){.hero-logo{--hero-canvas-width:172.8px}}
+@media(max-width:899px) and (min-height:501px){.hero-animation{width:min(78vw,288px)}}
+@media(max-height:500px) and (min-width:600px){.hero-animation{width:172.8px}}

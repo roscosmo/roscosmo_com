@@ -53,20 +53,18 @@
         assert([...doc.querySelectorAll('.site-head .brand-link,.site-head .site-nav')].every(el=>!overlaps(el.getBoundingClientRect(),logo))&&device.bottom<caption.top,'Hero overlap');
         assert(doc.querySelectorAll('.hero-logo h1').length===1&&doc.querySelector('.hero-logo h1').textContent==='Peepshow','Accessible heading changed');
         assert([...doc.querySelectorAll('.section-wordmark')].map(i=>i.getAttribute('src')).join('|')==='assets/logo-peepos.png|assets/logo-peepstudio.png','Other section logos changed');
-        const deviceScale=(device.right-device.left)/893;
         const landing=logo.top+logo.width*api.scene.floor/api.scene.width;
-        assert(Math.abs(landing-(device.top+35*deviceScale))<1,'Splash baseline misses upper shell');
-        assert(logo.width<=.95*(device.right-device.left)+1,'Outer drips miss device on narrow/short layout');
+        assert(Math.abs(landing-device.top)<.5,'Hard landing edge does not meet device top');
+        assert(w.getComputedStyle(root).transform==='none','Logo was moved from its original position');
+        assert(logo.top===doc.querySelector('.hero-logo').getBoundingClientRect().top,'Logo top changed');
+        const viewportWidth=doc.documentElement.clientWidth;
+        const expectedWidth=height<=500&&width>=600?172.8:width<900?Math.min(viewportWidth*.78,288):Math.min(viewportWidth*.8,Math.min(166,Math.max(120,viewportWidth*.11))*2.4);
+        assert(Math.abs(logo.width-expectedWidth)<1,`Original logo size changed: ${logo.width}, expected ${expectedWidth}, inner ${w.innerWidth}`);
+        const clip=w.getComputedStyle(art).clipPath;
+        assert(clip.startsWith('inset(')&&clip.includes('4.16667%'),'Artwork can paint below hard landing edge');
         assert([...root.querySelectorAll('button')].every(el=>el.getBoundingClientRect().width>=44),'Motion controls shrank below 44px');
-        const shell=doc.createElement('canvas');shell.width=1920;shell.height=1080;
-        const shellContext=shell.getContext('2d');shellContext.drawImage(doc.querySelector('#baseDevice'),0,0);
-        for(const drip of api.scene.schedule){
-          const x=logo.left+(drip.release.bulbCenter[0]+drip.drift)*logo.width/1800;
-          const sourceX=Math.round(555+(x-device.left)/deviceScale);
-          assert(shellContext.getImageData(sourceX,64,1,1).data[3]>200,`${drip.id} splash misses visible shell`);
-        }
-        assert(toggle.getBoundingClientRect().right<=width,'Pause control overflows');
-        report(`${width}×${height}: splash line meets upper shell; outer drips fit device; header and caption clear; no overflow`);
+        assert(toggle.getBoundingClientRect().right<=viewportWidth,'Pause control overflows');
+        report(`${width}×${height}: original logo position/size; device top flush with hard splash edge; no overlap or overflow`);
         const before=api.debug.elapsed; await wait(180); assert(api.debug.elapsed>before,'Autoplay stopped');
         toggle.click(); const paused=api.debug.elapsed,markup=art.innerHTML;
         await wait(180); assert(api.debug.elapsed===paused&&art.innerHTML===markup&&!api.debug.scheduled,'Pause did not stop animation');
@@ -81,11 +79,14 @@
         resizeFrame.width=width;resizeFrame.height=height;await wait(200);
         await until(()=>{
           const box=root.getBoundingClientRect(),device=w.PeepPresentation.debug.bounds;
-          const scale=(device.right-device.left)/893;
-          return Math.abs(box.top+box.width*1035/1800-device.top-35*scale)<1;
+          return Math.abs(box.top+box.width*1035/1800-device.top)<.5;
         },'Resize detached the splash line');
       }
-      report('Repeated portrait/landscape/desktop resizes keep splashes attached without layout drift');
+      report('Repeated portrait/landscape/desktop resizes keep hard splash/device edges flush without layout drift');
+      // Start the blink test at a fresh elapsed time, not paused mid-auto-blink
+      // after the variable-duration resize sequence.
+      ({w,doc}=await load(390,844));api=w.PeepLogoAnimation;
+      root=doc.querySelector('#peepshowLogo');art=root.querySelector('.hero-animation-art');
       const toggle=root.querySelector('.hero-animation-toggle'),eye=root.querySelector('.hero-animation-eye');
       toggle.click();
       eye.focus(); eye.click();
