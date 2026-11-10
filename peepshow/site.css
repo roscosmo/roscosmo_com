@@ -97,7 +97,7 @@
  .product-page .hero-logo{top:max(128px,14svh)}
 }
 
-/* Isolate a phone's assembly from native fling momentum, then restore scrolling. */
+/* Isolate an explicitly opened assembly, then restore scrolling on close. */
 html.assembly-locked{overflow:hidden;overscroll-behavior-y:none}
 body.assembly-locked{position:fixed;top:calc(-1 * var(--assembly-scroll-y));left:0;right:0;width:100%;overflow:hidden;overscroll-behavior-y:none}
 .assembly-skip{position:fixed;z-index:30;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);padding:8px 14px;font-size:12px;white-space:nowrap;background:#101911;border-color:#405247;color:#b9c9be}
@@ -106,7 +106,7 @@ body.assembly-locked{position:fixed;top:calc(-1 * var(--assembly-scroll-y));left
 /* One soft shadow around the composited object, never an opaque device panel. */
 .device-box{filter:drop-shadow(0 12px 16px #000b) drop-shadow(0 2px 2px #0009)}
 
-/* Touch/small-screen visitors choose when to explore, outside normal scrolling. */
+/* Every visitor chooses when to explore, outside normal scrolling. */
 .assembly-invitation{display:none;pointer-events:auto}
 .manual-assembly .explode-chapter{height:auto;min-height:0;width:90%;max-width:1900px;margin:0 auto;padding:32px 0 48px;display:grid;grid-template-columns:46% 54%;text-align:left}
 .manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{position:static;grid-column:2;padding-left:clamp(24px,3vw,60px)}

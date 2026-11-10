@@ -92,3 +92,16 @@ The lossless WebP logos retain the original dimensions and decoded pixels.
 Original PNG sources are kept. PeepShow's Python runtime warms near the software
 section; each game archive is fetched only on Play and reused during that visit.
 Check both Dungeon and Virtual pet, stopping between them, after runtime changes.
+
+# Button-driven assembly on every screen
+
+Open `/tests/peepshow-assembly.html` and run the checks. Six sizes from
+320×568 to 1920×1080 verify that crossing the assembly section never opens or
+locks it, reading wheel events remain native, and Explore is visible. The
+suite checks complete opening/reassembly, artwork bounds, inert background,
+Tab/Escape, early and repeated close, focus and scroll restoration, repeat
+opening, delayed images and direct software-section links. The existing hero
+snap remains; the rest of desktop reading uses native wheel/trackpad scrolling.
+Only an explicit Explore action locks the page while the dialog is open.
+
+Tests use synthetic events in real iframe layouts, not physical-device gestures.

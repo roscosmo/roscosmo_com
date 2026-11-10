@@ -1,4 +1,4 @@
-/* Product v9: complete opening snap; v8 assembly, runtime and demos preserved. */
+/* Button-driven assembly on every screen; opening snap and input demos preserved. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -26,8 +26,8 @@
     const o=offsets(b,p.r);
     return {left:p.x+o.left*p.s,top:p.y+o.top*p.s,right:p.x+o.right*p.s,bottom:p.y+o.bottom*p.s};
   }
-  // Freeze only the assembly on phones. Native momentum must not compete with
-  // animation scroll writes; the rest of the page keeps its native touch scroll.
+  // Freeze the page only after an explicit Explore click. Closing restores the
+  // reading position and focus; scrolling alone never starts the assembly.
   let assemblyLock=null,exploration=null,closeFromFrame=50;
   const pageY=()=>assemblyLock?assemblyLock.y:window.scrollY;
   let m=null,dirty=true,pose=null,ready=false,lastFrameName='',frame=1,phase='idle',phaseStart=0;
@@ -60,7 +60,7 @@
     // and orientation changes. Desktop keeps its existing viewport geometry.
     const w=document.documentElement.clientWidth,stableH=viewer.clientHeight;
     const mobile=w<900&&stableH>500,h=mobile?stableH:innerHeight;
-    const manual=w<900||matchMedia('(pointer:coarse)').matches;
+    const manual=true; // Explore inside is explicit on desktop, tablet and phone.
     document.body.classList.toggle('manual-assembly',manual);
     // A real layout/orientation change may alter the document above our return point.
     if(exploration)exploration.returnY=clamp(exploreInside.getBoundingClientRect().top+pageY()-exploration.buttonTop,0,maximum());
@@ -217,7 +217,7 @@
   }
   function beginEntry(now){
     void preload();
-    if(moving()||(m.manual&&!exploration))return;
+    if(moving()||!exploration)return;
     armed=false;visited=false;exitRequest=0;frame=1;phaseFrom={...(pose||m.ex)};
     const entryY=exploration?exploration.returnY:m.exTop;
     lockAssembly(entryY);
@@ -236,7 +236,14 @@
     exploration=null;scrolling=false;heroSettleAt=0;
     assemblyDialog.hidden=true;document.body.classList.remove('exploring-inside');
     for(const [el,wasInert] of session.inert)el.inert=wasInert;
-    unlockAssembly();apply(normalPose(pageY()));
+    unlockAssembly();
+    // Unlocking restores the scrollbar and can change text wrapping/reading
+    // clearance. Restore the button's screen position in that final layout,
+    // rather than using coordinates measured while the body was fixed.
+    layout();
+    const restoredY=clamp(exploreInside.getBoundingClientRect().top+pageY()-session.buttonTop,0,maximum());
+    writeScroll(restoredY);lastY=smoothY=targetY=restoredY;
+    apply(normalPose(pageY()));
     session.focus?.focus({preventScroll:true});
     note('');log('explore-closed');
   }
@@ -248,7 +255,7 @@
     if(frame>1)beginClose(performance.now());else beginExit(performance.now());
   }
   function openExploration(){
-    if(!m.manual||moving())return;
+    if(moving())return;
     heroSnap=null;heroSettleAt=0;heroWheelUntil=0;cancelEase();
     exploration={returnY:pageY(),buttonTop:exploreInside.getBoundingClientRect().top,focus:exploreInside,inert:[]};
     for(const el of [document.querySelector('.site-head'),$('productStory'),$('productFooter'),viewer,returnTop]){
@@ -386,10 +393,8 @@
       if(scrolling){
         smoothY=motion.checked?smoothY+(targetY-smoothY)*(1-Math.exp(-dt/tau)):targetY;
         if(Math.abs(targetY-smoothY)<.25){smoothY=targetY;scrolling=false;}
-        // Clamp the scroll to the assembly entrance before a large wheel delta can skip it.
-        if(!m.manual&&armed&&!entryBypass&&motion.checked&&smoothY>=m.exTop&&lastY<m.exTop){beginEntry(now);}
-        else writeScroll(smoothY);
-      }else if(!m.manual&&armed&&!entryBypass&&motion.checked&&pageY()>=m.exTop&&lastY<m.exTop){beginEntry(now);}
+        writeScroll(smoothY);
+      }
     }
     if(!heroWasActive&&moving())scene(now);
     else if(!heroWasActive){
@@ -416,6 +421,11 @@
     if(!e.cancelable||e.ctrlKey||e.metaKey||e.shiftKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)||nested(e.target,e.deltaY))return;
     if(!motion.checked&&!moving())return;
     const dy=e.deltaY*(e.deltaMode===1?22:e.deltaMode===2?innerHeight*.8:1);
+    // Keep native desktop wheel/trackpad scrolling throughout the reading
+    // sections. Only the existing hero snap and an explicitly opened dialog
+    // consume gestures.
+    const opening=motion.checked&&(pageY()<m.machineTop-2||(dy<0&&pageY()<=m.machineTop+2));
+    if(!heroSnap&&!moving()&&!opening&&performance.now()>=heroWheelUntil){cancelEase();return;}
     e.preventDefault();
     if(heroSnap){heroWheelUntil=performance.now()+120;return;}
     if(performance.now()<heroWheelUntil){heroWheelUntil=performance.now()+120;return;}
