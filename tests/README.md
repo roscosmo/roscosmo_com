@@ -73,3 +73,22 @@ shared script at desktop/mobile widths with both motion preferences. The test
 samples rendered path and pupil bounding rectangles over time, rather than only
 checking transform strings. The header now intentionally matches site.html's
 always-animated logo; other reduced-motion rules remain unchanged.
+
+# Performance and demand loading
+
+Open `/tests/performance.html` and run the checks. At 390×844 and 1440×900,
+this checks that the initial hero requests only its idle frame, not the complete
+assembly sequence or emulator worker/game archives. Scrolling into the product
+must load all assembly frames. The resource byte count is informational: cached
+resources can report zero, and it is not an internet-speed benchmark.
+
+Assembly assets now start on the first scroll (including restored/deep-link
+positions), with an explicit loading gate for early Explore clicks. The input
+regression starts exploring before waiting for assembly readiness. The static
+hero regression only waits for its own artwork and presentation, since opening
+the page intentionally no longer loads the entire animation.
+
+The lossless WebP logos retain the original dimensions and decoded pixels.
+Original PNG sources are kept. PeepShow's Python runtime warms near the software
+section; each game archive is fetched only on Play and reused during that visit.
+Check both Dungeon and Virtual pet, stopping between them, after runtime changes.

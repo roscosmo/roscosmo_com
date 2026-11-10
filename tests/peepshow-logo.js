@@ -10,10 +10,10 @@
         const frame=document.createElement('iframe');frame.width=width;frame.height=height;
         const loaded=new Promise(resolve=>frame.onload=resolve);frame.src='../peepshow/';fixtures.replaceChildren(frame);frame.scrollIntoView({block:'start'});await loaded;
         const w=frame.contentWindow,d=frame.contentDocument;const started=performance.now();
-        while(!w.PeepPresentation?.debug.ready){assert(performance.now()-started<12000,'Product did not initialize');await wait(25);}
+        while(!w.PeepPresentation || !d.querySelector('.hero-wordmark')?.complete){assert(performance.now()-started<12000,'Product did not initialize');await wait(25);}
         await wait(200);
         const img=d.querySelector('.hero-wordmark'),slot=d.querySelector('.hero-logo'),caption=d.querySelector('.hero-caption');
-        assert(img?.complete&&img.naturalWidth===1666&&img.getAttribute('src')==='assets/logo-peepshow.png','Original static artwork missing');
+        assert(img?.complete&&img.naturalWidth===1666&&img.getAttribute('src')==='assets/logo-peepshow.webp','Original static artwork missing');
         assert(img.alt==='Peepshow'&&d.querySelector('.hero-logo h1').contains(img),'Accessible hero title changed');
         assert(!d.querySelector('#peepshowLogo,.hero-animation-toggle,script[src*="logo-animation"]')&&!w.PeepLogoAnimation,'Animated hero still active');
         const b=img.getBoundingClientRect(),device=w.PeepPresentation.debug.bounds,c=caption.getBoundingClientRect();

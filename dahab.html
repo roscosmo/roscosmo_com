@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dahab | Roscosmo R&D</title>
-    <link rel="icon" type="image/png" href="assets/images/peepguy.png" />
+    <link rel="icon" type="image/webp" href="assets/images/peepguy.webp" />
     <meta
       name="description"
       content="Dahab is a 2021 personal Unity Android prototype: a small Arabic-themed round-based action game, where you have to collect your weapons and survive as long as possible. Monsters respawn larger and more dangerous after dying."
@@ -32,21 +32,8 @@
          To change the file or path, update the `src` URL below. */
       @font-face {
         font-family: 'Arabian';
-        /* Try absolute paths first (leading slash) to avoid relative path issues
-           when the page is served from a different directory. Keep the relative
-           fallbacks for local testing. */
-        src: url('/assets/fonts/Arabian.woff2') format('woff2'),
-             url('/assets/fonts/Arabian.woff') format('woff'),
-             url('/assets/fonts/Arabian.ttf') format('truetype'),
-             url('/assets/fonts/arabian.ttf') format('truetype'),
-             url('/assets/font/Arabian.ttf') format('truetype'),
-             url('/assets/font/arabian.ttf') format('truetype'),
-             url('assets/fonts/Arabian.woff2') format('woff2'),
-             url('assets/fonts/Arabian.woff') format('woff'),
-             url('assets/fonts/Arabian.ttf') format('truetype'),
-             url('assets/fonts/arabian.ttf') format('truetype'),
-             url('assets/font/Arabian.ttf') format('truetype'),
-             url('assets/font/arabian.ttf') format('truetype');
+        src: url('assets/fonts/Arabian.woff') format('woff'),
+             url('assets/fonts/Arabian.ttf') format('truetype');
         font-weight: 100 900;
         font-style: normal;
         font-display: swap;
@@ -79,7 +66,7 @@
            !important so any site-wide grid/background overlays are overridden.
            This removes thin guide/grid lines defined elsewhere. */
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.6)),
-          url("assets/images/dahab_bg.png") center center / cover no-repeat !important;
+          url("assets/images/dahab_bg.webp") center center / cover no-repeat !important;
         pointer-events: none;
         z-index: 0;
       }
@@ -427,7 +414,7 @@
     <main>
       <section class="hero">
         <h1 class="title-logo-wrap" aria-label="Dahab">
-          <img class="title-logo" src="assets/images/dahab-logo.png" alt="Dahab" />
+          <img class="title-logo" src="assets/images/dahab-logo.webp" alt="Dahab" />
         </h1>
         <p class="meta">Android game · Unity · 2021 prototype</p>
         <p class="summary">
@@ -477,7 +464,7 @@
         <div class="skills-grid">
           <div class="skill">
             <div class="skill-logo">
-              <img alt="Unity logo" src="assets/images/skills/unity.svg" onerror="this.style.display='none'"/>
+
               <div class="fallback">U</div>
             </div>
             <div class="skill-body">
@@ -488,7 +475,7 @@
 
           <div class="skill">
             <div class="skill-logo">
-              <img alt="C# logo" src="assets/images/skills/csharp.svg" onerror="this.style.display='none'"/>
+
               <div class="fallback">C#</div>
             </div>
             <div class="skill-body">
@@ -499,7 +486,7 @@
 
           <div class="skill">
             <div class="skill-logo">
-              <img alt="Shader Graph logo" src="assets/images/skills/shader-graph.svg" onerror="this.style.display='none'"/>
+
               <div class="fallback">SG</div>
             </div>
             <div class="skill-body">
@@ -511,7 +498,7 @@
 
           <div class="skill">
             <div class="skill-logo">
-              <img alt="ADB logo" src="assets/images/skills/adb.svg" onerror="this.style.display='none'"/>
+
               <div class="fallback">ADB</div>
             </div>
             <div class="skill-body">

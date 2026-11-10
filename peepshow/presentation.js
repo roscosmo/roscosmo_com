@@ -216,6 +216,7 @@
     scrolling=true;
   }
   function beginEntry(now){
+    void preload();
     if(moving()||(m.manual&&!exploration))return;
     armed=false;visited=false;exitRequest=0;frame=1;phaseFrom={...(pose||m.ex)};
     const entryY=exploration?exploration.returnY:m.exTop;
@@ -337,7 +338,7 @@
     if(phase==='exiting')glow=1-ease((now-phaseStart)/1000);
     viewer.style.setProperty('--glow',glow.toFixed(3));
     document.body.style.setProperty('--reading-fade',range(pageY(),m.machineTop*.45,m.machineTop).toFixed(3));
-    if(!moving())note(ready?'':'Loading assembly images…');
+    if(!moving())note(ready||!preloadPromise?'':'Loading assembly images…');
   }
   function maybeInputsDemo(now){
     const y=pageY();
@@ -535,9 +536,14 @@
     }
     throw new Error(url+': '+failure.message);
   }
-  async function preload(){
-    const urls=['front-neutral','front-l','front-r','front-lr','button-a','button-b','button-start','joy-up','joy-right','joy-down','joy-left','joy-up-left','joy-up-right','joy-down-left','joy-down-right'];
-    const jobs=[...names.map(n=>async()=>images.set(n,await load('frames/'+n+'.webp'))),...urls.map(n=>()=>load('assets/'+n+'.webp'))];
+  let preloadPromise=null;
+  function preload(){
+    if(preloadPromise)return preloadPromise;
+    preloadPromise=loadAssembly();
+    return preloadPromise;
+  }
+  async function loadAssembly(){
+    const jobs=names.map(n=>async()=>images.set(n,await load('frames/'+n+'.webp')));
     let cursor=0;const errors=[];
     const run=async()=>{while(cursor<jobs.length){const task=jobs[cursor++];try{await task();}catch(error){errors.push(error.message);}}};
     await Promise.all(Array.from({length:4},run));ready=names.every(n=>images.has(n));
@@ -562,5 +568,10 @@
     get softwareVisible(){return lastSoftware;},
     get debug(){return {heroSnap:heroSnap?{destination:heroSnap.destination}:null,phase,frame,ready,missingImages:names.filter(n=>!images.has(n)),gate:moving(),exploring:!!exploration,scrollLocked:!!assemblyLock,armed,visited,inputsDemoArmed,inputsDemoPending,exitRequest,scrollY:pageY(),targetY,scrolling,pose,bounds:pose?bounds(pose,frame>1?exploded:front):null,softwareVisible:lastSoftware,landmarks:m,events:[...events]};}
   };
-  layout();apply(normalPose(pageY()));requestAnimationFrame(tick);void preload();
+  layout();apply(normalPose(pageY()));requestAnimationFrame(tick);
+  // The hero needs only its idle frame. Start the 52-frame assembly sequence
+  // when the visitor begins exploring, including restored scroll/deep links.
+  const prepareAssembly=()=>{if(pageY()>0){void preload();removeEventListener('scroll',prepareAssembly);}};
+  addEventListener('scroll',prepareAssembly,{passive:true});
+  prepareAssembly();
 })();

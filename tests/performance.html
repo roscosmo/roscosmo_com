@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><title>Performance regression</title>
+<style>body{background:#222;color:white;font:14px system-ui}iframe{display:block;border:0}pre{white-space:pre-wrap}</style>
+<h1>Performance regression</h1><button id="run">Run performance checks</button><pre id="results">Ready</pre><div id="fixtures"></div>
+<script>
+const output=document.querySelector('#results'),run=document.querySelector('#run');
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function until(test,label,timeout=20000){const start=performance.now();while(!test()){if(performance.now()-start>timeout)throw Error(label);await sleep(50);}}
+function assert(test,label){if(!test)throw Error(label);output.textContent+='\nPASS '+label;}
+run.onclick=async()=>{
+run.disabled=true;output.textContent='Running';
+try{
+for(const [width,height] of [[390,844],[1440,900]]){
+const f=document.createElement('iframe');f.width=width;f.height=height;f.src='../peepshow/';document.querySelector('#fixtures').replaceChildren(f);
+await new Promise(resolve=>f.onload=resolve);const w=f.contentWindow;
+await until(()=>w.PeepPresentation&&w.PeepRuntime,'startup');await sleep(1500);
+const resources=w.performance.getEntriesByType('resource');
+assert(resources.filter(r=>r.name.includes('/frames/')).length===1,width+'px: hero loads only its idle frame');
+assert(!resources.some(r=>r.name.includes('/emulator/worker.js')||r.name.endsWith('.zip')),width+'px: no emulator worker or game archives at hero');
+assert(!w.PeepPresentation.debug.ready,width+'px: assembly remains deferred');
+assert(w.document.querySelector('.hero-wordmark').naturalWidth===1666,width+'px: original-size hero artwork loaded');
+output.textContent+='\nHero resources: '+resources.length+'; encoded body bytes '+resources.reduce((n,r)=>n+r.encodedBodySize,0);
+w.scrollTo(0,w.PeepPresentation.debug.landmarks.machineTop);
+await until(()=>w.PeepPresentation.debug.ready,'assembly did not load after exploring');
+assert(w.PeepPresentation.debug.missingImages.length===0,width+'px: all assembly frames ready after exploring');
+}
+output.textContent+='\nALL PERFORMANCE CHECKS PASSED';document.title='PASS Performance';
+}catch(error){output.textContent+='\nFAIL '+error.stack;document.title='FAIL Performance';}
+run.disabled=false;
+};
+</script>

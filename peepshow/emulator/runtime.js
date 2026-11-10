@@ -1,5 +1,3 @@
-const $ = id => document.getElementById(id);
-const worker = new Worker('./emulator/worker.js', {type: 'module'});
 let serial = 0, revision = 0, previewRevision, root, documentSource, state, runtime;
 let running = false, suspended = false, initialized = false, uiQueue = Promise.resolve();
 let warmupPromise = null;
@@ -8,17 +6,24 @@ let lastTick = 0, audioContext, tickTimer;
 let tickPending = false;
 const pending = new Map(), audioBuffers = new Map(), playing = new Set(), held = new Set();
 const measurements = [];
-worker.onmessage = ({data}) => {
-  const request = pending.get(data.id);
-  if (!request) return;
-  pending.delete(data.id);
-  data.error ? request.reject(Error(data.error)) : request.resolve(data.result);
-};
-worker.onerror = error => {
-  for (const request of pending.values()) request.reject(Error(error.message));
-  pending.clear(); running = false;
-};
+const $ = id => document.getElementById(id);
+let worker;
+function ensureWorker() {
+  if (worker) return;
+  worker = new Worker('./emulator/worker.js', {type: 'module'});
+  worker.onmessage = ({data}) => {
+    const request = pending.get(data.id);
+    if (!request) return;
+    pending.delete(data.id);
+    data.error ? request.reject(Error(data.error)) : request.resolve(data.result);
+  };
+  worker.onerror = error => {
+    for (const request of pending.values()) request.reject(Error(error.message));
+    pending.clear(); running = false;
+  };
+}
 function send(kind, fields = {}) {
+  ensureWorker();
   const id = ++serial;
   return new Promise((resolve, reject) => {
     pending.set(id, {resolve, reject}); worker.postMessage({id, kind, ...fields});
@@ -126,26 +131,14 @@ async function openExample(name) {
   exampleArchives.set(name,bytes);
   await openArchive(bytes);
 }
-// Initialize Python and load the default package only after the rendered site assets are ready.
+// Warm Python near the software section; game packages load on explicit Play.
 // No AudioContext or playback begins until an explicit user gesture.
 async function warmupRuntime() {
   if(warmupPromise) return warmupPromise;
   warmupPromise=(async()=>{
     report('Preparing browser emulator…');
     if(!initialized){runtime=await send('init');initialized=true;}
-    // Fetch both bundles while the visitor explores the product animation.
-    await Promise.all(['dungeon','virtual_pet'].map(async name=>{
-      if(exampleArchives.has(name))return;
-      const url='./emulator/'+name+'.zip';
-      const response=await fetch(url);
-      if(!response.ok)throw Error('Could not load '+url+' (HTTP '+response.status+')');
-      const bytes=new Uint8Array(await response.arrayBuffer());
-      if(bytes.length<4||bytes[0]!==0x50||bytes[1]!==0x4b||bytes[2]!==0x03||bytes[3]!==0x04)throw Error('Invalid ZIP data from '+url);
-      exampleArchives.set(name,bytes);
-    }));
-    // Prepare Dungeon as the default example; keep gameplay stopped until Play.
-    await openArchive(exampleArchives.get('dungeon'));
-    startedName='dungeon';
+    // Game archives are fetched only when that game is selected and played.
     report('Emulator ready · choose a game');
     document.getElementById('siteLoadStatus').textContent='Emulator ready';
   })().catch(error=>{
@@ -283,7 +276,14 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden && running)
   .finally(refreshButtons).catch(()=>{});
 }});
 window.PeepRuntime={start:startRealExample, stop:stopPreview, get running(){return running;},get state(){return state;}};
-report('Runtime queued until product images load');refreshButtons();
-function beginPreload(){void warmupRuntime().catch(error=>console.error('[PeepOS prewarm]',error));}
-if(window.peepRendersReady)beginPreload();
-else window.addEventListener('peep-renders-ready',beginPreload,{once:true});
+report('Emulator loads when you reach the software section');refreshButtons();
+// Browsing the product should not download a Python/WASM runtime or two games.
+// Warm it shortly before the software section; Play also awaits this same promise.
+if ('IntersectionObserver' in window) {
+  const observer=new IntersectionObserver(entries=>{
+    if(!entries.some(entry=>entry.isIntersecting))return;
+    observer.disconnect();
+    void warmupRuntime().catch(error=>console.error('[PeepOS prewarm]',error));
+  },{rootMargin:'100% 0px'});
+  observer.observe(document.getElementById('info'));
+}

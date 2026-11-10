@@ -44,7 +44,12 @@ async function load(width,height,slow=false){
     w.requestAnimationFrame(sampleVisual);
   }
   w.requestAnimationFrame(sampleVisual);
-  if(!slow)await until(()=>debug().ready,'image preload');
+  if(!slow){
+    // Assembly assets now begin when the visitor leaves the hero.
+    w.scrollTo(0,debug().landmarks.machineTop);
+    await until(()=>debug().ready,'image preload after exploring');
+    w.scrollTo(0,0);await wait(250);
+  }
 }
 async function arm(){w.scrollTo(0,debug().landmarks.inputsDemoAt-debug().landmarks.h*.31);await wait(240);assert(debug().inputsDemoArmed,'demo did not rearm');record();}
 function cross(){w.scrollTo(0,debug().landmarks.inputsDemoAt+20);}
