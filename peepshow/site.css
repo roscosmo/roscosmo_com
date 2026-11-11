@@ -112,15 +112,14 @@ body.assembly-locked{position:fixed;top:calc(-1 * var(--assembly-scroll-y));left
 .manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{position:static;grid-column:2;padding-left:clamp(24px,3vw,60px)}
 .manual-assembly .assembly-invitation{display:block}
 .manual-assembly .assembly-invitation p{margin:8px 0 12px;font-size:16px}
-/* A custom illustrated cutaway makes the whole invitation a tactile target. */
-.manual-assembly .explore-button{position:relative;display:flex;flex-direction:column;align-items:center;width:min(100%,460px);min-height:64px;margin:8px 0 0;padding:0 0 8px;border:0;border-radius:18px;background:transparent;box-shadow:none;font-size:clamp(18px,1.4vw,21px);line-height:1.25;letter-spacing:-.025em;isolation:isolate}
-.explore-art{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;pointer-events:none;user-select:none;transform-origin:50% 75%;transition:transform 220ms ease}
-.explore-label{display:block;position:relative;margin-top:-8px;padding:16px 28px;min-width:202px;border:1px solid var(--accent);border-radius:999px;background:var(--accent);color:#080b09;font-weight:750;box-shadow:0 5px 20px #f23c141c;transition:background 180ms ease,box-shadow 180ms ease}
-.explore-button:focus-visible{outline:2px solid var(--ink);outline-offset:7px}
-.explore-button:focus-visible .explore-art{transform:translateY(-4px) rotate(-1deg)}
-.explore-button:focus-visible .explore-label{background:var(--accent-hover);box-shadow:0 7px 26px #f23c1440}
-@media(hover:hover){.manual-assembly .explore-button:hover{background:transparent}.explore-button:hover .explore-art{transform:translateY(-4px) rotate(-1deg)}.explore-button:hover .explore-label{background:var(--accent-hover);box-shadow:0 7px 26px #f23c1440}}
-@media(prefers-reduced-motion:reduce){.explore-art,.explore-label{transition:none}.explore-button:hover .explore-art,.explore-button:focus-visible .explore-art{transform:none}}
+/* A comic explosion invites the reveal without showing the inside first. */
+.manual-assembly .explore-button{position:relative;display:block;width:min(100%,380px);min-height:64px;margin:18px 0 0;padding:0;border:0;border-radius:18px;background:transparent;box-shadow:none;font-size:clamp(23px,2.5vw,30px);line-height:1.1;letter-spacing:-.035em;isolation:isolate}
+.explore-graphic{position:relative;display:block;transform-origin:center;transition:transform 180ms ease}
+.explore-art{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;pointer-events:none;user-select:none}
+.explore-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62%;padding:0;color:#080b09;font-weight:850;white-space:nowrap;text-align:center;pointer-events:none}
+.explore-button:focus-visible{outline:2px solid var(--ink);outline-offset:7px}.explore-button:focus-visible .explore-graphic{transform:rotate(-2deg) scale(1.025)}
+@media(hover:hover){.manual-assembly .explore-button:hover{background:transparent}.explore-button:hover .explore-graphic{transform:rotate(-2deg) scale(1.025)}}
+@media(prefers-reduced-motion:reduce){.explore-graphic{transition:none}.explore-button:hover .explore-graphic,.explore-button:focus-visible .explore-graphic{transform:none}}
 @media(max-width:899px) and (min-height:501px){
  .manual-assembly .explode-chapter{display:block;width:88%;padding:28px 0 32px}
  .manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{padding:0}

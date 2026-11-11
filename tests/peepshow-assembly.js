@@ -39,19 +39,21 @@ run.onclick=async()=>{
         w.document.body.dispatchEvent(wheel);assert(!wheel.defaultPrevented,'reading wheel intercepted');
         assert(w.document.documentElement.scrollWidth<=width,'horizontal overflow');
       });
-      await check(width+'×'+height+' illustrated Explore invitation',async()=>{
+      await check(width+'×'+height+' cartoon explosion invitation',async()=>{
         const button=w.document.querySelector('#exploreInside'),art=button.querySelector('.explore-art'),label=button.querySelector('.explore-label');
-        button.scrollIntoView({block:'center'});await until(()=>art.complete&&art.naturalWidth>0,'cutaway artwork');await wait(120);
+        button.scrollIntoView({block:'center'});await until(()=>art.complete&&art.naturalWidth>0,'cartoon explosion artwork');await wait(120);
         const b=button.getBoundingClientRect(),a=art.getBoundingClientRect(),l=label.getBoundingClientRect(),copy=button.closest('.assembly-invitation').querySelector('p').getBoundingClientRect();
-        assert(b.height>=180&&b.width>=190,'Explore target too small');
-        assert(parseFloat(w.getComputedStyle(button).fontSize)>=18,'Explore label too small');
+        assert(b.height>=170&&b.width>=190,'Explore target too small');
+        assert(parseFloat(w.getComputedStyle(button).fontSize)>=23,'Explore label too small');
         assert(button.textContent.trim()==='Explore inside','accessible label changed');
         assert(button.getAttribute('aria-haspopup')==='dialog'&&button.getAttribute('aria-controls')==='assemblyDialog','dialog semantics missing');
         assert(art.alt===''&&art.getAttribute('aria-hidden')==='true','decorative illustration exposed');
         assert(art.loading==='lazy'&&art.srcset.includes('1024w'),'responsive artwork missing');
         assert(!button.querySelector('.burst-arrow'),'superseded arrows still present');
         assert(a.left>=0&&a.right<=width&&a.top>copy.bottom,'artwork overlaps copy or viewport');
-        assert(l.height>=48&&l.left>=b.left&&l.right<=b.right,'label target or containment');
+        assert(l.left>=b.left&&l.right<=b.right&&l.top>=b.top&&l.bottom<=b.bottom,'label containment');
+        assert(art.src.includes('explore-blast-')&&!art.src.includes('cutaway'),'illustration reveals the assembly');
+        assert(l.width>=label.scrollWidth-1,'label overflows its central space');
         assert(w.document.documentElement.scrollWidth<=width,'invitation causes horizontal overflow');
       });
       await check(width+'×'+height+' open, focus trap, full reassembly and restoration',async()=>{
