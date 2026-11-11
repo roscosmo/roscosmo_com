@@ -106,10 +106,13 @@ Only an explicit Explore action locks the page while the dialog is open.
 
 Tests use synthetic events in real iframe layouts, not physical-device gestures.
 
-# Prominent Explore invitation
+# Illustrated Explore invitation
 
-The assembly suite also checks the larger 64px-high Explore target, legible label,
-four decorative outward arrows, dialog semantics, clearance from the preceding
-copy and horizontal bounds at all six sizes. Arrow movement is limited to hover
-and keyboard focus; reduced-motion visitors get the same static treatment.
-Use `/tests/peepshow-explore-preview.html` for desktop/mobile visual review.
+The assembly suite also checks the custom cutaway illustration, its responsive
+WebP sources and successful loading, the whole-image button, the 48px-plus label,
+decorative-image accessibility, unchanged dialog semantics and copy/viewport
+clearance at all six sizes. The illustration has subtle hover/focus movement;
+reduced-motion visitors get a static treatment. The entire illustration and label
+open the same assembly dialog. Use `/tests/peepshow-explore-preview.html` for
+desktop/mobile visual review. The art is illustrative, based on the actual
+PeepShow assembly frames, and is not a technical schematic.

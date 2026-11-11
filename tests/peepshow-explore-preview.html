@@ -5,7 +5,7 @@
 <script>
 const frame=document.querySelector('#fixture'),status=document.querySelector('#status');
 function show(width,height){frame.width=width;frame.height=height;status.textContent=`${width} × ${height}`;frame.src='../peepshow/?explore-preview='+Date.now();}
-frame.addEventListener('load',()=>{const w=frame.contentWindow;requestAnimationFrame(()=>requestAnimationFrame(()=>w.document.querySelector('#exploreInside').scrollIntoView({block:'center'})));});
+frame.addEventListener('load',()=>{const w=frame.contentWindow;requestAnimationFrame(()=>requestAnimationFrame(()=>{const section=w.document.querySelector('#explosion'),m=w.PeepPresentation.debug.landmarks;w.scrollTo(0,section.getBoundingClientRect().top+w.scrollY-(m.mobile?m.reading:24));}));});
 document.querySelectorAll('[data-size]').forEach(button=>button.addEventListener('click',()=>show(...button.dataset.size.split(',').map(Number))));
 show(390,844);
 </script></html>
