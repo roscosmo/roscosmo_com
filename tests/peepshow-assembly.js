@@ -39,6 +39,18 @@ run.onclick=async()=>{
         w.document.body.dispatchEvent(wheel);assert(!wheel.defaultPrevented,'reading wheel intercepted');
         assert(w.document.documentElement.scrollWidth<=width,'horizontal overflow');
       });
+      await check(width+'×'+height+' prominent outward-arrow invitation',async()=>{
+        const button=w.document.querySelector('#exploreInside'),arrows=[...button.querySelectorAll('.burst-arrow')];
+        button.scrollIntoView({block:'center'});await wait(120);
+        const b=button.getBoundingClientRect(),copy=button.closest('.assembly-invitation').querySelector('p').getBoundingClientRect();
+        assert(b.height>=64&&b.width>=190,'Explore target too small');
+        assert(parseFloat(w.getComputedStyle(button).fontSize)>=17,'Explore label too small');
+        assert(button.textContent.trim()==='Explore inside','accessible label changed');
+        assert(button.getAttribute('aria-haspopup')==='dialog'&&button.getAttribute('aria-controls')==='assemblyDialog','dialog semantics missing');
+        assert(arrows.length===4&&arrows.every(a=>a.getAttribute('aria-hidden')==='true'&&a.getAttribute('focusable')==='false'),'decorative arrows exposed');
+        for(const arrow of arrows){const r=arrow.getBoundingClientRect();assert(r.left>=0&&r.right<=width,'arrow cropped');assert(r.top>copy.bottom,'arrow overlaps copy');assert(r.width>=24&&r.height>=24,'arrow too small');}
+        assert(w.document.documentElement.scrollWidth<=width,'invitation causes horizontal overflow');
+      });
       await check(width+'×'+height+' open, focus trap, full reassembly and restoration',async()=>{
         w.document.querySelector('#exploreInside').scrollIntoView({block:'center'});await wait(200);const y=w.scrollY,buttonTop=w.document.querySelector('#exploreInside').getBoundingClientRect().top;
         await open();assert(debug().frame===50&&debug().scrollLocked,'not fully opened');

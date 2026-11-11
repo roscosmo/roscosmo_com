@@ -105,3 +105,11 @@ snap remains; the rest of desktop reading uses native wheel/trackpad scrolling.
 Only an explicit Explore action locks the page while the dialog is open.
 
 Tests use synthetic events in real iframe layouts, not physical-device gestures.
+
+# Prominent Explore invitation
+
+The assembly suite also checks the larger 64px-high Explore target, legible label,
+four decorative outward arrows, dialog semantics, clearance from the preceding
+copy and horizontal bounds at all six sizes. Arrow movement is limited to hover
+and keyboard focus; reduced-motion visitors get the same static treatment.
+Use `/tests/peepshow-explore-preview.html` for desktop/mobile visual review.

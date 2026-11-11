@@ -112,7 +112,18 @@ body.assembly-locked{position:fixed;top:calc(-1 * var(--assembly-scroll-y));left
 .manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{position:static;grid-column:2;padding-left:clamp(24px,3vw,60px)}
 .manual-assembly .assembly-invitation{display:block}
 .manual-assembly .assembly-invitation p{margin:8px 0 12px;font-size:16px}
-.manual-assembly .assembly-invitation button{min-height:48px;margin-top:4px}
+/* Four outward arrows make this an invitation to pull the device apart. */
+.explore-burst{display:inline-flex;width:min(100%,292px);padding:26px;margin:2px 0 0;vertical-align:top}
+.manual-assembly .explore-button{position:relative;isolation:isolate;width:100%;min-height:64px;margin:0;padding:17px 18px;font-size:clamp(17px,1.25vw,20px);line-height:1.3;letter-spacing:-.025em;box-shadow:0 0 0 1px #f23c1438,0 8px 28px #f23c141c;transition:background 180ms ease,box-shadow 180ms ease}
+.explore-button .burst-arrow{position:absolute;width:25px;height:25px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transform:translate(0,0) rotate(var(--turn));transition:transform 180ms ease,stroke 180ms ease}
+.burst-arrow--tl{top:-20px;left:-20px;--turn:-90deg;--x:-4px;--y:-4px}
+.burst-arrow--tr{top:-20px;right:-20px;--turn:0deg;--x:4px;--y:-4px}
+.burst-arrow--bl{bottom:-20px;left:-20px;--turn:180deg;--x:-4px;--y:4px}
+.burst-arrow--br{bottom:-20px;right:-20px;--turn:90deg;--x:4px;--y:4px}
+.explore-button:focus-visible{outline:2px solid var(--ink);outline-offset:6px}
+.explore-button:focus-visible .burst-arrow{transform:translate(var(--x),var(--y)) rotate(var(--turn));stroke:var(--accent-hover)}
+@media(hover:hover){.explore-button:hover .burst-arrow{transform:translate(var(--x),var(--y)) rotate(var(--turn));stroke:var(--accent-hover)}}
+@media(prefers-reduced-motion:reduce){.manual-assembly .explore-button,.explore-button .burst-arrow{transition:none}.explore-button:hover .burst-arrow,.explore-button:focus-visible .burst-arrow{transform:rotate(var(--turn))}}
 @media(max-width:899px) and (min-height:501px){
  .manual-assembly .explode-chapter{display:block;width:88%;padding:28px 0 32px}
  .manual-assembly .assembly-heading,.manual-assembly .assembly-invitation{padding:0}
