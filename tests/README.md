@@ -106,12 +106,13 @@ Only an explicit Explore action locks the page while the dialog is open.
 
 Tests use synthetic events in real iframe layouts, not physical-device gestures.
 
-# Cartoon explosion Explore invitation
+# Ink-burst Explore invitation
 
-The assembly suite also checks the generated comic blast graphic, its responsive
-WebP sources and successful loading, the whole-image button, centered live text,
-decorative-image accessibility, unchanged dialog semantics and copy/viewport
-clearance at all six sizes. The graphic reveals no hardware or internal parts:
-the animated assembly remains a surprise. Hover and keyboard focus give the
-whole explosion a small tilt; reduced-motion visitors get a static treatment.
-Use `/tests/peepshow-explore-preview.html` for desktop/mobile visual review.
+The assembly suite checks the bespoke orange/ivory burst illustration, its
+responsive WebP sources and successful loading, whole-button click target,
+live text, decorative-image accessibility and dialog semantics across six sizes.
+The illustration shows no hardware, preserving the animation reveal. Its open
+negative space and line-art treatment match the page's palette rather than a
+filled comic badge. Hover and focus move only the illustration slightly;
+reduced-motion visitors get a static treatment. Use
+`/tests/peepshow-explore-preview.html` for desktop/mobile visual review.
