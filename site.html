@@ -3,7 +3,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Roscosmo R&amp;D | Index</title>
+<title>Roscosmo R&amp;D | Projects, Tools &amp; Info</title>
+<meta name="description" content="Roscosmo R&amp;D. Engineering, design, and independent projects. Explore PeepShow, Dahab, and creative tools.">
+<link rel="canonical" href="https://roscosmo.com/site.html">
 <meta content="dark" name="color-scheme"/>
 <style>
 :root { --ink: #ececf0; background: black; }
@@ -257,6 +259,7 @@ body:not(.tuning-enabled) .tune-open, body:not(.tuning-enabled) .tune-panel{disp
 </svg>
 </a></nav>
 </div></main>
+<div data-nosnippet>
 <button aria-controls="motion-tuner" aria-expanded="false" class="tune-open" id="show-tuner" type="button">MOTION <span aria-hidden="true">⚙</span></button>
 <aside aria-label="Motion tuning controls" class="tune-panel" hidden="" id="motion-tuner">
 <div class="tune-head"><strong>Motion tuner</strong><button aria-label="Hide tuning controls" class="tune-close" id="hide-tuner" type="button">×</button></div>
@@ -270,8 +273,8 @@ body:not(.tuning-enabled) .tune-open, body:not(.tuning-enabled) .tune-panel{disp
 <button id="pause-motion" type="button">Pause</button><button id="test-motion" type="button">Test: safe motion</button>
 <button id="reset-motion" type="button">Reset</button><button id="copy-motion" type="button">Copy settings</button>
 </div>
-<p class="tune-foot">Collision guard is always on. Larger travel moves whole words sideways; individual letters contract slightly instead of pushing into neighbours. This tuning panel can be removed for the live site.</p>
 </aside>
+</div>
 <script>
 (() => {
   'use strict';
